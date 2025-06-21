@@ -9,6 +9,8 @@
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
+#include <fcntl.h>
+#include <io.h>
 
 using namespace std;
 using namespace ConsoleUtils;
@@ -22,7 +24,7 @@ BattleManager::BattleManager(Player* player, Monster* monster)
 
 void BattleManager::Run() {
     ShowConsoleCursor(false);
-    //PlayIntroAnimation();
+    PlayIntroAnimation();
 
     Log(m_statusMessage);
     Sleep(1500);
@@ -48,6 +50,9 @@ void BattleManager::ProcessPlayerTurn()
 {
     m_player->GetAbilityComponent()->GetAttributeSet()->bIsDefending = false;
     Log(L"무엇을 할까?");
+
+    // 메뉴를 선택하기 전 쌓였을지 모르는 모든 입력 비움
+    ClearInputBuffer();
 
     vector<wstring> options = { L"공격", L"방어", L"아이템", L"도망가기" };
     int choice = SelectMenuVertical(options, 65, 22);
@@ -172,61 +177,6 @@ void BattleManager::Draw() {
         wcout << wstring(23, L' ');
     }
 }
-void BattleManager::PlayIntroAnimation()
-{
-    ShowConsoleCursor(false);
-    clearScreen();
-
-    // 1. 화면 깜빡임 효과 (3번)
-    for (int i = 0; i < 3; ++i)
-    {
-        system("color F0");
-        Sleep(60);
-        system("color 0F");
-        Sleep(60);
-    }
-
-    // 2. 위아래로 갈라지는 효과
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); // 핸들을 직접 가져옴
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
-    GetConsoleScreenBufferInfo(hConsole, &csbi);
-    int screenWidth = csbi.srWindow.Right - csbi.srWindow.Left + 1;
-    int screenHeight = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
-
-    // gotoxy를 사용하기보다 직접 핸들을 제어하는 것이 더 안정적
-    auto SetCursorPos = [&](int x, int y) {
-        SetConsoleCursorPosition(hConsole, { (SHORT)x, (SHORT)y });
-        };
-
-    // 먼저 화면 전체를 블록으로 채움
-    for (int y = 0; y < screenHeight; ++y)
-    {
-        SetCursorPos(0, y);
-        for (int x = 0; x < screenWidth; ++x)
-        {
-            wcout << L"█";
-        }
-    }
-
-    // 중앙에서부터 위아래로 한 줄씩 공백으로 만들며 갈라지는 효과
-    int centerY = screenHeight / 2;
-    wstring blankLine(screenWidth, L' '); // 공백으로 채워진 한 줄
-
-    for (int i = 0; i <= centerY; ++i)
-    {
-        if (centerY - i >= 0) {
-            SetCursorPos(0, centerY - i);
-            wcout << blankLine;
-        }
-        if (centerY + i < screenHeight) {
-            SetCursorPos(0, centerY + i);
-            wcout << blankLine;
-        }
-        Sleep(25);
-    }
-    clearScreen();
-}
-
 std::wstring BattleManager::DrawStatBar(const std::wstring& label, float current, float max, int barLength) {
     if (current < 0) current = 0;
     float ratio = (max > 0) ? (current / max) : 0;
@@ -238,4 +188,8 @@ std::wstring BattleManager::DrawStatBar(const std::wstring& label, float current
     }
     bar += L"]";
     return bar;
+}
+void BattleManager::PlayIntroAnimation()
+{
+
 }

@@ -96,3 +96,12 @@ namespace ConsoleUtils {
         }
     }
 }
+void ConsoleUtils::ClearInputBuffer()
+{
+    // _kbhit() : 키보드 입력이 버퍼에 있는지 확인하는 함수. 있으면 true 반환.
+    // 버퍼에 입력이 없을 때까지 루프를 돌며 _getch()로 문자를 읽어들여 소진시킴
+    while (_kbhit())
+    {
+        _getch();
+    }
+}

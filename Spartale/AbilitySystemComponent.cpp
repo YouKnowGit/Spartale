@@ -4,6 +4,7 @@
 #include "GameplayEffect.h"
 #include "Actor.h"
 
+#include <algorithm> // std::max 사용을 위해 포함
 #include <iostream> // 로그 출력을 위해 포함
 
 AbilitySystemComponent::AbilitySystemComponent(Actor* Owner)
@@ -91,6 +92,14 @@ void AbilitySystemComponent::ApplyGameplayEffectToSelf(const GameplayEffect* Eff
     {
         // Effect의 Apply 함수를 호출하여 실제 효과를 적용
         Effect->Apply(MyAttributeSet.get());
+
+        if (Effect->TargetAttributeName == "HP")
+        {
+            AttributeSet* MyAS = GetAttributeSet();
+
+			// '자신의' AttributeSet에 있는 HP 값을 읽어서 0과 비교. ( 0보다 작으면 0으로 설정 )
+            MyAS->HP.CurrentValue = std::max(0.0f, MyAS->HP.CurrentValue);
+        }
     }
 }
 
