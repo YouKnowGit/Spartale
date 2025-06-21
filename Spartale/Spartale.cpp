@@ -1,11 +1,31 @@
 ﻿// Spartale.cpp : 이 파일에는 'main' 함수가 포함됩니다. 거기서 프로그램 실행이 시작되고 종료됩니다.
 //
-
+#include "Character.h"
+#include "Equipment.h"
 #include <iostream>
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    // 1. 캐릭터 생성
+    Character player("이름", 1);
+    player.setStats(10, 5, 3);
+
+    // 2. 장비 생성
+    Equipment* sword = new Equipment("철검", EquipSlotType::RightHand, 5, 0, 0, EquipmentType::Weapon);
+    Equipment* helmet = new Equipment("철 투구", EquipSlotType::Head, 5, 0, 0, EquipmentType::Helmet);
+    // 3. 캐릭터에 장비 장착
+    player.equipItem(sword);
+    player.equipItem(helmet);
+
+    // 4. 캐릭터 상태 출력
+    player.displayStatus();
+    player.displayEquipment();
+
+
+
+    // 5. 메모리 정리
+    delete sword;
+    delete helmet;
 }
 
 // 프로그램 실행: <Ctrl+F5> 또는 [디버그] > [디버깅하지 않고 시작] 메뉴
