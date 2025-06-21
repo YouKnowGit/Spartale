@@ -64,3 +64,41 @@ void GameplayEffect::Apply(AttributeSet* TargetAttributeSet) const
     }
     }
 }
+void GameplayEffect::Remove(AttributeSet* TargetAttributeSet) const
+{
+    if (!TargetAttributeSet) return;
+
+    // 이펙트 적용 방식에 따라 로직을 분기
+    switch (ApplicationType)
+    {
+    case EEffectApplication::Instant:
+    case EEffectApplication::Infinite:
+    {
+        if (TargetAttributeName == "HP")
+        {
+            TargetAttributeSet->HP.CurrentValue -= Magnitude;
+        }
+        else if (TargetAttributeName == "MP")
+        {
+            TargetAttributeSet->MP.CurrentValue -= Magnitude;
+        }
+        else if (TargetAttributeName == "Strength")
+        {
+            TargetAttributeSet->Strength.CurrentValue -= Magnitude;
+        }
+        else if (TargetAttributeName == "Agility")
+        {
+            TargetAttributeSet->Agility.CurrentValue -= Magnitude;
+        }
+        else if (TargetAttributeName == "Gold")
+        {
+            TargetAttributeSet->Gold.CurrentValue -= Magnitude;
+        }
+        break;
+    }
+
+    case EEffectApplication::Duration:
+        // TODO: 지속 효과 제거 로직
+        break;
+    }
+}

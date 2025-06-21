@@ -54,4 +54,6 @@ public:
 
     // 힘, 지능 스탯에 따라 MaxHP, MaxMP를 재계산하는 함수
     void AdjustDependentAttributes();
+
+    void Display() const;
 };

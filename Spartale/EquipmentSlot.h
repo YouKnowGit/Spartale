@@ -1,42 +1,37 @@
+// EquipmentSlot.h (GAS 구조 기반)
 #pragma once
-#include <string>
+#include "Equipment.h"
 #include "EquipSlotType.h"
 
-// Equipment 클래스를 전방 선언 (헤더 include 없이 포인터만 사용 가능하게 하기 위함)
-class Equipment;
-
-
-// 장비 슬롯 클래스: 캐릭터의 특정 부위에 장비를 장착하거나 해제하는 기능을 담당
 class EquipmentSlot {
-private:	
-	// 현재 슬롯에 장착된 장비 (없으면 nullptr)
-	Equipment* equippedItem;
+private:
+    EquipSlotType slotType;
+    Equipment* equippedItem = nullptr;
 
-protected:
-	// 이 슬롯이 어떤 부위를 담당하는지
-	EquipSlotType slotType;
 public:
-	// 슬롯 타입을 지정하여 생성
-public:
-	EquipmentSlot(); // 기본 생성자 
-	EquipmentSlot(EquipSlotType slotType);
+    EquipmentSlot() : slotType(EquipSlotType::RightHand), equippedItem(nullptr) {}
+    EquipmentSlot(EquipSlotType slotType)
+        : slotType(slotType), equippedItem(nullptr) {
+    }
 
+    Equipment* GetEquippedItem() const { return equippedItem; }
+    EquipSlotType GetSlotType() const { return slotType; }
 
-	// 장비를 슬롯에 장착
-	bool equip(Equipment* item);
+    // 장착: 기존 장비 효과 제거 → 새 장비 장착 및 효과 적용
+    void Equip(Equipment* newItem, AttributeSet* attributes) {
+        if (equippedItem) {
+            equippedItem->RemoveEffect(attributes);
+        }
+        equippedItem = newItem;
+        if (equippedItem) {
+            equippedItem->ApplyEffect(attributes);
+        }
+    }
 
-	// 슬롯을 비우기
-	void unequip();
-
-	void display() const;
-
-	// 현재 장착된 장비를 반환
-	Equipment* getEquippedItem() const;
-
-	// 슬롯의 타입 (어느 부위인지) 반환
-	EquipSlotType getSlotType()const;
-
-
-	
-
+    void Unequip(AttributeSet* attributes) {
+        if (equippedItem) {
+            equippedItem->RemoveEffect(attributes);
+            equippedItem = nullptr;
+        }
+    }
 };

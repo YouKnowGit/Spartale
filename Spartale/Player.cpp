@@ -1,7 +1,6 @@
 #include "Player.h"
 #include "AbilitySystemComponent.h"
 #include "AttributeSet.h"
-#include <iostream>
 #include <string> 
 
 Player::Player()
@@ -45,4 +44,47 @@ void Player::Render()
 {
     // TODO: 플레이어의 정보를 화면에 그리는 로직
 }
+void Player::Equip(Equipment* item)
+{
+    if (!item)
+    {
+        std::cout << "장비할 아이템이 없습니다.\n";
+        return;
+    }
 
+    EquipSlotType slotType = item->GetSlotType();
+    AttributeSet* attributes = GetAbilityComponent()->GetAttributeSet();
+
+    // 이미 슬롯이 존재하는 경우
+    auto it = equipmentSlots.find(slotType);
+    if (it != equipmentSlots.end())
+    {
+        std::wcout << L"기존 장비를 교체합니다: ";
+        if (it->second.GetEquippedItem())
+            std::wcout << it->second.GetEquippedItem()->GetName() << L" → ";
+        else
+            std::wcout << L"(없음) → ";
+
+        std::wcout << item->GetName() << L"\n";
+
+        it->second.Equip(item, attributes);
+    }
+    else
+    {
+        EquipmentSlot newSlot(slotType);
+        newSlot.Equip(item, attributes);
+        equipmentSlots[slotType] = newSlot;
+
+        std::wcout << item->GetName() << L" 을(를) 새 슬롯에 장착했습니다.\n";
+    }
+    
+}
+void Player::DisplayStats() const
+{
+   
+    if (AbilityComponent)
+    {
+        AbilityComponent->GetAttributeSet()->Display();
+    }
+    
+}

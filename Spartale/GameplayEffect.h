@@ -30,4 +30,6 @@ public:
 
     // 이 이펙트를 대상의 AttributeSet에 실제로 적용하는 함수
     virtual void Apply(AttributeSet* TargetAttributeSet) const;
+    virtual void Remove(AttributeSet* TargetAttributeSet) const;
+    //virtual ~GameplayEffect();
 };
