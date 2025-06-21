@@ -1,6 +1,8 @@
 #include "Player.h"
 #include "AbilitySystemComponent.h"
 #include "AttributeSet.h"
+#include <iostream>
+#include <string> 
 
 Player::Player()
 {
@@ -10,14 +12,17 @@ Player::Player()
 
 void Player::Initialize()
 {
-    // 플레이어 이름 설정
-    Name = L"용사";
+    std::string temp;
+    std::cout << "플레이어 이름을 입력하세요: ";
+    std::getline(std::cin, temp);
+    Name = std::wstring(temp.begin(), temp.end());
+    
 
-    // ASC를 통해 AttributeSet에 접근
+    // ASC 통해 AttributeSet에 접근
     AttributeSet* MyStats = GetAbilityComponent()->GetAttributeSet();
     if (MyStats)
     {
-        // 플레이어의 초기 능력치를 설정
+        // 플레이어 초기 능력치 설정
         MyStats->Level = 1;
         MyStats->HP.BaseValue = 150.f;
         MyStats->HP.CurrentValue = 150.f;
@@ -28,7 +33,6 @@ void Player::Initialize()
         MyStats->Strength.CurrentValue = 15.f;
         MyStats->Defence.BaseValue = 10.f;
         MyStats->Defence.CurrentValue = 10.f;
-
     }
 }
 
@@ -41,3 +45,4 @@ void Player::Render()
 {
     // TODO: 플레이어의 정보를 화면에 그리는 로직
 }
+

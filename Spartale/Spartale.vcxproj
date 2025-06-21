@@ -134,6 +134,8 @@
     <ClCompile Include="BattleManager.cpp" />
     <ClCompile Include="ConsoleUtils.cpp" />
     <ClCompile Include="DamageUtils.cpp" />
+    <ClCompile Include="Equipment.cpp" />
+    <ClCompile Include="EquipmentSlot.cpp" />
     <ClCompile Include="GameplayAbility.cpp" />
     <ClCompile Include="GameplayEffect.cpp" />
     <ClCompile Include="Monster.cpp" />
@@ -148,6 +150,9 @@
     <ClInclude Include="BattleManager.h" />
     <ClInclude Include="ConsoleUtils.h" />
     <ClInclude Include="DamageUtils.h" />
+    <ClInclude Include="Equipment.h" />
+    <ClInclude Include="EquipmentSlot.h" />
+    <ClInclude Include="EquipSlotType.h" />
     <ClInclude Include="GameplayAbility.h" />
     <ClInclude Include="GameplayEffect.h" />
     <ClInclude Include="Global.h" />

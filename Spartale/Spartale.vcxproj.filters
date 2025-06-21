@@ -37,6 +37,12 @@
     <Filter Include="소스 파일\Systems">
       <UniqueIdentifier>{60e85c58-fb20-414c-abd9-668b81a60078}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Equipment">
+      <UniqueIdentifier>{bf5f9f13-de60-478f-a4b9-db5eaa4941dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Equipment">
+      <UniqueIdentifier>{c3cf19ff-c5a4-4c42-9fd7-665c2e4ebbda}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Spartale.cpp">
@@ -75,6 +81,12 @@
     <ClCompile Include="BattleManager.cpp">
       <Filter>소스 파일\Systems</Filter>
     </ClCompile>
+    <ClCompile Include="Equipment.cpp">
+      <Filter>소스 파일\Equipment</Filter>
+    </ClCompile>
+    <ClCompile Include="EquipmentSlot.cpp">
+      <Filter>소스 파일\Equipment</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AB_NormalAttack.h">
@@ -112,6 +124,15 @@
     </ClInclude>
     <ClInclude Include="BattleManager.h">
       <Filter>헤더 파일\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Equipment.h">
+      <Filter>헤더 파일\Equipment</Filter>
+    </ClInclude>
+    <ClInclude Include="EquipmentSlot.h">
+      <Filter>헤더 파일\Equipment</Filter>
+    </ClInclude>
+    <ClInclude Include="EquipSlotType.h">
+      <Filter>헤더 파일\Equipment</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
