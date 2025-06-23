@@ -1,18 +1,18 @@
-#pragma once
-#include "GameplayAbility.h"
+ï»¿#pragma once
+#include "Framework/AbilitySystem/GameplayAbility.h"
 
-// 'ÀÏ¹İ °ø°İ' ¾îºô¸®Æ¼ Å¬·¡½º¸¦ Á¤ÀÇ
+// 'ì¼ë°˜ ê³µê²©' ì–´ë¹Œë¦¬í‹° í´ë˜ìŠ¤ë¥¼ ì •ì˜
 class AB_NormalAttack : public GameplayAbility
 {
 public:
     AB_NormalAttack();
     virtual ~AB_NormalAttack() = default;
 
-    // GameplayAbilityÀÇ ¼ø¼ö °¡»ó ÇÔ¼ö¸¦ ÀçÁ¤ÀÇ
+    // GameplayAbilityì˜ ìˆœìˆ˜ ê°€ìƒ í•¨ìˆ˜ ì¬ì •ì˜
     virtual std::wstring ActivateAbility(AbilitySystemComponent* SourceASC, Actor* Target) override;
-    virtual void SetupEffects() override;
+    virtual void SetupEffects() override {}
 
 private:
-    // ÀÌ ½ºÅ³ÀÇ µ¥¹ÌÁö Å¸ÀÔ
+    // ì´ ìŠ¤í‚¬ì˜ ë°ë¯¸ì§€ íƒ€ì…
     EDamageType MyDamageType;
 };

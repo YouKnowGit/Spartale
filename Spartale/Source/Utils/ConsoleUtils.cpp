@@ -1,4 +1,4 @@
-#include "ConsoleUtils.h"
+#include "Utils/ConsoleUtils.h"
 #include <iostream>
 #include <conio.h>
 #include <vector>
@@ -10,16 +10,16 @@ namespace ConsoleUtils {
     static HANDLE g_hBuffer[2];
 
     void DrawBox(int x, int y, int width, int height) {
-        gotoxy(x, y); wcout << L"¦£";
-        for (int i = 0; i < width - 2; ++i) wcout << L"¦¡";
-        wcout << L"¦¤";
+        gotoxy(x, y); wcout << L"â”Œ";
+        for (int i = 0; i < width - 2; ++i) wcout << L"â”€";
+        wcout << L"â”";
         for (int i = 1; i < height - 1; ++i) {
-            gotoxy(x, y + i); wcout << L"¦¢";
-            gotoxy(x + width - 1, y + i); wcout << L"¦¢";
+            gotoxy(x, y + i); wcout << L"â”‚";
+            gotoxy(x + width - 1, y + i); wcout << L"â”‚";
         }
-        gotoxy(x, y + height - 1); wcout << L"¦¦";
-        for (int i = 0; i < width - 2; ++i) wcout << L"¦¡";
-        wcout << L"¦¥";
+        gotoxy(x, y + height - 1); wcout << L"â””";
+        for (int i = 0; i < width - 2; ++i) wcout << L"â”€";
+        wcout << L"â”˜";
     }
 
     void gotoxy(int x, int y) {
@@ -78,7 +78,7 @@ namespace ConsoleUtils {
         while (true) {
             for (int i = 0; i < options.size(); ++i) {
                 gotoxy(startX, startY + i);
-                if (i == selection) wcout << L"¢º " << options[i];
+                if (i == selection) wcout << L"ï¿½ï¿½ " << options[i];
                 else wcout << L"  " << options[i] << L"  ";
             }
             key = _getch();
@@ -96,10 +96,17 @@ namespace ConsoleUtils {
         }
     }
 }
+void ConsoleUtils::SafeWriteUnicodeLine(HANDLE hConsole, const std::wstring& line, SHORT y)
+{
+    DWORD written;
+    COORD pos = { 0, y };
+    SetConsoleCursorPosition(hConsole, pos);
+    WriteConsoleW(hConsole, line.c_str(), (DWORD)line.length(), &written, nullptr);
+}
 void ConsoleUtils::ClearInputBuffer()
 {
-    // _kbhit() : Å°º¸µå ÀÔ·ÂÀÌ ¹öÆÛ¿¡ ÀÖ´ÂÁö È®ÀÎÇÏ´Â ÇÔ¼ö. ÀÖÀ¸¸é true ¹ÝÈ¯.
-    // ¹öÆÛ¿¡ ÀÔ·ÂÀÌ ¾øÀ» ¶§±îÁö ·çÇÁ¸¦ µ¹¸ç _getch()·Î ¹®ÀÚ¸¦ ÀÐ¾îµé¿© ¼ÒÁø½ÃÅ´
+    // _kbhit() : í‚¤ë³´ë“œ ìž…ë ¥ì´ ë²„í¼ì— ìžˆëŠ”ì§€ í™•ì¸í•˜ëŠ” í•¨ìˆ˜. ìžˆìœ¼ë©´ true ë°˜í™˜.
+    // ë²„í¼ì— ìž…ë ¥ì´ ì—†ì„ ë•Œê¹Œì§€ ë£¨í”„ë¥¼ ëŒë©° _getch()ë¡œ ë¬¸ìžë¥¼ ì½ì–´ë“¤ì—¬ ì†Œì§„ì‹œí‚´
     while (_kbhit())
     {
         _getch();
