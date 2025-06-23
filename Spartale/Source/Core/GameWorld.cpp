@@ -8,6 +8,7 @@
 #include "GameLogic/BattleManager.h"
 #include "GameLogic/DataManager.h"
 #include "GameLogic/Units/Monster.h"
+
 #include <iostream>
 #include <conio.h>
 #include <memory>
@@ -166,9 +167,6 @@ void GameWorld::StartBattle()
     // 전투 실행 및 결과 처리
     BattleManager battleManager(m_player.get(), monster.get(), m_renderer);
     EBattleResult result = battleManager.Run(); // 전투 결과를 받음
-
-    m_renderer.Clear();
-    battleManager.Run();
 
     // 전투 결과에 따라 플레이어가 패배했는지 여부만 체크
     if (result == EBattleResult::PlayerLost)

@@ -29,7 +29,7 @@ int main()
     ConsoleUtils::ShowConsoleCursor(false);
     auto player = make_unique<Player>(L"주인공");
 
-    DataManager::GetInstance().LoadMonsterData("monsters.json");
+    DataManager::GetInstance().LoadMonsterData("Data/Monsters.json");
     EGameState currentState = EGameState::MainMenu;
 
     ConsoleRenderer renderer;

@@ -150,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Field_1.json" />
+    <None Include="Data\Monsters.json" />
     <None Include="Data\Town.json" />
   </ItemGroup>
   <ItemGroup>
