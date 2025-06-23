@@ -2,6 +2,9 @@
 #include "AbilitySystemComponent.h"
 #include "AttributeSet.h"
 #include <string> 
+#include <iostream>
+#include <map>
+#include "EquipSlotType.h"
 
 Player::Player()
 {
@@ -52,6 +55,7 @@ void Player::Equip(Equipment* item)
         return;
     }
 
+
     EquipSlotType slotType = item->GetSlotType();
     AttributeSet* attributes = GetAbilityComponent()->GetAttributeSet();
 
@@ -87,4 +91,42 @@ void Player::DisplayStats() const
         AbilityComponent->GetAttributeSet()->Display();
     }
     
+}
+
+void Player::DisplayEquipment() const {
+    std::wcout << L"\n[장비 슬롯 상태]\n";
+
+    // 고정된 슬롯 순서
+    std::vector<EquipSlotType> slotOrder = {
+        EquipSlotType::Head,
+        EquipSlotType::Chest,
+        EquipSlotType::LeftHand,
+        EquipSlotType::RightHand,
+        EquipSlotType::boots,
+        EquipSlotType::Neck
+    };
+
+    for (EquipSlotType slotType : slotOrder) {
+        std::wstring slotName;
+
+        // 슬롯 이름 변환
+        switch (slotType) {
+        case EquipSlotType::Head: slotName = L"머리"; break;
+        case EquipSlotType::Chest: slotName = L"가슴"; break;
+        case EquipSlotType::LeftHand: slotName = L"왼손"; break;
+        case EquipSlotType::RightHand: slotName = L"오른손"; break;
+        case EquipSlotType::boots: slotName = L"신발"; break;
+        case EquipSlotType::Neck: slotName = L"목"; break;
+        default: slotName = L"알 수 없음"; break;
+        }
+
+        auto it = equipmentSlots.find(slotType);
+        if (it != equipmentSlots.end() && it->second.GetEquippedItem()) {
+            std::wcout << L"- " << slotName << L" 슬롯: "
+                << it->second.GetEquippedItem()->GetName() << L"\n";
+        }
+        else {
+            std::wcout << L"- " << slotName << L" 슬롯: 비어있음\n";
+        }
+    }
 }

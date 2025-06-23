@@ -8,7 +8,6 @@ enum class EquipSlotType
     LeftHand,    // 왼손 (예: 방패)
     Chest,       // 가슴 (예: 갑옷)
     Head,        // 머리 (예: 투구)
-    LeftFoot,    // 왼발 (예: 신발)
-    RightFoot,   // 오른발 (예: 신발)
+    boots,       // 신발
     Neck         // 목 (예: 목걸이)
 };

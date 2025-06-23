@@ -3,7 +3,10 @@
 #include <string>
 #include "EquipSlotType.h"
 #include "GameplayEffect.h"
+#include "AttributeSet.h" // 실제 정의가 필요하므로 include
 
+
+class AttributeSet;
 class Equipment {
 private:
     std::wstring name;
