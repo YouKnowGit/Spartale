@@ -5,7 +5,7 @@
 #include <thread>
 
 // 스토리 관련 장면 함수들
-void Scene_Prologe(); // 프롤로그(시작)
+void Scene_Prologue(); // 프롤로그(시작)
 void Scene_Begin();   // 게임의 시작 - 마을에서 깨어남.
 void Scene_Field();   // 필드 첫 진입 후
 void Scene_TowerGate(); // 탑의 문 앞에서

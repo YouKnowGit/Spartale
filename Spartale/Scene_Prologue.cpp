@@ -4,7 +4,7 @@
 #include <chrono>
 #include "Story.h"
 
-void Scene_Prologe() {
+void Scene_Prologue() {
     typeEffect("어둠이 깃든 대륙, 에르덴.");
     typeEffect("수많은 전쟁과 피의 역사 속, 희망이라 불릴 전투가 있었다.");
     waitForEnter();
