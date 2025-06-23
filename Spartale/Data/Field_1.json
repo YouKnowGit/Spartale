@@ -36,5 +36,7 @@
       "destX": 28,
       "destY": 11
     }
-  ]
+  ],
+
+  "encounterList": [ "goblin_warrior", "slime_weak", "goblin_shaman" ]
 }

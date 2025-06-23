@@ -8,7 +8,7 @@ class Monster : public Actor
 {
 public:
     // 몬스터의 종류에 따라 다른 이름과 스탯을 가질 수 있도록 생성자에서 값을 받음
-    Monster(const std::wstring& InName, float InHP, float InStrength, float InDefence);
+    Monster(const std::wstring& InName, float InHP, float InStrength, float InDefence, int level = 1);
     virtual ~Monster() = default;
 
     std::wstring RunAI(Actor* Target);

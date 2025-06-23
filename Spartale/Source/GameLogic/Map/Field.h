@@ -31,11 +31,13 @@ public:
 	// Getter
 	int GetWidth() const { return m_width; }
 	int GetHeight() const { return m_height; }
-	
+	const std::vector<std::string>& GetEncounterList() const { return m_encounterList; }
+
 private:
 	int m_width;
 	int m_height;
 
 	std::vector<std::vector<TileType>> m_mapData;
 	std::map<std::pair<int, int>, Portal> m_portals;
+	std::vector<std::string> m_encounterList; // 맵에 출현하는 몬스터 ID 목록
 };

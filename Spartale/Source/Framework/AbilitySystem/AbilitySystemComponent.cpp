@@ -28,6 +28,49 @@ void AbilitySystemComponent::Initialize()
 {
 }
 
+bool AbilitySystemComponent::CheckAndProcessLevelUp()
+{
+    if (!MyAttributeSet) return false;
+
+    // 레벨업에 필요한 경험치 공식 (예: 레벨 * 50)
+    float requiredExp = 50.0f * MyAttributeSet->Level;
+    bool bLeveledUp = false;
+
+    // 현재 경험치가 필요 경험치보다 많으면 레벨업 (여러 번 레벨업 가능하도록 while 사용)
+    while (MyAttributeSet->Experience.CurrentValue >= requiredExp)
+    {
+        // 레벨업 비용만큼 경험치 차감
+        MyAttributeSet->Experience.CurrentValue -= requiredExp;
+
+        // 레벨 1 증가
+        MyAttributeSet->Level++;
+        bLeveledUp = true;
+
+        // 레벨업 보상 (스탯 포인트 5 지급)
+        MyAttributeSet->AdditionalStatPoints += 5;
+
+        // 기본 스탯 자동 상승
+        MyAttributeSet->Strength.BaseValue += 2;
+        MyAttributeSet->Strength.CurrentValue += 2;
+        MyAttributeSet->Agility.BaseValue += 1;
+        MyAttributeSet->Agility.CurrentValue += 1;
+        MyAttributeSet->Intelligence.BaseValue += 1;
+        MyAttributeSet->Intelligence.CurrentValue += 1;
+        MyAttributeSet->Defence.BaseValue += 1.5;
+        MyAttributeSet->Defence.CurrentValue += 1.5;
+        MyAttributeSet->MagicResistance.BaseValue += 1.5;
+        MyAttributeSet->MagicResistance.CurrentValue += 1.5;
+
+        // 스탯 변경에 따른 최대 HP/MP 재계산
+        MyAttributeSet->AdjustDependentAttributes();
+
+        // 다음 레벨업에 필요한 경험치를 다시 계산
+        requiredExp = 100.0f * MyAttributeSet->Level;
+    }
+
+    return bLeveledUp;
+}
+
 // unique_ptr을 인자로 받아서 GrantedAbilities 벡터에 추가. (스킬을 배우는 함수)
 void AbilitySystemComponent::GrantAbility(std::unique_ptr<GameplayAbility> Ability)
 {
@@ -63,27 +106,25 @@ void AbilitySystemComponent::UnEquipAbility(int32_t SlotIndex)
 }
 
 // 최종적으로 스킬을 활성화하는 함수 (방아쇠 역할)
-std::wstring AbilitySystemComponent::TryActivateAbility(int32_t SlotIndex, Actor* Target)
-{ // 1. 슬롯 인덱스가 유효한지, 해당 슬롯에 어빌리티가 장착되어 있는지 확인
+// 스킬 사용이 가능한지(True, False)와 스킬 시전 결과에 대한 메세지 반환
+FActivationResult AbilitySystemComponent::TryActivateAbility(int32_t SlotIndex, Actor* Target)
+{
     if (SlotIndex < 0 || SlotIndex >= EquippedAbilities.size() || EquippedAbilities[SlotIndex] == nullptr)
     {
-        return L"해당 슬롯에 스킬이 없습니다.";
+        return { false, L"해당 슬롯에 스킬이 없습니다." };
     }
 
-    // 2. 장착된 어빌리티를 가져옴
     GameplayAbility* AbilityToActivate = EquippedAbilities[SlotIndex];
 
-    // 3. 해당 어빌리티를 지금 사용할 수 있는지 확인 (비용, 쿨타임 등)
     if (!AbilityToActivate->CanActivateAbility(this))
     {
-        return L"스킬을 사용할 수 없습니다. (쿨타임, 마나 부족 등)";
+        return { false, L"스킬을 사용할 수 없습니다. (마나 부족 등)" };
     }
 
-    // 4. 모든 검사를 통과했으면, 어빌리티를 최종적으로 활성화(사용)
     std::wstring LogMessage = AbilityToActivate->ActivateAbility(this, Target);
 
-    // 5. 어빌리티 실행 결과로 받은 로그 메시지를 반환
-    return LogMessage;
+    // 성공 시에는 bSuccess를 true로 설정하여 반환
+    return { true, LogMessage };
 }
 
 void AbilitySystemComponent::ApplyGameplayEffectToSelf(std::unique_ptr<GameplayEffect> Effect)
@@ -188,4 +229,8 @@ GameplayAbility* AbilitySystemComponent::GetGrantedAbility(int32_t Index) const
 
     // 유효하지 않은 인덱스라면 nullptr을 반환
     return nullptr;
+}
+const std::vector<std::unique_ptr<GameplayAbility>>& AbilitySystemComponent::GetGrantedAbilities() const
+{
+    return GrantedAbilities;
 }

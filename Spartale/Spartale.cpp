@@ -15,43 +15,78 @@
 #include "Utils/ConsoleUtils.h"
 #include "GameLogic/Map/Field.h"
 #include "Core/GameWorld.h"
+#include "GameLogic/DataManager.h"
+#include "GameLogic/MainMenu.h"
 
 
 using namespace std;
 
 int main()
 {
-    /*
-	ConsoleUtils::ShowConsoleCursor(false);
-    auto player = make_unique<Player>(L"주인공");
-    EGameState currentState = EGameState::World; // 게임은 월드 탐험부터 시작
 
+    setlocale(LC_ALL, "");
+    // 커서 숨기기
+    ConsoleUtils::ShowConsoleCursor(false);
+    auto player = make_unique<Player>(L"주인공");
+
+    DataManager::GetInstance().LoadMonsterData("monsters.json");
+    EGameState currentState = EGameState::MainMenu;
+
+    ConsoleRenderer renderer;
+    renderer.Initialize();
     while (currentState != EGameState::Quit)
     {
         switch (currentState)
         {
+        case EGameState::MainMenu:
+        {
+            // MainMenu 상태일 때
+            MainMenu menu(renderer);
+            currentState = menu.Run(); // 메뉴 실행 후, 그 결과(다음 상태)를 받음
+            break;
+        }
+
+
         case EGameState::World:
         {
-            GameWorld world(std::move(player));
-            world.Run(); // 월드 탐험 루프 실행
+            // World 상태일 때 (새 게임 시작)
+            auto player = make_unique<Player>(L"주인공");
 
-            currentState = EGameState::Quit; 
+            GameWorld world(std::move(player));
+            world.Run();
+
+            // GameWorld 루프가 끝나면(ESC -> 메인메뉴로 나가기 선택 시)
+            // 게임을 종료하는 대신, MainMenu 상태로 전환합니다.
+            currentState = EGameState::MainMenu;
             break;
         }
+
         case EGameState::Battle:
         {
+            // TODO: 전투 상태 로직 구현
+            // 전투가 끝나면 World나 MainMenu로 돌아가야 함
+            cout << "전투 시스템 미구현" << endl;
+            Sleep(1000);
+            currentState = EGameState::MainMenu; // 임시로 메뉴로 복귀
             break;
         }
-        // ... 메인 메뉴 등 다른 상태 추가 가능
         }
     }
 
-    ConsoleUtils::gotoxy(0, 26);
-    cout << "게임을 종료합니다." << endl;
-    ConsoleUtils::ShowConsoleCursor(true);
+    // --- 게임 종료 ---
+    renderer.Clear();
+    std::wstring exitMessage = L"게임을 종료합니다.";
+    for (int i = 0; i < exitMessage.length(); ++i)
+    {
+        renderer.Draw(30 + i * 2, 12, exitMessage[i]);
+    }
+    renderer.Render();
+    Sleep(2000);
+
+    ConsoleUtils::ShowConsoleCursor(true); // 커서 다시 표시
 
     return 0;
-    */
+    /*
 
 	// 전투 테스트용 코드 (주석 처리)
     // 1. 플레이어와 몬스터 생성
@@ -78,7 +113,7 @@ int main()
     // 3. 배틀매니저 생성 및 전투 루프 실행
     BattleManager battleManager(player.get(), monster.get(), renderer);
     battleManager.Run();
-    
+    */
 
     return 0;
 }

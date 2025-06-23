@@ -1,0 +1,36 @@
+{
+  "goblin_warrior": {
+    "name": "고블린 전사",
+    "level": 3,
+    "hp": 80,
+    "strength": 12,
+    "agility": 8,
+    "intelligence": 3,
+    "defence": 6,
+    "magicResistance": 2,
+    "skills": [ "normal_attack" ]
+  },
+  "slime_weak": {
+    "name": "허약한 슬라임",
+    "level": 1,
+    "hp": 40,
+    "strength": 8,
+    "agility": 3,
+    "intelligence": 1,
+    "defence": 2,
+    "magicResistance": 0,
+    "skills": [ "normal_attack" ]
+  },
+  "goblin_shaman": {
+    "name": "고블린 주술사",
+    "level": 4,
+    "hp": 60,
+    "mp": 60,
+    "strength": 5,
+    "agility": 5,
+    "intelligence": 15,
+    "defence": 4,
+    "magicResistance": 10,
+    "skills": [ "poison_cloud", "normal_attack" ]
+  }
+}
