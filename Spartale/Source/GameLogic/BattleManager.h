@@ -63,6 +63,7 @@ private:
     // 전투 상태 관리 변수
     EBattleState m_battleState;
     EBattleResult m_battleResult; // 전투 결과를 저장할 변수
+
     bool m_bIsBattleOver;
     int m_CurrentTurn;
 
@@ -73,4 +74,5 @@ private:
 
     // 난수 생성 엔진을 멤버 변수로 추가
     std::mt19937 m_rng; 
+
 };

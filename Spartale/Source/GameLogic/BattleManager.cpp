@@ -29,6 +29,7 @@ BattleManager::BattleManager(Player* player, Monster* monster, ConsoleRenderer& 
 
 EBattleResult BattleManager::Run()
 {
+
     while (!m_bIsBattleOver)
     {
         ProcessInput();
