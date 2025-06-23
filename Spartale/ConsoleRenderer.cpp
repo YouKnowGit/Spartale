@@ -13,21 +13,32 @@ ConsoleRenderer::~ConsoleRenderer()
     }
 }
 
-void ConsoleRenderer::Initialize(int width, int height)
+void ConsoleRenderer::Initialize()
 {
-    m_width = width;
-    m_height = height;
     m_hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-    // 버퍼 메모리 할당
-    m_buffer = new CHAR_INFO[width * height];
+    // 현재 콘솔 창의 정보를 읽어옵니다.
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    if (!GetConsoleScreenBufferInfo(m_hConsole, &csbi))
+    {
+        // 에러 처리
+        m_width = 80;
+        m_height = 25;
+    }
+    else
+    {
+        // 읽어온 실제 창 크기를 사용합니다.
+        m_width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+        m_height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+    }
 
-    // 콘솔 창 크기 및 버퍼 크기 조정
-    SMALL_RECT consoleSize = { 0, 0, (SHORT)width - 1, (SHORT)height - 1 };
-    COORD bufferSize = { (SHORT)width, (SHORT)height };
-
-    SetConsoleWindowInfo(m_hConsole, TRUE, &consoleSize);
-    SetConsoleScreenBufferSize(m_hConsole, bufferSize);
+    // 이전에 할당된 버퍼가 있다면 안전하게 삭제합니다.
+    if (m_buffer)
+    {
+        delete[] m_buffer;
+    }
+    // 읽어온 현재 창 크기에 맞춰 백 버퍼를 생성합니다.
+    m_buffer = new CHAR_INFO[m_width * m_height];
 }
 
 void ConsoleRenderer::Draw(int x, int y, wchar_t character, WORD attribute)

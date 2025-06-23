@@ -13,7 +13,7 @@ GameWorld::GameWorld(std::unique_ptr<Player> player)
 void GameWorld::Initialize()
 {
     // 렌더러 초기화
-    m_renderer.Initialize(80, 25);
+    m_renderer.Initialize();
 
     // 첫 맵 로드 및 플레이어 초기 위치 설정 (필요 시)
     m_field.LoadMapFromFile("Town.json");
