@@ -1,9 +1,9 @@
 #pragma once
 
 #include <memory>
-#include "Player.h"
-#include "Field.h"
-#include "ConsoleRenderer.h"
+#include "GameLogic/Units/Player.h"
+#include "GameLogic/Map/Field.h"
+#include "Utils/ConsoleRenderer.h"
 
 class GameWorld
 {

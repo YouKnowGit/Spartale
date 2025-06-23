@@ -1,5 +1,5 @@
-#include "AttributeSet.h"
-#include "AbilitySystemComponent.h"
+#include "Framework/AbilitySystem/AttributeSet.h"
+#include "Framework/AbilitySystem/AbilitySystemComponent.h"
 
 AttributeSet::AttributeSet(AbilitySystemComponent* OwnerComp)
 	: OwningAbilitySystemComponent(OwnerComp) // 멤버 이니셜라이저를 사용해 OwningAbilitySystemComponent 초기화

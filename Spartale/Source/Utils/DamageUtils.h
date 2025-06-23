@@ -1,5 +1,5 @@
 #pragma once
-#include "Global.h" // EDamageType
+#include "Core/Global.h" // EDamageType
 
 // 전방 선언
 class Actor;

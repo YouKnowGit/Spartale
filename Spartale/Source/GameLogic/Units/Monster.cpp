@@ -1,6 +1,6 @@
-#include "Monster.h"
-#include "AbilitySystemComponent.h"
-#include "AttributeSet.h"
+#include "GameLogic/Units/Monster.h"
+#include "Framework/AbilitySystem/AbilitySystemComponent.h"
+#include "Framework/AbilitySystem/AttributeSet.h"
 
 Monster::Monster(const std::wstring& InName, float InHP, float InStrength, float InDefence)
 {

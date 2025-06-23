@@ -104,7 +104,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)include;$(ProjectDir);%(AdditionalIncludeDirectories)
+</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,44 +128,45 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AbilitySystemComponent.cpp" />
-    <ClCompile Include="AB_NormalAttack.cpp" />
-    <ClCompile Include="AB_PoisonCloud.cpp" />
-    <ClCompile Include="Actor.cpp" />
-    <ClCompile Include="AttributeSet.cpp" />
-    <ClCompile Include="BattleManager.cpp" />
-    <ClCompile Include="ConsoleRenderer.cpp" />
-    <ClCompile Include="ConsoleUtils.cpp" />
-    <ClCompile Include="DamageUtils.cpp" />
-    <ClCompile Include="Field.cpp" />
-    <ClCompile Include="GameplayAbility.cpp" />
-    <ClCompile Include="GameplayEffect.cpp" />
-    <ClCompile Include="GameWorld.cpp" />
-    <ClCompile Include="Monster.cpp" />
-    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Source\Core\Actor.cpp" />
+    <ClCompile Include="Source\Core\GameWorld.cpp" />
+    <ClCompile Include="Source\Framework\AbilitySystem\AbilitySystemComponent.cpp" />
+    <ClCompile Include="Source\Framework\AbilitySystem\AttributeSet.cpp" />
+    <ClCompile Include="Source\Framework\AbilitySystem\GameplayAbility.cpp" />
+    <ClCompile Include="Source\Framework\AbilitySystem\GameplayEffect.cpp" />
+    <ClCompile Include="Source\GameLogic\BattleManager.cpp" />
+    <ClCompile Include="Source\GameLogic\Map\Field.cpp" />
+    <ClCompile Include="Source\GameLogic\Skills\AB_NormalAttack.cpp" />
+    <ClCompile Include="Source\GameLogic\Skills\AB_PoisonCloud.cpp" />
+    <ClCompile Include="Source\GameLogic\Units\Monster.cpp" />
+    <ClCompile Include="Source\GameLogic\Units\Player.cpp" />
+    <ClCompile Include="Source\Utils\ConsoleRenderer.cpp" />
+    <ClCompile Include="Source\Utils\ConsoleUtils.cpp" />
+    <ClCompile Include="Source\Utils\DamageUtils.cpp" />
     <ClCompile Include="Spartale.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AbilitySystemComponent.h" />
-    <ClInclude Include="AB_NormalAttack.h" />
-    <ClInclude Include="AB_PoisonCloud.h" />
-    <ClInclude Include="Actor.h" />
-    <ClInclude Include="AttributeSet.h" />
-    <ClInclude Include="BattleManager.h" />
-    <ClInclude Include="ConsoleRenderer.h" />
-    <ClInclude Include="ConsoleUtils.h" />
-    <ClInclude Include="DamageUtils.h" />
-    <ClInclude Include="Field.h" />
-    <ClInclude Include="GameplayAbility.h" />
-    <ClInclude Include="GameplayEffect.h" />
-    <ClInclude Include="GameWorld.h" />
-    <ClInclude Include="Global.h" />
-    <ClInclude Include="Monster.h" />
-    <ClInclude Include="Player.h" />
+    <None Include="Data\Field_1.json" />
+    <None Include="Data\Town.json" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Field_1.json" />
-    <None Include="Town.json" />
+    <ClInclude Include="include\json.hpp" />
+    <ClInclude Include="Source\Core\Actor.h" />
+    <ClInclude Include="Source\Core\GameWorld.h" />
+    <ClInclude Include="Source\Core\Global.h" />
+    <ClInclude Include="Source\Framework\AbilitySystem\AbilitySystemComponent.h" />
+    <ClInclude Include="Source\Framework\AbilitySystem\AttributeSet.h" />
+    <ClInclude Include="Source\Framework\AbilitySystem\GameplayAbility.h" />
+    <ClInclude Include="Source\Framework\AbilitySystem\GameplayEffect.h" />
+    <ClInclude Include="Source\GameLogic\BattleManager.h" />
+    <ClInclude Include="Source\GameLogic\Map\Field.h" />
+    <ClInclude Include="Source\GameLogic\Skills\AB_NormalAttack.h" />
+    <ClInclude Include="Source\GameLogic\Skills\AB_PoisonCloud.h" />
+    <ClInclude Include="Source\GameLogic\Units\Monster.h" />
+    <ClInclude Include="Source\GameLogic\Units\Player.h" />
+    <ClInclude Include="Source\Utils\ConsoleRenderer.h" />
+    <ClInclude Include="Source\Utils\ConsoleUtils.h" />
+    <ClInclude Include="Source\Utils\DamageUtils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

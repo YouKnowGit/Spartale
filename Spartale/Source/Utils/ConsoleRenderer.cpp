@@ -1,4 +1,4 @@
-#include "ConsoleRenderer.h"
+#include "Utils/ConsoleRenderer.h"
 
 ConsoleRenderer::ConsoleRenderer()
     : m_width(0), m_height(0), m_hConsole(nullptr), m_buffer(nullptr)

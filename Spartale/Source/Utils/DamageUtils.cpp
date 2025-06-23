@@ -1,7 +1,7 @@
-#include "DamageUtils.h"
-#include "Actor.h"
-#include "AbilitySystemComponent.h"
-#include "AttributeSet.h"
+#include "Utils/DamageUtils.h"
+#include "Core/Actor.h"
+#include "Framework/AbilitySystem/AbilitySystemComponent.h"
+#include "Framework/AbilitySystem/AttributeSet.h"
 
 #include <random>
 
@@ -42,7 +42,7 @@ namespace DamageUtils
             break;
         }
 
-        
+
         {
             // 데미지 편차를 위한 난수 발생 구간
             // static으로 선언하여, 이 함수가 처음 호출될 때 단 한 번만 생성

@@ -1,6 +1,6 @@
-#include "Player.h"
-#include "AbilitySystemComponent.h"
-#include "AttributeSet.h"
+#include "GameLogic/Units/Player.h"
+#include "Framework/AbilitySystem/AbilitySystemComponent.h"
+#include "Framework/AbilitySystem/AttributeSet.h"
 
 Player::Player(std::wstring name)
 {

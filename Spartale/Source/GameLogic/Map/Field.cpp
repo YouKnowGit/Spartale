@@ -1,6 +1,6 @@
-﻿#include "Field.h"
-#include "Player.h"
-#include "ConsoleUtils.h"
+﻿#include "GameLogic/Map/Field.h"
+#include "GameLogic/Units/Player.h"
+#include "Utils/ConsoleUtils.h"
 
 #include <iostream>
 #include <fstream> // 파일 입출력
@@ -94,6 +94,8 @@ bool Field::LoadMapFromFile(const std::string& mapFilePath)
     std::cout << "Map loaded: " << mapFilePath << std::endl;
     std::cout << "Dimensions: " << m_width << " x " << m_height << std::endl;
     std::cout << "Portal count: " << m_portals.size() << std::endl;
+    
+    //system("pause");
 
     return true;
 }
@@ -155,7 +157,6 @@ void Field::Draw(Actor* player, ConsoleRenderer& renderer) const
     case Direction::RIGHT:  wcout << L"▶"; break;
     }
 
-    
     // 디버그용 플레이어 위치 출력
     gotoxy(0, m_height + 1);
     wcout << L"Player Position: (" << p->GetX() << L", " << p->GetY() << L")   ";

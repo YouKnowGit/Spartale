@@ -1,9 +1,9 @@
-﻿#include "AB_NormalAttack.h"
-#include "GameplayEffect.h"
-#include "AbilitySystemComponent.h"
-#include "Actor.h"
-#include "AttributeSet.h"
-#include "DamageUtils.h"
+﻿#include "GameLogic/Skills/AB_NormalAttack.h"
+#include "Framework/AbilitySystem/GameplayEffect.h"
+#include "Framework/AbilitySystem/AbilitySystemComponent.h"
+#include "Core/Actor.h"
+#include "Framework/AbilitySystem/AttributeSet.h"
+#include "Utils/DamageUtils.h"
 #include <map>
 #include <string> // std::to_wstring 사용을 위해 포함
 

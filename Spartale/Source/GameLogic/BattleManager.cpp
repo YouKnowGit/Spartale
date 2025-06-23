@@ -1,10 +1,10 @@
-﻿#include "BattleManager.h"
-#include "Player.h"
-#include "Monster.h"
-#include "ConsoleRenderer.h"
-#include "AttributeSet.h"
-#include "AbilitySystemComponent.h"
-#include "GameplayAbility.h"
+#include "GameLogic/BattleManager.h"
+#include "GameLogic/Units/Player.h"
+#include "GameLogic/Units/Monster.h"
+#include "Framework/AbilitySystem/AttributeSet.h"
+#include "Framework/AbilitySystem/AbilitySystemComponent.h"
+#include "Framework/AbilitySystem/GameplayAbility.h"
+#include "Utils/ConsoleUtils.h"
 
 #include <iostream>
 #include <windows.h>
