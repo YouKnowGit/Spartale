@@ -96,6 +96,13 @@ namespace ConsoleUtils {
         }
     }
 }
+void ConsoleUtils::SafeWriteUnicodeLine(HANDLE hConsole, const std::wstring& line, SHORT y)
+{
+    DWORD written;
+    COORD pos = { 0, y };
+    SetConsoleCursorPosition(hConsole, pos);
+    WriteConsoleW(hConsole, line.c_str(), (DWORD)line.length(), &written, nullptr);
+}
 void ConsoleUtils::ClearInputBuffer()
 {
     // _kbhit() : 키보드 입력이 버퍼에 있는지 확인하는 함수. 있으면 true 반환.

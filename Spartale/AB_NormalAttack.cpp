@@ -4,6 +4,7 @@
 #include "Actor.h"
 #include "AttributeSet.h"
 #include "DamageUtils.h"
+#include <map>
 #include <string> // std::to_wstring 사용을 위해 포함
 
 AB_NormalAttack::AB_NormalAttack()
@@ -34,14 +35,14 @@ std::wstring AB_NormalAttack::ActivateAbility(AbilitySystemComponent* SourceASC,
     float Damage = DamageUtils::CalculateDamage(SourceActor, Target, this->AD_Ratio, this->AP_Ratio, this->MyDamageType);
 
     // 2. 효과에 대해 정의할 GameplayEffect를 생성
-    GameplayEffect DamageEffect;
-    DamageEffect.EffectName = L"데미지";
-    DamageEffect.ApplicationType = EEffectApplication::Instant;
-	DamageEffect.TargetAttributeName = "HP";    // 대상의 HP 속성에 적용
-    DamageEffect.Magnitude = -Damage;   // HP 피해이므로 음수로 설정
+    auto DamageEffect = std::make_unique<GameplayEffect>();
+    DamageEffect->EffectName = L"데미지";
+    DamageEffect->ApplicationType = EEffectApplication::Instant;
+	DamageEffect->TargetAttributeName = "HP";    // 대상의 HP 속성에 적용
+    DamageEffect->Magnitude = -Damage;   // HP 피해이므로 음수로 설정
 
     // 3. 대상에게 효과를 적용
-    Target->GetAbilityComponent()->ApplyGameplayEffectToSelf(&DamageEffect);
+    Target->GetAbilityComponent()->ApplyGameplayEffectToSelf(std::move(DamageEffect));
 
     // 4. 로그를 반환
     std::wstring LogMessage = SourceActor->Name + L"이(가) "

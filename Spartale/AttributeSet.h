@@ -1,4 +1,6 @@
 #pragma once
+#include <map>
+#include <string>
 #include "Global.h"
 
 class AbilitySystemComponent;
@@ -18,7 +20,10 @@ public:
     AttributeSet(AbilitySystemComponent* OwnerComp);
     virtual ~AttributeSet() = default;
 
-    // 소유권이 없는 참조 포인터
+    // 속성 이름으로 실제 데이터에 접근할 수 있게 해주는 맵
+	// 속성 이름은 문자열로 저장되며, 해당 속성의 FAttributeData 포인터를 참조
+    std::map<std::string, FAttributeData*> AttributeMap;
+
     AbilitySystemComponent* OwningAbilitySystemComponent;
 
     // --- 기본 스탯 (Primary Stats) ---

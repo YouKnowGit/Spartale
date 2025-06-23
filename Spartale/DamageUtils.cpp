@@ -42,11 +42,6 @@ namespace DamageUtils
             break;
         }
 
-        // 최소 데미지는 1로 설정
-        if (Damage < 1.f)
-        {
-            Damage = 1.f;
-        } 
         
         {
             // 데미지 편차를 위한 난수 발생 구간
@@ -58,7 +53,16 @@ namespace DamageUtils
             static std::uniform_real_distribution<float> distrib(0.95f, 1.15f);
 
             // 최종 데미지에 랜덤 배율을 곱합니다.
-            Damage *= distrib(gen);
+            if (Damage > 0)
+            {
+                Damage *= distrib(gen);
+            }
+        }
+
+        // 최소 데미지는 1로 설정
+        if (Damage < 1.f)
+        {
+            Damage = 1.f;
         }
 
         return Damage;

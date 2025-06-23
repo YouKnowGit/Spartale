@@ -2,17 +2,17 @@
 #include "AbilitySystemComponent.h"
 #include "AttributeSet.h"
 
-Player::Player()
+Player::Player(std::wstring name)
 {
+    // 플레이어 이름 설정
+    Name = name;
+
 	// Player 객체 생성 시 바로 초기화 함수 호출
     Initialize();
 }
 
 void Player::Initialize()
 {
-    // 플레이어 이름 설정
-    Name = L"용사";
-
     // ASC를 통해 AttributeSet에 접근
     AttributeSet* MyStats = GetAbilityComponent()->GetAttributeSet();
     if (MyStats)
@@ -28,8 +28,15 @@ void Player::Initialize()
         MyStats->Strength.CurrentValue = 15.f;
         MyStats->Defence.BaseValue = 10.f;
         MyStats->Defence.CurrentValue = 10.f;
+        MyStats->Intelligence.CurrentValue = 10.f;
+        MyStats->Intelligence.BaseValue = 10.f;
 
     }
+
+    // 필드용 위치 설정
+    m_x = 5;
+    m_y = 5;
+    m_direction = Direction::DOWN;
 }
 
 void Player::Update()
@@ -40,4 +47,14 @@ void Player::Update()
 void Player::Render()
 {
     // TODO: 플레이어의 정보를 화면에 그리는 로직
+}
+
+void Player::SetDirection(Direction dir)
+{
+    m_direction = dir;
+}
+
+Direction Player::GetDirection() const
+{
+    return m_direction;
 }

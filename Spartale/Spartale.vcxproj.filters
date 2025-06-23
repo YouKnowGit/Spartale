@@ -37,6 +37,15 @@
     <Filter Include="소스 파일\Systems">
       <UniqueIdentifier>{60e85c58-fb20-414c-abd9-668b81a60078}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\Maps">
+      <UniqueIdentifier>{957aa5fa-03ec-4072-8df1-05c525163562}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Maps">
+      <UniqueIdentifier>{a9b6527e-5d9a-4453-81dd-e2d8f6c71c83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="JSON 파일">
+      <UniqueIdentifier>{053ce539-da71-44c0-aaca-b33dca14cd51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Spartale.cpp">
@@ -74,6 +83,18 @@
     </ClCompile>
     <ClCompile Include="BattleManager.cpp">
       <Filter>소스 파일\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="AB_PoisonCloud.cpp">
+      <Filter>소스 파일\Skills</Filter>
+    </ClCompile>
+    <ClCompile Include="Field.cpp">
+      <Filter>소스 파일\Maps</Filter>
+    </ClCompile>
+    <ClCompile Include="ConsoleRenderer.cpp">
+      <Filter>소스 파일\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="GameWorld.cpp">
+      <Filter>소스 파일\Maps</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -113,5 +134,25 @@
     <ClInclude Include="BattleManager.h">
       <Filter>헤더 파일\Systems</Filter>
     </ClInclude>
+    <ClInclude Include="AB_PoisonCloud.h">
+      <Filter>헤더 파일\Skills</Filter>
+    </ClInclude>
+    <ClInclude Include="Field.h">
+      <Filter>헤더 파일\Maps</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleRenderer.h">
+      <Filter>헤더 파일\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="GameWorld.h">
+      <Filter>헤더 파일\Maps</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Town.json">
+      <Filter>JSON 파일</Filter>
+    </None>
+    <None Include="Field_1.json">
+      <Filter>JSON 파일</Filter>
+    </None>
   </ItemGroup>
 </Project>

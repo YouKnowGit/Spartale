@@ -12,55 +12,49 @@ GameplayEffect::~GameplayEffect()
 // TargetAttributeName을 기반으로 TargetAttributeSet의 실제 속성을 찾아
 // Magnitude만큼 수치를 변경하는 함수
 void GameplayEffect::Apply(AttributeSet* TargetAttributeSet) const
-{// 대상의 AttributeSet 유효성 검사
+{
+    // 대상의 AttributeSet 유효성 검사
     if (!TargetAttributeSet)
     {
         return;
     }
 
-    // 이펙트 적용 방식에 따라 로직을 분기
-    // 현재는 즉시 적용(Instant)만 구현
-    switch (ApplicationType)
-    {
-    case EEffectApplication::Instant:
-    {
-        // TargetAttributeName 문자열을 비교하여 어떤 속성을 변경할지 결정
-        if (TargetAttributeName == "HP")
-        {
-            TargetAttributeSet->HP.CurrentValue += Magnitude;
-        }
-        else if (TargetAttributeName == "MP")
-        {
-            TargetAttributeSet->MP.CurrentValue += Magnitude;
-        }
-        else if (TargetAttributeName == "Strength")
-        {
-            TargetAttributeSet->Strength.CurrentValue += Magnitude;
-        }
-        else if (TargetAttributeName == "Agility")
-        {
-            TargetAttributeSet->Agility.CurrentValue += Magnitude;
-        }
-        // ... ( 추가적인 속성들에 대해 처리하려면 여기에 else if 문을 추가하세용 ) ...
-        else if (TargetAttributeName == "Gold")
-        {
-            TargetAttributeSet->Gold.CurrentValue += Magnitude;
-        }
+    // 1. 맵에서 TargetAttributeName에 해당하는 속성을 find
+    auto it = TargetAttributeSet->AttributeMap.find(TargetAttributeName);
 
-        break;
-    }
-
-    case EEffectApplication::Duration:
+	// 2. 속성을 정상적으로 찾았는지 검사
+    if (it != TargetAttributeSet->AttributeMap.end())
     {
-		// 지속 효과 (독, 버프 등)
-        break;
-    }
+        // 3. 해당 속성의 현재 값을 Magnitude 만큼 변경
+        // it->first는 키("HP"), it->second는 값(HP 데이터의 주소)
+        FAttributeData* AttributeToChange = it->second;
 
-    case EEffectApplication::Infinite:
-    {
-        // TODO: 영구 효과 로직 구현
-        // 영구적인 장비 아이템의 스탯 보너스 등에 사용
-        break;
+        // 변경 전의 값을 기록
+        float OldValue = AttributeToChange->CurrentValue;
+
+        AttributeToChange->CurrentValue += Magnitude;
+
+        // AttributeSet에게 "값이 바뀌었으니 후처리" 라고 알려줌
+        TargetAttributeSet->PostAttributeChange(*AttributeToChange, OldValue, AttributeToChange->CurrentValue);
+
     }
-    }
+}
+
+std::unique_ptr<GameplayEffect> GameplayEffect::CreateInverseEffect() const
+{
+    // 1. 새로운 GameplayEffect 객체 생성
+    auto InverseEffect = std::make_unique<GameplayEffect>();
+
+	// 2. InverseEffect의 속성들을 설정
+    InverseEffect->EffectName = this->EffectName + L" (제거)";
+    InverseEffect->TargetAttributeName = this->TargetAttributeName;
+
+    // 3. 적용 방식은 즉시 (Instant) 로 처리
+    InverseEffect->ApplicationType = EEffectApplication::Instant;
+
+    // 4. 변경 수치(Magnitude) 를 정반대로 설정
+    InverseEffect->Magnitude = -this->Magnitude;
+
+    // 5. 완성된 반대 효과를 반환
+    return InverseEffect;
 }

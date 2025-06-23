@@ -6,6 +6,7 @@
 
 #include <algorithm> // std::max 사용을 위해 포함
 #include <iostream> // 로그 출력을 위해 포함
+#include <string> // std::wstring 사용을 위해 포함
 
 AbilitySystemComponent::AbilitySystemComponent(Actor* Owner)
     : OwnerActor(Owner) // 멤버 이니셜라이저를 사용하여 OwnerActor를 초기화 (Actor.cpp 에서 사용함)
@@ -85,22 +86,94 @@ std::wstring AbilitySystemComponent::TryActivateAbility(int32_t SlotIndex, Actor
     return LogMessage;
 }
 
-void AbilitySystemComponent::ApplyGameplayEffectToSelf(const GameplayEffect* Effect)
+void AbilitySystemComponent::ApplyGameplayEffectToSelf(std::unique_ptr<GameplayEffect> Effect)
 {
     // Effect 포인터와 자신의 AttributeSet 유효성 검사
-    if (Effect && MyAttributeSet)
+    if (!Effect || !MyAttributeSet)
     {
-        // Effect의 Apply 함수를 호출하여 실제 효과를 적용
-        Effect->Apply(MyAttributeSet.get());
+        return;
+    }
 
-        if (Effect->TargetAttributeName == "HP")
+	// ApplicationType에 따라 Case 분기 처리
+    switch (Effect->ApplicationType)
+    {
+        case EEffectApplication::Instant:
         {
-            AttributeSet* MyAS = GetAttributeSet();
+            // 즉시 효과
+            Effect->Apply(MyAttributeSet.get());
+            break;
+        }
 
-			// '자신의' AttributeSet에 있는 HP 값을 읽어서 0과 비교. ( 0보다 작으면 0으로 설정 )
-            MyAS->HP.CurrentValue = std::max(0.0f, MyAS->HP.CurrentValue);
+        case EEffectApplication::Duration:
+        case EEffectApplication::Infinite:
+        {
+            bool bFoundAndRefreshed = false;
+            // 현재 적용 중인 효과 목록(ActiveEffects)을 확인
+            for (FActiveGameplayEffect& ActiveEffect : this->ActiveEffects)
+            {
+                // '효과 이름'이 같은 것이 있는지 확인
+                if (ActiveEffect.SourceEffect->EffectName == Effect->EffectName)
+                {
+                    // 같은 효과를 찾았다면 새로 추가하는 대신, 기존 효과의 지속시간만 갱신 (독안개 등 중첩 방지)
+                    ActiveEffect.RemainingTurns = Effect->Duration;
+                    bFoundAndRefreshed = true;
+                    break;
+                }
+            }
+
+            // 중복된 효과를 찾지 못하고 갱신하지도 않았다면 새로 목록에 추가
+            if (!bFoundAndRefreshed)
+            {
+                FActiveGameplayEffect NewActiveEffect;
+                NewActiveEffect.RemainingTurns = (Effect->ApplicationType == EEffectApplication::Infinite) ? -1 : Effect->Duration;
+                NewActiveEffect.SourceEffect = std::move(Effect); // 소유권 이전
+                this->ActiveEffects.push_back(std::move(NewActiveEffect));
+            }
+
+            break;
         }
     }
+}
+
+std::wstring AbilitySystemComponent::UpdateActiveEffects()
+{
+    std::wstring LogMessage = L"";
+
+    for (int i = ActiveEffects.size() - 1; i >= 0; --i)
+    {
+        FActiveGameplayEffect& ActiveEffect = ActiveEffects[i];
+        GameplayEffect* Effect = ActiveEffect.SourceEffect.get();
+
+        if (!Effect) continue;
+
+        // "매 턴 발동" 효과 처리
+        if (Effect->bExecuteOnTurn)
+        {
+            // 저장된 Magnitude를 그대로 사용
+            Effect->Apply(MyAttributeSet.get());
+
+            // 로그를 생성. Effect에 저장된 SourceActor를 사용
+            if (Effect->SourceActor)
+            {
+                LogMessage += Effect->SourceActor->Name + L"의 " + Effect->EffectName + L" 효과로 "
+                    + OwnerActor->Name + L"이(가) "
+                    + std::to_wstring(static_cast<int>(-Effect->Magnitude)) + L"의 피해를 입었습니다.";
+            }
+        }
+
+        // 남은 턴 관리
+        if (ActiveEffect.RemainingTurns > 0)
+        {
+            ActiveEffect.RemainingTurns--;
+        }
+
+        // 효과 만료 처리
+        if (ActiveEffect.RemainingTurns == 0)
+        {
+            ActiveEffects.erase(ActiveEffects.begin() + i);
+        }
+    }
+    return LogMessage;
 }
 
 // Getter

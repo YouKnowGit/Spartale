@@ -33,11 +33,23 @@ void BattleManager::Run() {
         Draw();
         ProcessPlayerTurn();
         CheckBattleStatus();
+        std::wstring playerLog = m_player->GetAbilityComponent()->UpdateActiveEffects();
+        if (!playerLog.empty())
+        {
+            Log(playerLog); // 로그가 비어있지 않을 때만 Log 함수 호출
+			Sleep(2000); // 플레이어 턴 후 효과 업데이트 시간
+        }
         if (m_bIsBattleOver) break;
 
         Draw();
         ProcessEnemyTurn();
         CheckBattleStatus();
+        std::wstring monsterLog = m_monster->GetAbilityComponent()->UpdateActiveEffects();
+        if (!monsterLog.empty())
+        {
+            Log(monsterLog); // 로그가 비어있지 않을 때만 Log 함수 호출
+			Sleep(2000); // 몬스터 턴 후 효과 업데이트 시간
+        }
         if (m_bIsBattleOver) break;
 
         m_CurrentTurn++;
@@ -191,5 +203,52 @@ std::wstring BattleManager::DrawStatBar(const std::wstring& label, float current
 }
 void BattleManager::PlayIntroAnimation()
 {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    ShowConsoleCursor(false);
+    clearScreen();
 
+    for (int i = 0; i < 3; ++i) {
+        system("color F4"); Sleep(80);
+        system("color 0F"); Sleep(80);
+    }
+
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(hConsole, &csbi);
+    int width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+    int height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+
+    // 전체 화면을 블록으로 채우기
+    std::wstring blockLine(width, L'█');
+    if (blockLine.length() % 2 != 0) blockLine += L" ";
+
+    for (int y = 0; y < height; ++y) {
+        SafeWriteUnicodeLine(hConsole, blockLine, y);
+    }
+
+    Sleep(100);
+
+    // 가운데에서 좌우로 갈라지는 애니메이션
+    int centerX = width / 2;
+    for (int offset = 0; offset <= centerX; ++offset)
+    {
+        for (int y = 0; y < height; ++y)
+        {
+            // 왼쪽 칸 지우기
+            if (centerX - offset >= 0) {
+                gotoxy(centerX - offset, y);
+                std::wcout << L" ";
+            }
+
+            // 오른쪽 칸 지우기
+            if (centerX + offset < width) {
+                gotoxy(centerX + offset, y);
+                std::wcout << L" ";
+            }
+        }
+        Sleep(5);
+    }
+
+    clearScreen();
+    ShowConsoleCursor(true);
+    system("color 0F");
 }

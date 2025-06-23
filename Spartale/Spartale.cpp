@@ -3,23 +3,57 @@
 #include <locale>
 #include <fcntl.h>
 #include <io.h>
+#include <conio.h>
+#include <Windows.h>
 
 #include "Player.h"
 #include "Monster.h"
 #include "AB_NormalAttack.h"
 #include "BattleManager.h"
 #include "AbilitySystemComponent.h"
+#include "AB_PoisonCloud.h"
+#include "ConsoleUtils.h"
+#include "Field.h"
+#include "GameWorld.h"
 
 
 using namespace std;
 
 int main()
 {
-	// 한글 지원을 위한 로케일 설정
-    wcout.imbue(locale(""));
+	ConsoleUtils::ShowConsoleCursor(false);
+    auto player = make_unique<Player>(L"주인공");
+    EGameState currentState = EGameState::World; // 게임은 월드 탐험부터 시작
 
+    while (currentState != EGameState::Quit)
+    {
+        switch (currentState)
+        {
+        case EGameState::World:
+        {
+            GameWorld world(std::move(player));
+            world.Run(); // 월드 탐험 루프 실행
+
+            currentState = EGameState::Quit; 
+            break;
+        }
+        case EGameState::Battle:
+        {
+            break;
+        }
+        // ... 메인 메뉴 등 다른 상태 추가 가능
+        }
+    }
+
+    ConsoleUtils::gotoxy(0, 26);
+    cout << "게임을 종료합니다." << endl;
+    ConsoleUtils::ShowConsoleCursor(true);
+
+    return 0;
+    /*
+	// 전투 테스트용 코드 (주석 처리)
     // 1. 플레이어와 몬스터 생성
-    auto player = make_unique<Player>();
+    auto player = make_unique<Player>(L"주인공");
     auto monster = make_unique<Monster>(L"고블린", 70.f, 10.f, 5.f);
 
     // 2. 각자에게 '일반 공격' 스킬 부여 및 0번 슬롯에 장착
@@ -28,6 +62,10 @@ int main()
     player->GetAbilityComponent()->GrantAbility(std::move(playerAttack));
     player->GetAbilityComponent()->EquipAbility(0, player->GetAbilityComponent()->GetGrantedAbility(0));
 
+    auto poisonCloud = make_unique<AB_PoisonCloud>();
+    player->GetAbilityComponent()->GrantAbility(std::move(poisonCloud));
+    player->GetAbilityComponent()->EquipAbility(1, player->GetAbilityComponent()->GetGrantedAbility(1));
+
     auto monsterAttack = make_unique<AB_NormalAttack>();
     monster->GetAbilityComponent()->GrantAbility(std::move(monsterAttack));
     monster->GetAbilityComponent()->EquipAbility(0, monster->GetAbilityComponent()->GetGrantedAbility(0));
@@ -35,6 +73,7 @@ int main()
     // 3. 배틀매니저 생성 및 전투 루프 실행
     BattleManager battleManager(player.get(), monster.get());
     battleManager.Run();
+    */
 
     return 0;
 }

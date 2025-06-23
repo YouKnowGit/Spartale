@@ -24,9 +24,15 @@ public:
     virtual void Update() {}
     virtual void Render() {}
 
+    virtual void SetPosition(int x, int y);
+    virtual int GetX() const;
+    virtual int GetY() const;
+
     // Getter
     AbilitySystemComponent* GetAbilityComponent() const { return AbilityComponent.get(); }
 
 protected:
     int ActorID;
+    int m_x;
+    int m_y;
 };
