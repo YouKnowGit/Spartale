@@ -25,24 +25,24 @@ void GameplayEffect::Apply(AttributeSet* TargetAttributeSet) const
     case EEffectApplication::Instant:
     {
         // TargetAttributeName 문자열을 비교하여 어떤 속성을 변경할지 결정
-        if (TargetAttributeName == "HP")
+        if (TargetAttributeName == L"HP")
         {
             TargetAttributeSet->HP.CurrentValue += Magnitude;
         }
-        else if (TargetAttributeName == "MP")
+        else if (TargetAttributeName == L"MP")
         {
             TargetAttributeSet->MP.CurrentValue += Magnitude;
         }
-        else if (TargetAttributeName == "Strength")
+        else if (TargetAttributeName == L"Strength")
         {
             TargetAttributeSet->Strength.CurrentValue += Magnitude;
         }
-        else if (TargetAttributeName == "Agility")
+        else if (TargetAttributeName == L"Agility")
         {
             TargetAttributeSet->Agility.CurrentValue += Magnitude;
         }
         // ... ( 추가적인 속성들에 대해 처리하려면 여기에 else if 문을 추가하세용 ) ...
-        else if (TargetAttributeName == "Gold")
+        else if (TargetAttributeName == L"Gold")
         {
             TargetAttributeSet->Gold.CurrentValue += Magnitude;
         }
@@ -74,23 +74,23 @@ void GameplayEffect::Remove(AttributeSet* TargetAttributeSet) const
     case EEffectApplication::Instant:
     case EEffectApplication::Infinite:
     {
-        if (TargetAttributeName == "HP")
+        if (TargetAttributeName == L"HP")
         {
             TargetAttributeSet->HP.CurrentValue -= Magnitude;
         }
-        else if (TargetAttributeName == "MP")
+        else if (TargetAttributeName == L"MP")
         {
             TargetAttributeSet->MP.CurrentValue -= Magnitude;
         }
-        else if (TargetAttributeName == "Strength")
+        else if (TargetAttributeName == L"Strength")
         {
             TargetAttributeSet->Strength.CurrentValue -= Magnitude;
         }
-        else if (TargetAttributeName == "Agility")
+        else if (TargetAttributeName == L"Agility")
         {
             TargetAttributeSet->Agility.CurrentValue -= Magnitude;
         }
-        else if (TargetAttributeName == "Gold")
+        else if (TargetAttributeName == L"Gold")
         {
             TargetAttributeSet->Gold.CurrentValue -= Magnitude;
         }

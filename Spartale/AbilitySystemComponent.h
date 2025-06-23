@@ -12,6 +12,7 @@ class GameplayEffect;
 class AbilitySystemComponent
 {
 public:
+    AbilitySystemComponent();
     AbilitySystemComponent(Actor* Owner);
     ~AbilitySystemComponent();
 

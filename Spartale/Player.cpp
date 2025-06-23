@@ -1,30 +1,32 @@
-#include "Player.h"
-#include "AbilitySystemComponent.h"
-#include "AttributeSet.h"
-#include <string> 
-#include <iostream>
-#include <map>
-#include "EquipSlotType.h"
+ï»¿#include "Player.h"
+#include "EquipItem.h"
+#include <codecvt>
+#include <locale>
+//#include "ItemBase.h"
 
-Player::Player()
+Player::Player() 
 {
-	// Player °´Ã¼ »ý¼º ½Ã ¹Ù·Î ÃÊ±âÈ­ ÇÔ¼ö È£Ãâ
     Initialize();
+
+
+    equipmentSlots.emplace(EquipSlotType::RightHand, EquipmentSlot(EquipSlotType::RightHand));
+    equipmentSlots.emplace(EquipSlotType::LeftHand, EquipmentSlot(EquipSlotType::LeftHand));
+    equipmentSlots.emplace(EquipSlotType::Chest, EquipmentSlot(EquipSlotType::Chest));
+    equipmentSlots.emplace(EquipSlotType::Head, EquipmentSlot(EquipSlotType::Head));
+    equipmentSlots.emplace(EquipSlotType::Boots, EquipmentSlot(EquipSlotType::Boots));
+    equipmentSlots.emplace(EquipSlotType::Neck, EquipmentSlot(EquipSlotType::Neck));
 }
 
-void Player::Initialize()
+void Player::Initialize() 
 {
-    std::string temp;
-    std::cout << "ÇÃ·¹ÀÌ¾î ÀÌ¸§À» ÀÔ·ÂÇÏ¼¼¿ä: ";
-    std::getline(std::cin, temp);
+    std::wstring temp;
+    std::wcout << L"í”Œë ˆì´ì–´ì´ë¦„ì„ ìž…ë ¥í•´ì£¼ì„¸ìš”: ";
+    std::getline(std::wcin, temp);
     Name = std::wstring(temp.begin(), temp.end());
-    
 
-    // ASC ÅëÇØ AttributeSet¿¡ Á¢±Ù
     AttributeSet* MyStats = GetAbilityComponent()->GetAttributeSet();
     if (MyStats)
     {
-        // ÇÃ·¹ÀÌ¾î ÃÊ±â ´É·ÂÄ¡ ¼³Á¤
         MyStats->Level = 1;
         MyStats->HP.BaseValue = 150.f;
         MyStats->HP.CurrentValue = 150.f;
@@ -37,96 +39,59 @@ void Player::Initialize()
         MyStats->Defence.CurrentValue = 10.f;
     }
 }
+void Player::Update() {}
+void Player::Render() {}
 
-void Player::Update()
-{
-    // TODO: ¸Å ÇÁ·¹ÀÓ¸¶´Ù ÇÃ·¹ÀÌ¾î°¡ Ã³¸®ÇØ¾ß ÇÒ ·ÎÁ÷ (¿¹: ÀÔ·Â Ã³¸®)
+AttributeSet* Player::GetAttributeSet() {
+    return AttributeComponent.GetAttributeSet();
 }
 
-void Player::Render()
+void Player::EquipItems(ItemBase* item)
 {
-    // TODO: ÇÃ·¹ÀÌ¾îÀÇ Á¤º¸¸¦ È­¸é¿¡ ±×¸®´Â ·ÎÁ÷
-}
-void Player::Equip(Equipment* item)
-{
-    if (!item)
-    {
-        std::cout << "ÀåºñÇÒ ¾ÆÀÌÅÛÀÌ ¾ø½À´Ï´Ù.\n";
+    if (!item) return;
+   
+    auto equipItem = static_cast<EquipItem*>(item);
+    if (!equipItem) {
+        std::wcout << L"ìž¥ë¹„í•  ìˆ˜ ì—†ëŠ” ì•„ì´í…œìž…ë‹ˆë‹¤.\n";
         return;
     }
 
-
-    EquipSlotType slotType = item->GetSlotType();
-    AttributeSet* attributes = GetAbilityComponent()->GetAttributeSet();
-
-    // ÀÌ¹Ì ½½·ÔÀÌ Á¸ÀçÇÏ´Â °æ¿ì
-    auto it = equipmentSlots.find(slotType);
-    if (it != equipmentSlots.end())
-    {
-        std::wcout << L"±âÁ¸ Àåºñ¸¦ ±³Ã¼ÇÕ´Ï´Ù: ";
-        if (it->second.GetEquippedItem())
-            std::wcout << it->second.GetEquippedItem()->GetName() << L" ¡æ ";
-        else
-            std::wcout << L"(¾øÀ½) ¡æ ";
-
-        std::wcout << item->GetName() << L"\n";
-
-        it->second.Equip(item, attributes);
-    }
-    else
-    {
-        EquipmentSlot newSlot(slotType);
-        newSlot.Equip(item, attributes);
-        equipmentSlots[slotType] = newSlot;
-
-        std::wcout << item->GetName() << L" À»(¸¦) »õ ½½·Ô¿¡ ÀåÂøÇß½À´Ï´Ù.\n";
-    }
-    
+    EquipSlotType slot = equipItem->GetSlotType();
+    equipmentSlots[slot].Equip(equipItem, GetAttributeSet());
 }
-void Player::DisplayStats() const
-{
-   
-    if (AbilityComponent)
-    {
-        AbilityComponent->GetAttributeSet()->Display();
+
+void Player::Unequip(EquipSlotType slotType) {
+    if (equipmentSlots.count(slotType)) {
+        equipmentSlots[slotType].Unequip(GetAttributeSet());
     }
-    
+}
+
+void Player::DisplayStats() const {
+    AttributeComponent.GetAttributeSet()->Display();
 }
 
 void Player::DisplayEquipment() const {
-    std::wcout << L"\n[Àåºñ ½½·Ô »óÅÂ]\n";
+    for (auto it = equipmentSlots.begin(); it != equipmentSlots.end(); ++it) {
+        EquipSlotType slot = it->first;
+        const EquipmentSlot& eqSlot = it->second;
 
-    // °íÁ¤µÈ ½½·Ô ¼ø¼­
-    std::vector<EquipSlotType> slotOrder = {
-        EquipSlotType::Head,
-        EquipSlotType::Chest,
-        EquipSlotType::LeftHand,
-        EquipSlotType::RightHand,
-        EquipSlotType::boots,
-        EquipSlotType::Neck
-    };
-
-    for (EquipSlotType slotType : slotOrder) {
-        std::wstring slotName;
-
-        // ½½·Ô ÀÌ¸§ º¯È¯
-        switch (slotType) {
-        case EquipSlotType::Head: slotName = L"¸Ó¸®"; break;
-        case EquipSlotType::Chest: slotName = L"°¡½¿"; break;
-        case EquipSlotType::LeftHand: slotName = L"¿Þ¼Õ"; break;
-        case EquipSlotType::RightHand: slotName = L"¿À¸¥¼Õ"; break;
-        case EquipSlotType::boots: slotName = L"½Å¹ß"; break;
-        case EquipSlotType::Neck: slotName = L"¸ñ"; break;
-        default: slotName = L"¾Ë ¼ö ¾øÀ½"; break;
+        std::wcout << L"[";
+        switch (slot) {
+        case EquipSlotType::RightHand: std::wcout << L"ì˜¤ë¥¸ì†"; break;
+        case EquipSlotType::LeftHand:  std::wcout << L"ì™¼ì†"; break;
+        case EquipSlotType::Chest:     std::wcout << L"ê°€ìŠ´"; break;
+        case EquipSlotType::Head:      std::wcout << L"ë¨¸ë¦¬"; break;
+        case EquipSlotType::Boots:     std::wcout << L"ì‹ ë°œ"; break;
+        case EquipSlotType::Neck:      std::wcout << L"ëª©"; break;
         }
+        std::wcout << L"] ";
 
-        auto it = equipmentSlots.find(slotType);
-        if (it != equipmentSlots.end() && it->second.GetEquippedItem()) {
-            std::wcout << L"- " << slotName << L" ½½·Ô: "
-                << it->second.GetEquippedItem()->GetName() << L"\n";
+        auto item = eqSlot.GetEquippedItem();
+        if (item) {
+            std::wcout << item->GetName() << std::endl;
         }
         else {
-            std::wcout << L"- " << slotName << L" ½½·Ô: ºñ¾îÀÖÀ½\n";
+            std::wcout << L"ë¹„ì–´ ìžˆìŒ" << std::endl;
         }
     }
 }

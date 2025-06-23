@@ -37,7 +37,7 @@ std::wstring AB_NormalAttack::ActivateAbility(AbilitySystemComponent* SourceASC,
     GameplayEffect DamageEffect;
     DamageEffect.EffectName = L"데미지";
     DamageEffect.ApplicationType = EEffectApplication::Instant;
-	DamageEffect.TargetAttributeName = "HP";    // 대상의 HP 속성에 적용
+	DamageEffect.TargetAttributeName = L"HP";    // 대상의 HP 속성에 적용
     DamageEffect.Magnitude = -Damage;   // HP 피해이므로 음수로 설정
 
     // 3. 대상에게 효과를 적용

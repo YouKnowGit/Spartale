@@ -134,10 +134,11 @@
     <ClCompile Include="BattleManager.cpp" />
     <ClCompile Include="ConsoleUtils.cpp" />
     <ClCompile Include="DamageUtils.cpp" />
-    <ClCompile Include="Equipment.cpp" />
+    <ClCompile Include="EquipItem.cpp" />
     <ClCompile Include="EquipmentSlot.cpp" />
     <ClCompile Include="GameplayAbility.cpp" />
     <ClCompile Include="GameplayEffect.cpp" />
+    <ClCompile Include="ItemBase.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Spartale.cpp" />
@@ -150,14 +151,17 @@
     <ClInclude Include="BattleManager.h" />
     <ClInclude Include="ConsoleUtils.h" />
     <ClInclude Include="DamageUtils.h" />
-    <ClInclude Include="Equipment.h" />
+    <ClInclude Include="EquipItem.h" />
     <ClInclude Include="EquipmentSlot.h" />
     <ClInclude Include="EquipSlotType.h" />
     <ClInclude Include="GameplayAbility.h" />
     <ClInclude Include="GameplayEffect.h" />
     <ClInclude Include="Global.h" />
+    <ClInclude Include="HealthPotion.h" />
+    <ClInclude Include="ItemBase.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Sword.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

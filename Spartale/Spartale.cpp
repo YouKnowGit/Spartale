@@ -1,11 +1,8 @@
 ﻿#include <iostream>
 #include <io.h>
 #include <fcntl.h>
-
+#include "Sword.h"  // 강철검 장비 정의
 #include "Player.h"
-#include "Equipment.h"
-#include "GameplayEffect.h"
-#include "EquipSlotType.h"
 
 int main() {
     // 유니코드 출력 설정 (한글 출력용)
@@ -13,24 +10,26 @@ int main() {
 
     // 플레이어 생성 및 초기화
     Player player;
+    // 스탯 출력 전 초기 상태
+    wcout << L"초기 능력치:\n";
+    player.DisplayStats();
 
-    // 장비 이펙트 생성: 힘 +5
-    GameplayEffect swordEffect;
-    swordEffect.EffectName = L"강화된 힘";
-    swordEffect.ApplicationType = EEffectApplication::Instant;
-    swordEffect.TargetAttributeName = "Strength";
-    swordEffect.Magnitude = 5.0f;
-
-    // 장비 생성: 오른손 무기
-    Equipment sword(L"강철 검", EquipSlotType::RightHand, swordEffect);
+    // 강철검 생성 (Sword는 EquipItem을 상속받고 내부에 GameplayEffect 포함)
+    Sword* steelSword = new Sword();
 
     // 장착
-    player.Equip(&sword);
+    player.EquipItems(steelSword);
 
-    // 결과 출력
-    std::wcout << L"\n현재 능력치 상태:\n";
+    wcout << L"\n장착 후 능력치:\n";
     player.DisplayStats();
     player.DisplayEquipment();
 
+    // 탈착
+    player.Unequip(EquipSlotType::RightHand);
+
+    wcout << L"\n탈착 후 능력치:\n";
+    player.DisplayStats();
+    player.DisplayEquipment();
+    delete steelSword;
     return 0;
 }

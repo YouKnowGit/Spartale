@@ -1,13 +1,24 @@
 #pragma once
-
 #include <string>
 #include "Global.h"
 #include "AttributeSet.h"
-
+enum class EAttributeOperation {
+    Add,
+    Subtract,
+    Multiply,
+    Divide
+};
 class GameplayEffect
 {
+private:
+    
+    EAttributeOperation Operation;
 public:
     GameplayEffect();
+    GameplayEffect(const std::wstring& attributeName, EAttributeOperation operation, float magnitude)
+        : TargetAttributeName(attributeName), Operation(operation), Magnitude(magnitude)
+    {
+    }
     virtual ~GameplayEffect();
 
     // 이펙트의 이름
@@ -17,8 +28,8 @@ public:
     EEffectApplication ApplicationType;
 
     // 이펙트가 적용될 속성의 이름 (예: "HP", "Strength")
-    std::string TargetAttributeName;
-
+    //std::string TargetAttributeName;
+    std::wstring TargetAttributeName;
     // 지속 시간 (턴 단위)
     int Duration = 0;
 
@@ -31,5 +42,7 @@ public:
     // 이 이펙트를 대상의 AttributeSet에 실제로 적용하는 함수
     virtual void Apply(AttributeSet* TargetAttributeSet) const;
     virtual void Remove(AttributeSet* TargetAttributeSet) const;
+    
     //virtual ~GameplayEffect();
+    
 };

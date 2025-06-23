@@ -81,10 +81,13 @@
     <ClCompile Include="BattleManager.cpp">
       <Filter>소스 파일\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="Equipment.cpp">
+    <ClCompile Include="EquipmentSlot.cpp">
       <Filter>소스 파일\Equipment</Filter>
     </ClCompile>
-    <ClCompile Include="EquipmentSlot.cpp">
+    <ClCompile Include="EquipItem.cpp">
+      <Filter>소스 파일\Equipment</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemBase.cpp">
       <Filter>소스 파일\Equipment</Filter>
     </ClCompile>
   </ItemGroup>
@@ -125,13 +128,22 @@
     <ClInclude Include="BattleManager.h">
       <Filter>헤더 파일\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="Equipment.h">
-      <Filter>헤더 파일\Equipment</Filter>
-    </ClInclude>
     <ClInclude Include="EquipmentSlot.h">
       <Filter>헤더 파일\Equipment</Filter>
     </ClInclude>
     <ClInclude Include="EquipSlotType.h">
+      <Filter>헤더 파일\Equipment</Filter>
+    </ClInclude>
+    <ClInclude Include="EquipItem.h">
+      <Filter>헤더 파일\Equipment</Filter>
+    </ClInclude>
+    <ClInclude Include="HealthPotion.h">
+      <Filter>헤더 파일\Equipment</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemBase.h">
+      <Filter>헤더 파일\Equipment</Filter>
+    </ClInclude>
+    <ClInclude Include="Sword.h">
       <Filter>헤더 파일\Equipment</Filter>
     </ClInclude>
   </ItemGroup>
