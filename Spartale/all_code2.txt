@@ -1,0 +1,1397 @@
+#pragma once
+#include <vector>
+#include <memory>
+#include <string>
+
+// Àü¹æ ¼±¾ğ
+class Actor;
+class AttributeSet;
+class GameplayAbility;
+class GameplayEffect;
+
+struct FActiveGameplayEffect
+{
+    // ¾î¶² È¿°úÀÎÁö
+    std::unique_ptr<GameplayEffect> SourceEffect = nullptr;
+
+    // È¿°ú°¡ ¸î ÅÏ ³²¾Ò´ÂÁö (-1Àº ¿µ±¸ Áö¼Ó)
+    int RemainingTurns = 0;
+};
+
+class AbilitySystemComponent
+{
+public:
+    AbilitySystemComponent(Actor* Owner);
+    ~AbilitySystemComponent();
+
+    void Initialize();
+
+	// ÇØ´ç Owner °¡ ¼ÒÀ¯ÇÒ ½ºÅ³ ¸ñ·Ï: GrantAbility
+    void GrantAbility(std::unique_ptr<GameplayAbility> Ability);
+    void ClearAbility(GameplayAbility* Ability);
+
+    // ÀüÅõ ½Ã »ç¿ëÇÒ 4°³ÀÇ ½ºÅ³: EquipAbility
+    void EquipAbility(int32_t SlotIndex, GameplayAbility* Ability);
+    void UnEquipAbility(int32_t SlotIndex);
+
+	// ½ºÅ³ ¹× ¾ÆÀÌÅÛ »ç¿ë
+	// TryActivateAbility: ¾îºô¸®Æ¼¸¦ »ç¿ë(È°¼ºÈ­)ÇÏ´Â ÇÔ¼ö
+	// ApplyGameplayEffectToSelf: ÀÚ½Å¿¡°Ô °ÔÀÓÇÃ·¹ÀÌ È¿°ú¸¦ Àû¿ëÇÏ´Â ÇÔ¼ö
+    std::wstring TryActivateAbility(int32_t SlotIndex, Actor* Target);
+    void ApplyGameplayEffectToSelf(std::unique_ptr<GameplayEffect> Effect);
+
+	// Getter
+    Actor* GetOwnerActor() const { return OwnerActor; }
+    AttributeSet* GetAttributeSet() const { return MyAttributeSet.get(); }
+    GameplayAbility* GetGrantedAbility(int32_t Index) const;
+    const std::vector<GameplayAbility*>& GetEquippedAbilities() const { return EquippedAbilities; }
+
+    std::wstring UpdateActiveEffects();
+
+protected:
+    // ÀÌ ÄÄÆ÷³ÍÆ®ÀÇ ¼ÒÀ¯ÀÚ 
+    Actor* OwnerActor;
+
+	// ÀÌ ÄÄÆ÷³ÍÆ®°¡ AttributeSet ¼ÒÀ¯ (ÀÌ¿¡ Á¢±ÙÇØ ´É·ÂÄ¡ °è»ê ¹× º¯°æ, protected ÀÌ¹Ç·Î Getter »ç¿ë)
+    std::unique_ptr<AttributeSet> MyAttributeSet;
+
+    // ½ÀµæÇÑ ¸ğµç ¾îºô¸®Æ¼ ¸ñ·Ï (¼ÒÀ¯ÇÑ ÀüÃ¼ ½ºÅ³)
+    std::vector<std::unique_ptr<GameplayAbility>> GrantedAbilities;
+
+    // ÀåÂøÇÑ ¾îºô¸®Æ¼ ¸ñ·Ï (»ç¿ëÀÚ°¡ Á¤ÇÑ 4°³ÀÇ ½ºÅ³)
+    std::vector<GameplayAbility*> EquippedAbilities;
+
+    // ÀÌ Ä³¸¯ÅÍ¿¡°Ô ÇöÀç Àû¿ë ÁßÀÎ ¸ğµç Áö¼Ó/¿µ±¸ È¿°ú ¸ñ·Ï (°Ô½ÃÆÇ ¿ªÇÒ)
+    std::vector<FActiveGameplayEffect> ActiveEffects;
+};#pragma once
+#include "GameplayAbility.h"
+
+// 'ÀÏ¹İ °ø°İ' ¾îºô¸®Æ¼ Å¬·¡½º¸¦ Á¤ÀÇ
+class AB_NormalAttack : public GameplayAbility
+{
+public:
+    AB_NormalAttack();
+    virtual ~AB_NormalAttack() = default;
+
+    // GameplayAbilityÀÇ ¼ø¼ö °¡»ó ÇÔ¼ö¸¦ ÀçÁ¤ÀÇ
+    virtual std::wstring ActivateAbility(AbilitySystemComponent* SourceASC, Actor* Target) override;
+    virtual void SetupEffects() override;
+
+private:
+    // ÀÌ ½ºÅ³ÀÇ µ¥¹ÌÁö Å¸ÀÔ
+    EDamageType MyDamageType;
+};#pragma once
+#include "GameplayAbility.h"
+
+// 'µ¶¾È°³' ¾îºô¸®Æ¼ Å¬·¡½º¸¦ Á¤ÀÇ
+class AB_PoisonCloud : public GameplayAbility
+{
+public:
+    AB_PoisonCloud();
+    virtual ~AB_PoisonCloud() = default;
+
+    // GameplayAbilityÀÇ ¼ø¼ö °¡»ó ÇÔ¼ö ÀçÁ¤ÀÇ
+    virtual std::wstring ActivateAbility(AbilitySystemComponent* SourceASC, Actor* Target) override;
+    virtual void SetupEffects() override {}
+
+private:
+    // ÀÌ ½ºÅ³ÀÇ µ¥¹ÌÁö Å¸ÀÔ
+    EDamageType MyDamageType;
+
+    // ÀÌ ½ºÅ³ÀÇ ¼¼ºÎ ¼³Á¤°ª
+    int PoisonDuration;       // µ¶ Áö¼Ó½Ã°£ (ÅÏ)
+};#pragma once
+#include <string>
+#include <vector>
+#include <memory> // ½º¸¶Æ® Æ÷ÀÎÅÍ »ç¿ë
+#include "Global.h" // Global.h´Â FMapLocation Á¤ÀÇ Æ÷ÇÔ
+
+// ASC Àü¹æ ¼±¾ğ
+class AbilitySystemComponent;
+
+class Actor
+{
+public:
+    Actor();
+    virtual ~Actor() = default;
+
+	// Actor´Â ASC(Ability System Component)¸¦ ¼ÒÀ¯. ÀÌ¸¦ ÅëÇØ ´É·Â,»óÅÂ¸¦ °ü¸®
+    std::unique_ptr<AbilitySystemComponent> AbilityComponent;
+
+    // ±âº» Á¤º¸ (ÀÌ¸§ ¹× À§Ä¡)
+    std::wstring Name;
+    FMapLocation CurrentLocation;
+
+    virtual void Initialize() {}
+    virtual void Update() {}
+    virtual void Render() {}
+
+    // Getter
+    AbilitySystemComponent* GetAbilityComponent() const { return AbilityComponent.get(); }
+
+protected:
+    int ActorID;
+};#pragma once
+#include <map>
+#include <string>
+#include "Global.h"
+
+class AbilitySystemComponent;
+
+// °¢ ´É·ÂÄ¡(Attribute)ÀÇ ÇöÀç °ª°ú ±âº» °ªÀ» ÀúÀåÇÏ´Â ±¸Á¶Ã¼
+struct FAttributeData
+{
+	float BaseValue = 0.0f; // ±âº» °ª(´É·ÂÄ¡ ¾ÆÀÌÅÛÀÌ³ª ½ºÅ³¿¡ ÀÇÇØ º¯°æµÇÁö ¾ÊÀ½)
+	float CurrentValue = 0.0f;  // ÇöÀç °ª(´É·ÂÄ¡ ¾ÆÀÌÅÛÀÌ³ª ½ºÅ³¿¡ ÀÇÇØ º¯°æµÉ ¼ö ÀÖÀ½)
+
+	// »ı¼ºÀÚ¸¦ ÅëÇØ ÇÏ³ªÀÇ °ªÀ¸·Î 2°³ÀÇ ¸â¹ö¸¦ ÃÊ±âÈ­ÇÒ ¼ö ÀÖµµ·Ï ¼³Á¤
+    FAttributeData(float value = 0.0f) : BaseValue(value), CurrentValue(value) {}
+};
+class AttributeSet
+{
+public:
+    AttributeSet(AbilitySystemComponent* OwnerComp);
+    virtual ~AttributeSet() = default;
+
+    // ¼Ó¼º ÀÌ¸§À¸·Î ½ÇÁ¦ µ¥ÀÌÅÍ¿¡ Á¢±ÙÇÒ ¼ö ÀÖ°Ô ÇØÁÖ´Â ¸Ê
+	// ¼Ó¼º ÀÌ¸§Àº ¹®ÀÚ¿­·Î ÀúÀåµÇ¸ç, ÇØ´ç ¼Ó¼ºÀÇ FAttributeData Æ÷ÀÎÅÍ¸¦ ÂüÁ¶
+    std::map<std::string, FAttributeData*> AttributeMap;
+
+    AbilitySystemComponent* OwningAbilitySystemComponent;
+
+    // --- ±âº» ½ºÅÈ (Primary Stats) ---
+    FAttributeData Strength;          // Èû
+    FAttributeData Agility;           // ¹ÎÃ¸
+    FAttributeData Intelligence;      // Áö´É
+    FAttributeData Defence;           // ¹æ¾î·Â
+    FAttributeData MagicResistance;   // ¸¶¹ı ÀúÇ×·Â
+
+    // --- ÀÚ¿ø (Resources) ---
+    FAttributeData HP;
+    FAttributeData MP;
+    FAttributeData BaseHP;
+    FAttributeData BaseMP;
+
+    // °ñµå¿Í °æÇèÄ¡, ·¹º§
+    FAttributeData Gold;
+    FAttributeData Experience;
+    int Level = 1;
+
+    FAttributeData CriticalHitChance;          // Ä¡¸íÅ¸ È®·ü (¿¹: 0.05 = 5%)
+    FAttributeData CriticalHitDamageMultiplier; // Ä¡¸íÅ¸ ÇÇÇØ·® ¹èÀ² (¿¹: 1.5 = 150%)
+
+    // --- ¸ŞÅ¸ µ¥ÀÌÅÍ (Meta Data) ---
+    bool bIsDefending = false; // ÇöÀç ¹æ¾î »óÅÂÀÎÁö ¿©ºÎ (¹æ¾î ½Ã½ºÅÛ Á¦°Å ½Ã »èÁ¦)
+    int AdditionalStatPoints = 0; // ºĞ¹è °¡´ÉÇÑ Ãß°¡ ½ºÅÈ Æ÷ÀÎÆ®
+
+    // ´É·ÂÄ¡°¡ º¯°æµÇ±â Á÷Àü¿¡ È£ÃâµÉ ÇÔ¼ö
+    virtual void PreAttributeChange(const FAttributeData& Attribute, float& NewValue);
+
+    // ´É·ÂÄ¡°¡ º¯°æµÈ Á÷ÈÄ¿¡ È£ÃâµÉ ÇÔ¼ö
+    virtual void PostAttributeChange(const FAttributeData& Attribute, float OldValue, float NewValue);
+
+    // Èû, Áö´É ½ºÅÈ¿¡ µû¶ó MaxHP, MaxMP¸¦ Àç°è»êÇÏ´Â ÇÔ¼ö
+    void AdjustDependentAttributes();
+};#pragma once
+#include <string>
+
+// Àü¹æ ¼±¾ğ
+class Actor;
+class Player;
+class Monster; 
+
+class BattleManager {
+public:
+    BattleManager(Player* player, Monster* monster);
+    void Run();
+
+private:
+    void ProcessPlayerTurn();
+    void ProcessEnemyTurn();
+    void CheckBattleStatus();
+    void EndBattle();
+    void Log(const std::wstring& message);
+    void Draw();
+    std::wstring DrawStatBar(const std::wstring& label, float current, float max, int barLength);
+    void PlayIntroAnimation();
+
+private:
+    Player* m_player;
+    Monster* m_monster;
+
+    bool m_bIsBattleOver;
+    bool m_bPlayerWon;
+    int m_CurrentTurn;
+    std::wstring m_statusMessage;
+};#pragma once
+#include <windows.h>
+#include <string>
+#include <vector>
+
+namespace ConsoleUtils {
+    void gotoxy(int x, int y);
+    void ShowConsoleCursor(bool showFlag);
+    void clearScreen();
+    void DrawBox(int x, int y, int width, int height);
+    int SelectMenuVertical(const std::vector<std::wstring>& options, int startX, int startY); 
+    void ClearInputBuffer(); 
+    void SafeWriteUnicodeLine(HANDLE hConsole, const std::wstring& line, SHORT y);
+}#pragma once
+#include "Global.h" // EDamageType
+
+// Àü¹æ ¼±¾ğ
+class Actor;
+
+namespace DamageUtils
+{
+    // ¸ğµç µ¥¹ÌÁö °è»êÀ» Ã³¸®ÇÏ´Â ÅëÇÕ static ÇÔ¼ö
+    // Actor Æ÷ÀÎÅÍ¸¦ Á÷Á¢ ¹Ş¾Æ ÇÊ¿äÇÑ ¸ğµç ½ºÅÈ¿¡ Á¢±Ù °¡´É
+    float CalculateDamage(const Actor* SourceActor, 
+                                    const Actor* TargetActor, 
+                                    float ADRatio, 
+                                    float APRatio, 
+                                    EDamageType DamageType);
+}#pragma once
+#pragma once
+
+#include <string>
+#include <vector>
+#include <memory> 
+#include "Global.h"
+
+class AbilitySystemComponent;
+class GameplayEffect;
+class Actor;
+
+// ½ºÅ³ÀÇ ±âº» Æ²ÀÌ µÇ´Â Ãß»ó Å¬·¡½º
+class GameplayAbility
+{
+public:
+    GameplayAbility();
+    virtual ~GameplayAbility() = default;
+
+    // ½ºÅ³ ÀÌ¸§ ¹× ¼³¸í
+    std::wstring AbilityName;
+    std::wstring AbilityDescription;
+
+    // »ç¿ë ºñ¿ë ¹× ÄğÅ¸ÀÓ
+    float ManaCost = 0.0f;
+    int Cooldown = 0; // ÅÏ ´ÜÀ§ (¾ÆÁ÷ ±¸Çö X)
+    int CurrentCooldown = 0;
+
+    // ½ºÅ³ °è¼ö
+    float AD_Ratio = 0.0f; // ¹°¸® °è¼ö
+    float AP_Ratio = 0.0f; // ¸¶¹ı °è¼ö
+
+    // ÀÌ ¾îºô¸®Æ¼°¡ Àû¿ëÇÒ °ÔÀÓÇÃ·¹ÀÌ ÀÌÆåÆ® ¸ñ·Ï (¾îºô¸®Æ¼°¡ ÀÌÆåÆ® °´Ã¼µéÀ» '¼ÒÀ¯')
+	// ex) °ø°İ·Â Áõ°¡, ¹æ¾î·Â °¨¼Ò µî
+    std::vector<std::unique_ptr<GameplayEffect>> EffectsToApply;
+
+    // °¡»ó ÇÔ¼ö: ÀÌ ¾îºô¸®Æ¼¸¦ »ç¿ëÇÒ ¼ö ÀÖ´ÂÁö È®ÀÎ
+	// ex) ¸¶³ª°¡ ÃæºĞÇÑÁö, ÄğÅ¸ÀÓÀÌ ³¡³µ´ÂÁö µî
+    virtual bool CanActivateAbility(AbilitySystemComponent* SourceASC) const;
+
+    // ¼ø¼ö °¡»ó ÇÔ¼ö: ¾îºô¸®Æ¼¸¦ ½ÇÁ¦·Î ¹ßµ¿½ÃÅ°´Â ÇÔ¼ö
+	// SourceASC: ½ÃÀüÀÚ(ASC), Target: ´ë»ó(Actor)
+	// ¹İÈ¯°ªÀº ¾îºô¸®Æ¼ ¹ßµ¿ °á°ú ¸Ş½ÃÁö (¼º°ø/½ÇÆĞ µî)
+	// ´ë»óÀÚ¸¦ Actor·Î ¹Ş´Â ÀÌÀ¯´Â, ½ÃÀüÀÚ¿¡ ºñÇØ ¹Ù²ğ ¼ö ÀÖ´Â ´ë»óÀÌ ´Ù¾çÇÏ±â ¶§¹®
+    // ¡Ø »ç¿ëÇÒ ¶§ À¯ÀÇÇÏ¼¼¿ä.
+	// ¿¹½Ã: ActivateAbility(m_player->GetGetAbilityComponent(), Goblin);
+	// ½ºÅ³ ¸¸µé ¶§(ÆÄ»ı Å¬·¡½º Á¦ÀÛ ½Ã) ¹İµå½Ã ±¸ÇöÇØ¾ß ÇÔ
+    virtual std::wstring ActivateAbility(AbilitySystemComponent* SourceASC, Actor* Target) = 0;
+
+protected:
+    // ¾îºô¸®Æ¼°¡ »ı¼ºµÉ ¶§ ÇÊ¿äÇÑ ÀÌÆåÆ®µéÀ» ¼³Á¤ÇÏ´Â ÇïÆÛ ÇÔ¼ö
+    virtual void SetupEffects() = 0;
+};#pragma once
+
+#include <string>
+#include <memory>
+#include "Global.h"
+#include "AttributeSet.h"
+
+class Actor;
+
+class GameplayEffect
+{
+public:
+    GameplayEffect();
+    virtual ~GameplayEffect();
+
+    // ÀÌÆåÆ®ÀÇ ÀÌ¸§
+    std::wstring EffectName;
+
+    // ÀÌÆåÆ® Àû¿ë ¹æ½Ä (Áï½Ã, Áö¼Ó, ¿µ±¸)
+    EEffectApplication ApplicationType;
+
+    // ÀÌÆåÆ®°¡ Àû¿ëµÉ ¼Ó¼ºÀÇ ÀÌ¸§ (¿¹: "HP", "Strength")
+    std::string TargetAttributeName;
+
+    EModifierOperation OperationType = EModifierOperation::Add; // ±âº»Àº µ¡¼À
+
+    // È¿°úÀÇ Á¤¹İ´ë È¿°ú¸¦ »ı¼ºÇØ¼­ ¹İÈ¯ÇÏ´Â ÇÔ¼ö (Áö¼Ó È¿°ú¸¦ ¿ø»ó º¹±¸ÇÏ±â À§ÇØ »ç¿ë)
+    std::unique_ptr<GameplayEffect> CreateInverseEffect() const;
+
+    // Áö¼Ó ½Ã°£ (ÅÏ ´ÜÀ§)
+    int Duration = 0;
+
+    // µ¥¹ÌÁö Å¸ÀÔ
+    EDamageType DamageType;
+
+    // º¯°æ ¼öÄ¡ (µ¥¹ÌÁö·®, È¸º¹·®, ½ºÅÈ Áõ°¡·® µî)
+    float Magnitude = 0.0f;
+
+    bool bExecuteOnTurn = false;
+
+    // È¿°ú ½ÃÀüÀÚ
+    Actor* SourceActor = nullptr;
+
+    // ÀÌ ÀÌÆåÆ®¸¦ ´ë»óÀÇ AttributeSet¿¡ ½ÇÁ¦·Î Àû¿ëÇÏ´Â ÇÔ¼ö
+    virtual void Apply(AttributeSet* TargetAttributeSet) const;
+};#pragma once
+/*********************************************/
+/* ÀÌ ÆÄÀÏÀº ÄÚµå¿¡ »ç¿ëµÉ Àü¹İÀûÀÎ ¿­°ÅÇüÀ» Á¤ÀÇ*/
+/**********************************************/
+
+// ¸Ê »óÀÇ À§Ä¡¸¦ ³ªÅ¸³»´Â °£´ÜÇÑ ±¸Á¶Ã¼
+struct FMapLocation
+{
+    int X = 0;
+    int Y = 0;
+};
+
+// °ÔÀÓÇÃ·¹ÀÌ ÀÌÆåÆ®ÀÇ Àû¿ë ¹æ½ÄÀ» Á¤ÀÇÇÏ´Â ¿­°ÅÇü
+enum class EEffectApplication
+{
+    Instant,    // Áï½Ã Àû¿ë
+    Duration,   // Áö¼Ó ½Ã°£ µ¿¾È Àû¿ë
+    Infinite    // ¿µ±¸ Àû¿ë
+};
+
+// µ¥¹ÌÁöÀÇ ¼Ó¼ºÀ» Á¤ÀÇÇÏ´Â ¿­°ÅÇü
+enum class EDamageType
+{
+    None,
+    Physical, // ¹°¸®
+    Magical,  // ¸¶¹ı
+    True      // °íÁ¤
+};
+
+// °ÔÀÓÇÃ·¹ÀÌ ÀÌÆåÆ®ÀÇ Àû¿ë ¹æ½Ä¿¡ µû¸¥ Áö¼Ó ½Ã°£ ´ÜÀ§¸¦ Á¤ÀÇÇÏ´Â ¿­°ÅÇü
+enum class EModifierOperation
+{
+    Add,       // ´õÇÏ±â (±âº»)
+    Multiply,  // °öÇÏ±â
+    Override   // µ¤¾î¾²±â
+};#pragma once
+#include "Actor.h"
+
+#include <string>
+
+// Actor¸¦ »ó¼Ó¹Ş¾Æ Monster Å¬·¡½º¸¦ Á¤ÀÇ
+class Monster : public Actor
+{
+public:
+    // ¸ó½ºÅÍÀÇ Á¾·ù¿¡ µû¶ó ´Ù¸¥ ÀÌ¸§°ú ½ºÅÈÀ» °¡Áú ¼ö ÀÖµµ·Ï »ı¼ºÀÚ¿¡¼­ °ªÀ» ¹ŞÀ½
+    Monster(const std::wstring& InName, float InHP, float InStrength, float InDefence);
+    virtual ~Monster() = default;
+
+    std::wstring RunAI(Actor* Target);
+
+    // ¸ó½ºÅÍ´Â ActorÀÇ ±âº» Initialize, Update, Render¸¦ ±×´ë·Î »ç¿ë
+    // ¸ó½ºÅÍ¸¸ÀÇ Æ¯º°ÇÑ ·ÎÁ÷ÀÌ ÇÊ¿äÇÏ´Ù¸é ¿©±â¼­µµ ÀçÁ¤ÀÇÇÏ¿© Ã³¸®
+};#pragma once
+#include "Actor.h"
+
+// Actor¸¦ »ó¼Ó¹Ş¾Æ Player Å¬·¡½º¸¦ Á¤ÀÇÇÕ´Ï´Ù.
+class Player : public Actor
+{
+public:
+    Player();
+    virtual ~Player() = default;
+
+    // ActorÀÇ °¡»ó ÇÔ¼öµéÀ» ÀçÁ¤ÀÇ(override)
+    virtual void Initialize() override;
+    virtual void Update() override;
+    virtual void Render() override;
+};#include "AbilitySystemComponent.h"
+#include "AttributeSet.h"
+#include "GameplayAbility.h"
+#include "GameplayEffect.h"
+#include "Actor.h"
+
+#include <algorithm> // std::max »ç¿ëÀ» À§ÇØ Æ÷ÇÔ
+#include <iostream> // ·Î±× Ãâ·ÂÀ» À§ÇØ Æ÷ÇÔ
+#include <string> // std::wstring »ç¿ëÀ» À§ÇØ Æ÷ÇÔ
+
+AbilitySystemComponent::AbilitySystemComponent(Actor* Owner)
+    : OwnerActor(Owner) // ¸â¹ö ÀÌ´Ï¼È¶óÀÌÀú¸¦ »ç¿ëÇÏ¿© OwnerActor¸¦ ÃÊ±âÈ­ (Actor.cpp ¿¡¼­ »ç¿ëÇÔ)
+{
+	// ÀÌ ÄÄÆ÷³ÍÆ®°¡ »ı¼ºµÉ ¶§, ÀÚ½ÅÀÇ AttributeSetÀ» »ı¼ºÇÏ¿© ¼ÒÀ¯ (¸ğµç Actor´Â AttributeSetÀ» ¼ÒÀ¯)
+    MyAttributeSet = std::make_unique<AttributeSet>(this);
+
+    // EquippedAbilities(ÀüÅõ ½Ã »ç¿ëÇÒ ½ºÅ³ 4°³) º¤ÅÍ¸¦ ¹Ì¸® 4Ä­(0, 1, 2, 3¹ø ½½·Ô)À¸·Î ÃÊ±âÈ­
+    EquippedAbilities.resize(4, nullptr);
+}
+
+// unique_ptr »ç¿ëÇÏ´Ï ¼Ò¸êÀÚ´Â ±¸Çö¸¸
+AbilitySystemComponent::~AbilitySystemComponent()
+{
+}
+
+// AbilitySystemComponentÀÇ ÃÊ±âÈ­ ÇÔ¼ö
+void AbilitySystemComponent::Initialize()
+{
+}
+
+// unique_ptrÀ» ÀÎÀÚ·Î ¹Ş¾Æ¼­ GrantedAbilities º¤ÅÍ¿¡ Ãß°¡. (½ºÅ³À» ¹è¿ì´Â ÇÔ¼ö)
+void AbilitySystemComponent::GrantAbility(std::unique_ptr<GameplayAbility> Ability)
+{
+	if (Ability) // nullptr Ã¼Å©¸¦ ÅëÇØ À¯È¿¼º °Ë»ç (¾ğ¸®¾óÀÇ IsValid ³ëµå ¿ªÇÒ)
+    {
+        GrantedAbilities.push_back(std::move(Ability));
+    }
+}
+
+// ½ºÅ³ÀÇ ÀÌ¸§À» ÅëÇØ ÇØ´ç ½ºÅ³À» Ã£°í Á¦°ÅÇÏ´Â ÇÔ¼ö
+void AbilitySystemComponent::ClearAbility(GameplayAbility* Ability)
+{
+}
+
+// EquipAbility ´Â ÀüÅõ ½Ã »ç¿ëÇÒ 4°³ÀÇ ½ºÅ³À» ´ã¾Æ³õ´Â º¤ÅÍ
+// »ç¿ëÀÚ°¡ PauseMenu ¿¡¼­ ½ºÅ³À» ÀåÂøÇÏ°í ÇØÁ¦ÇÒ ¶§ »ç¿ëÇÏ´Â ÇÔ¼ö
+void AbilitySystemComponent::EquipAbility(int32_t SlotIndex, GameplayAbility* Ability)
+{
+    // ½½·Ô ÀÎµ¦½º°¡ À¯È¿ÇÑ ¹üÀ§(0~3)ÀÎÁö È®ÀÎ
+    if (SlotIndex >= 0 && SlotIndex < EquippedAbilities.size())
+    {
+        EquippedAbilities[SlotIndex] = Ability;
+    }
+}
+
+// ¹İ´ë·Î ½ºÅ³À» ÇØÁ¦ÇÏ´Â ÇÔ¼ö
+void AbilitySystemComponent::UnEquipAbility(int32_t SlotIndex)
+{
+    if (SlotIndex >= 0 && SlotIndex < EquippedAbilities.size())
+    {
+        EquippedAbilities[SlotIndex] = nullptr;
+    }
+}
+
+// ÃÖÁ¾ÀûÀ¸·Î ½ºÅ³À» È°¼ºÈ­ÇÏ´Â ÇÔ¼ö (¹æ¾Æ¼è ¿ªÇÒ)
+std::wstring AbilitySystemComponent::TryActivateAbility(int32_t SlotIndex, Actor* Target)
+{ // 1. ½½·Ô ÀÎµ¦½º°¡ À¯È¿ÇÑÁö, ÇØ´ç ½½·Ô¿¡ ¾îºô¸®Æ¼°¡ ÀåÂøµÇ¾î ÀÖ´ÂÁö È®ÀÎ
+    if (SlotIndex < 0 || SlotIndex >= EquippedAbilities.size() || EquippedAbilities[SlotIndex] == nullptr)
+    {
+        return L"ÇØ´ç ½½·Ô¿¡ ½ºÅ³ÀÌ ¾ø½À´Ï´Ù.";
+    }
+
+    // 2. ÀåÂøµÈ ¾îºô¸®Æ¼¸¦ °¡Á®¿È
+    GameplayAbility* AbilityToActivate = EquippedAbilities[SlotIndex];
+
+    // 3. ÇØ´ç ¾îºô¸®Æ¼¸¦ Áö±İ »ç¿ëÇÒ ¼ö ÀÖ´ÂÁö È®ÀÎ (ºñ¿ë, ÄğÅ¸ÀÓ µî)
+    if (!AbilityToActivate->CanActivateAbility(this))
+    {
+        return L"½ºÅ³À» »ç¿ëÇÒ ¼ö ¾ø½À´Ï´Ù. (ÄğÅ¸ÀÓ, ¸¶³ª ºÎÁ· µî)";
+    }
+
+    // 4. ¸ğµç °Ë»ç¸¦ Åë°úÇßÀ¸¸é, ¾îºô¸®Æ¼¸¦ ÃÖÁ¾ÀûÀ¸·Î È°¼ºÈ­(»ç¿ë)
+    std::wstring LogMessage = AbilityToActivate->ActivateAbility(this, Target);
+
+    // 5. ¾îºô¸®Æ¼ ½ÇÇà °á°ú·Î ¹ŞÀº ·Î±× ¸Ş½ÃÁö¸¦ ¹İÈ¯
+    return LogMessage;
+}
+
+void AbilitySystemComponent::ApplyGameplayEffectToSelf(std::unique_ptr<GameplayEffect> Effect)
+{
+    // Effect Æ÷ÀÎÅÍ¿Í ÀÚ½ÅÀÇ AttributeSet À¯È¿¼º °Ë»ç
+    if (!Effect || !MyAttributeSet)
+    {
+        return;
+    }
+
+	// ApplicationType¿¡ µû¶ó Case ºĞ±â Ã³¸®
+    switch (Effect->ApplicationType)
+    {
+        case EEffectApplication::Instant:
+        {
+            // Áï½Ã È¿°ú
+            Effect->Apply(MyAttributeSet.get());
+            break;
+        }
+
+        case EEffectApplication::Duration:
+        case EEffectApplication::Infinite:
+        {
+            bool bFoundAndRefreshed = false;
+            // ÇöÀç Àû¿ë ÁßÀÎ È¿°ú ¸ñ·Ï(ActiveEffects)À» È®ÀÎ
+            for (FActiveGameplayEffect& ActiveEffect : this->ActiveEffects)
+            {
+                // 'È¿°ú ÀÌ¸§'ÀÌ °°Àº °ÍÀÌ ÀÖ´ÂÁö È®ÀÎ
+                if (ActiveEffect.SourceEffect->EffectName == Effect->EffectName)
+                {
+                    // °°Àº È¿°ú¸¦ Ã£¾Ò´Ù¸é »õ·Î Ãß°¡ÇÏ´Â ´ë½Å, ±âÁ¸ È¿°úÀÇ Áö¼Ó½Ã°£¸¸ °»½Å (µ¶¾È°³ µî ÁßÃ¸ ¹æÁö)
+                    ActiveEffect.RemainingTurns = Effect->Duration;
+                    bFoundAndRefreshed = true;
+                    break;
+                }
+            }
+
+            // Áßº¹µÈ È¿°ú¸¦ Ã£Áö ¸øÇÏ°í °»½ÅÇÏÁöµµ ¾Ê¾Ò´Ù¸é »õ·Î ¸ñ·Ï¿¡ Ãß°¡
+            if (!bFoundAndRefreshed)
+            {
+                FActiveGameplayEffect NewActiveEffect;
+                NewActiveEffect.RemainingTurns = (Effect->ApplicationType == EEffectApplication::Infinite) ? -1 : Effect->Duration;
+                NewActiveEffect.SourceEffect = std::move(Effect); // ¼ÒÀ¯±Ç ÀÌÀü
+                this->ActiveEffects.push_back(std::move(NewActiveEffect));
+            }
+
+            break;
+        }
+    }
+}
+
+std::wstring AbilitySystemComponent::UpdateActiveEffects()
+{
+    std::wstring LogMessage = L"";
+
+    for (int i = ActiveEffects.size() - 1; i >= 0; --i)
+    {
+        FActiveGameplayEffect& ActiveEffect = ActiveEffects[i];
+        GameplayEffect* Effect = ActiveEffect.SourceEffect.get();
+
+        if (!Effect) continue;
+
+        // "¸Å ÅÏ ¹ßµ¿" È¿°ú Ã³¸®
+        if (Effect->bExecuteOnTurn)
+        {
+            // ÀúÀåµÈ Magnitude¸¦ ±×´ë·Î »ç¿ë
+            Effect->Apply(MyAttributeSet.get());
+
+            // ·Î±×¸¦ »ı¼º. Effect¿¡ ÀúÀåµÈ SourceActor¸¦ »ç¿ë
+            if (Effect->SourceActor)
+            {
+                LogMessage += Effect->SourceActor->Name + L"ÀÇ " + Effect->EffectName + L" È¿°ú·Î "
+                    + OwnerActor->Name + L"ÀÌ(°¡) "
+                    + std::to_wstring(static_cast<int>(-Effect->Magnitude)) + L"ÀÇ ÇÇÇØ¸¦ ÀÔ¾ú½À´Ï´Ù.";
+            }
+        }
+
+        // ³²Àº ÅÏ °ü¸®
+        if (ActiveEffect.RemainingTurns > 0)
+        {
+            ActiveEffect.RemainingTurns--;
+        }
+
+        // È¿°ú ¸¸·á Ã³¸®
+        if (ActiveEffect.RemainingTurns == 0)
+        {
+            ActiveEffects.erase(ActiveEffects.begin() + i);
+        }
+    }
+    return LogMessage;
+}
+
+// Getter
+GameplayAbility* AbilitySystemComponent::GetGrantedAbility(int32_t Index) const
+{
+    // Index°¡ À¯È¿ÇÑ ¹üÀ§(0ºÎÅÍ º¤ÅÍ Å©±â - 1±îÁö)¿¡ ÀÖ´ÂÁö È®ÀÎ
+        if (Index >= 0 && Index < GrantedAbilities.size())
+        {
+            // unique_ptr·Î ÀúÀåµÈ ¾îºô¸®Æ¼ÀÇ ¼ø¼ö Æ÷ÀÎÅÍ(.get())¸¦ ¹İÈ¯
+            return GrantedAbilities[Index].get();
+        }
+
+    // À¯È¿ÇÏÁö ¾ÊÀº ÀÎµ¦½º¶ó¸é nullptrÀ» ¹İÈ¯
+    return nullptr;
+}#include "AB_NormalAttack.h"
+#include "GameplayEffect.h"
+#include "AbilitySystemComponent.h"
+#include "Actor.h"
+#include "AttributeSet.h"
+#include "DamageUtils.h"
+#include <map>
+#include <string> // std::to_wstring »ç¿ëÀ» À§ÇØ Æ÷ÇÔ
+
+AB_NormalAttack::AB_NormalAttack()
+{
+    // ¾îºô¸®Æ¼ ±âº» Á¤º¸ ¼³Á¤
+    AbilityName = L"ÀÏ¹İ °ø°İ";
+    AbilityDescription = L"´ë»ó¿¡°Ô ¹°¸® ÇÇÇØ¸¦ ÀÔÈü´Ï´Ù.";
+    MyDamageType = EDamageType::Physical; // ÀÌ ½ºÅ³Àº '¹°¸®' Å¸ÀÔ
+    AD_Ratio = 1.0f; // ÇÇÇØ·® °è¼ö. 1.0f´Â 'Èû' ´É·ÂÄ¡ÀÇ 100%¸¦ ÇÇÇØ·®À¸·Î »ç¿ëÇÑ´Ù´Â ÀÇ¹Ì
+	AP_Ratio = 0.0f; // EDamageType::Physical Å¸ÀÔÀº AP¸¦ »ç¿ëÇÏÁö ¾ÊÀ¸¹Ç·Î 0À¸·Î ¼³Á¤
+}
+
+void AB_NormalAttack::SetupEffects()
+{
+}
+
+std::wstring AB_NormalAttack::ActivateAbility(AbilitySystemComponent* SourceASC, Actor* Target)
+{
+    // ½ÃÀüÀÚ¿Í ´ë»óÀÌ À¯È¿ÇÑÁö È®ÀÎ
+    if (!SourceASC || !Target)
+    {
+        return L"´ë»óÀÌ ¾ø¾î °ø°İÇÒ ¼ö ¾ø½À´Ï´Ù.";
+    }
+
+    const Actor* SourceActor = SourceASC->GetOwnerActor();
+
+    // 1. µ¥¹ÌÁö °è»êÀ» »õ·Î¿î DamageUtils ÇÔ¼ö¿¡ À§ÀÓ
+    float Damage = DamageUtils::CalculateDamage(SourceActor, Target, this->AD_Ratio, this->AP_Ratio, this->MyDamageType);
+
+    // 2. È¿°ú¿¡ ´ëÇØ Á¤ÀÇÇÒ GameplayEffect¸¦ »ı¼º
+    auto DamageEffect = std::make_unique<GameplayEffect>();
+    DamageEffect->EffectName = L"µ¥¹ÌÁö";
+    DamageEffect->ApplicationType = EEffectApplication::Instant;
+	DamageEffect->TargetAttributeName = "HP";    // ´ë»óÀÇ HP ¼Ó¼º¿¡ Àû¿ë
+    DamageEffect->Magnitude = -Damage;   // HP ÇÇÇØÀÌ¹Ç·Î À½¼ö·Î ¼³Á¤
+
+    // 3. ´ë»ó¿¡°Ô È¿°ú¸¦ Àû¿ë
+    Target->GetAbilityComponent()->ApplyGameplayEffectToSelf(std::move(DamageEffect));
+
+    // 4. ·Î±×¸¦ ¹İÈ¯
+    std::wstring LogMessage = SourceActor->Name + L"ÀÌ(°¡) "
+        + Target->Name + L"¿¡°Ô "
+        + std::to_wstring(static_cast<int>(Damage))
+        + L"ÀÇ ÇÇÇØ¸¦ ÀÔÇû½À´Ï´Ù.";
+
+    return LogMessage;
+}#include "AB_PoisonCloud.h"
+#include "GameplayEffect.h"
+#include "AbilitySystemComponent.h"
+#include "Actor.h"
+#include "AttributeSet.h"
+#include "DamageUtils.h"
+#include <string>
+#include <memory>
+
+AB_PoisonCloud::AB_PoisonCloud()
+{
+    // ¾îºô¸®Æ¼ ±âº» Á¤º¸ ¼³Á¤
+    AbilityName = L"µ¶ ¾È°³";
+    AbilityDescription = L"´ë»ó¿¡°Ô 3ÅÏ°£ Áö¼ÓµÇ´Â µ¶ ÇÇÇØ¸¦ ÀÔÈü´Ï´Ù.";
+    ManaCost = 15.0f;
+
+    MyDamageType = EDamageType::Magical; // ÀÌ ½ºÅ³Àº '¹°¸®' Å¸ÀÔ
+    AD_Ratio = 0.0f; // EDamageType::Magical Å¸ÀÔÀº AD¸¦ »ç¿ëÇÏÁö ¾ÊÀ¸¹Ç·Î 0À¸·Î ¼³Á¤
+    AP_Ratio = 0.25f; // ¸¶¹ı ÇÇÇØ·® °è¼ö
+
+    // ½ºÅ³ ¼¼ºÎ ¼³Á¤°ª ÃÊ±âÈ­
+    PoisonDuration = 3;
+}
+
+std::wstring AB_PoisonCloud::ActivateAbility(AbilitySystemComponent* SourceASC, Actor* Target)
+{
+    // ½ÃÀüÀÚ¿Í ´ë»óÀÌ À¯È¿ÇÑÁö È®ÀÎ
+    if (!SourceASC || !Target)
+    {
+        return L"´ë»óÀÌ ¾ø¾î °ø°İÇÒ ¼ö ¾ø½À´Ï´Ù.";
+    }
+
+    const Actor* SourceActor = SourceASC->GetOwnerActor();
+    AbilitySystemComponent* TargetASC = Target->GetAbilityComponent();
+
+    if (!TargetASC)
+    {
+        return L"´ë»óÀÌ È¿°ú¸¦ ¹ŞÀ» ¼ö ¾ø½À´Ï´Ù.";
+    }
+    // ½ºÅ³ÀÌ ÅÏ´ç ¾ó¸¶ÀÇ µ¥¹ÌÁö¸¦ ÁÙÁö °è»ê
+    float DotDamage = DamageUtils::CalculateDamage(SourceActor, Target, this->AD_Ratio, this->AP_Ratio, this->MyDamageType);
+
+    // [È¿°ú¸¦ »ı¼º] ÇÏ°í °è»êµÈ µ¥¹ÌÁö(DotDamage)¸¦ Magnitude·Î ¼³Á¤ (Èü¿¡ ÇÒ´ç)
+    auto PoisonEffect = std::make_unique<GameplayEffect>();
+    PoisonEffect->EffectName = L"µ¶ ÇÇÇØ";
+    PoisonEffect->ApplicationType = EEffectApplication::Duration;
+    PoisonEffect->Duration = this->PoisonDuration;
+    PoisonEffect->bExecuteOnTurn = true;
+    PoisonEffect->TargetAttributeName = "HP";
+    PoisonEffect->Magnitude = -DotDamage;
+    PoisonEffect->SourceActor = SourceASC->GetOwnerActor(); // ½ÃÀüÀÚ ´©±¸ÀÎÁö ±â·Ï
+
+    TargetASC->ApplyGameplayEffectToSelf(std::move(PoisonEffect));
+
+    // ·Î±× ¹İÈ¯
+    std::wstring LogMessage = SourceActor->Name + L"ÀÌ(°¡) "
+        + AbilityName + L"À»(¸¦) ½ÃÀüÇß½À´Ï´Ù!";
+
+    return LogMessage;
+}#include "Actor.h"
+#include "AbilitySystemComponent.h"
+
+// »ı¼ºÀÚ: ÀÚ½ÅÀÇ AbilitySystemComponent¸¦ »ı¼ºÇÏ¿© ¼ÒÀ¯
+Actor::Actor()
+{
+    this->AbilityComponent = std::make_unique<AbilitySystemComponent>(this);
+}#include "AttributeSet.h"
+#include "AbilitySystemComponent.h"
+
+AttributeSet::AttributeSet(AbilitySystemComponent* OwnerComp)
+	: OwningAbilitySystemComponent(OwnerComp) // ¸â¹ö ÀÌ´Ï¼È¶óÀÌÀú¸¦ »ç¿ëÇØ OwningAbilitySystemComponent ÃÊ±âÈ­
+{
+    // °¢ ¼Ó¼ºÀÇ ÀÌ¸§°ú ¸Ş¸ğ¸® ÁÖ¼Ò¸¦ ¸Ê¿¡ µî·Ï
+    AttributeMap["HP"] = &HP;
+    AttributeMap["MP"] = &MP;
+    AttributeMap["BaseHP"] = &BaseHP;
+    AttributeMap["BaseMP"] = &BaseMP;
+    AttributeMap["Strength"] = &Strength;
+    AttributeMap["Agility"] = &Agility;
+    AttributeMap["Intelligence"] = &Intelligence;
+    AttributeMap["Defence"] = &Defence;
+    AttributeMap["MagicResistance"] = &MagicResistance;
+    AttributeMap["Gold"] = &Gold;
+    AttributeMap["Experience"] = &Experience;
+    AttributeMap["CriticalHitChance"] = &CriticalHitChance;
+    AttributeMap["CriticalHitDamageMultiplier"] = &CriticalHitDamageMultiplier;
+
+    // . . . ( »õ·Î¿î ½ºÅÈ Ãß°¡ ½Ã ¿©±â¿¡ Ãß°¡ ) . . .
+}
+
+void AttributeSet::PreAttributeChange(const FAttributeData& Attribute, float& NewValue)
+{
+}
+
+void AttributeSet::PostAttributeChange(const FAttributeData& Attribute, float OldValue, float NewValue)
+{
+    // Æ÷ÀÎÅÍ ºñ±³¸¦ ÅëÇØ ¾î¶² ¼Ó¼ºÀÌ º¯°æµÇ¾ú´ÂÁö È®ÀÎ
+    if (&Attribute == &HP)
+    {
+        // HP°¡ º¯°æµÇ¾ú´Ù¸é, 0°ú ÃÖ´ë HP »çÀÌÀÇ °ªÀ¸·Î º¸Á¤ÇÕ´Ï´Ù.
+        HP.CurrentValue = std::max(0.0f, HP.CurrentValue);
+        HP.CurrentValue = std::min(HP.BaseValue, HP.CurrentValue); // ÃÖ´ë Ã¼·ÂÀ» ³ÑÁö ¾Êµµ·Ï
+    }
+    else if (&Attribute == &MP)
+    {
+        // MP°¡ º¯°æµÇ¾ú´Ù¸é, 0°ú ÃÖ´ë MP »çÀÌÀÇ °ªÀ¸·Î º¸Á¤ÇÕ´Ï´Ù.
+        MP.CurrentValue = std::max(0.0f, MP.CurrentValue);
+        MP.CurrentValue = std::min(MP.BaseValue, MP.CurrentValue); // ÃÖ´ë ¸¶³ª¸¦ ³ÑÁö ¾Êµµ·Ï
+    }
+}
+
+void AttributeSet::AdjustDependentAttributes()
+{
+}ï»¿#include "BattleManager.h"
+#include "Player.h"
+#include "Monster.h"
+#include "AttributeSet.h"
+#include "AbilitySystemComponent.h"
+#include "GameplayAbility.h"
+#include "ConsoleUtils.h"
+
+#include <iostream>
+#include <windows.h>
+#include <conio.h>
+#include <fcntl.h>
+#include <io.h>
+
+using namespace std;
+using namespace ConsoleUtils;
+
+BattleManager::BattleManager(Player* player, Monster* monster)
+    : m_player(player), m_monster(monster),
+    m_bIsBattleOver(false), m_bPlayerWon(false), m_CurrentTurn(1)
+{
+    m_statusMessage = L"ì•¼ìƒì˜ " + m_monster->Name + L"ì´(ê°€) ë‚˜íƒ€ë‚¬ë‹¤!";
+}
+
+void BattleManager::Run() {
+    ShowConsoleCursor(false);
+    PlayIntroAnimation();
+
+    Log(m_statusMessage);
+    Sleep(1500);
+
+    while (!m_bIsBattleOver) {
+        Draw();
+        ProcessPlayerTurn();
+        CheckBattleStatus();
+        std::wstring playerLog = m_player->GetAbilityComponent()->UpdateActiveEffects();
+        if (!playerLog.empty())
+        {
+            Log(playerLog); // ë¡œê·¸ê°€ ë¹„ì–´ìˆì§€ ì•Šì„ ë•Œë§Œ Log í•¨ìˆ˜ í˜¸ì¶œ
+			Sleep(2000); // í”Œë ˆì´ì–´ í„´ í›„ íš¨ê³¼ ì—…ë°ì´íŠ¸ ì‹œê°„
+        }
+        if (m_bIsBattleOver) break;
+
+        Draw();
+        ProcessEnemyTurn();
+        CheckBattleStatus();
+        std::wstring monsterLog = m_monster->GetAbilityComponent()->UpdateActiveEffects();
+        if (!monsterLog.empty())
+        {
+            Log(monsterLog); // ë¡œê·¸ê°€ ë¹„ì–´ìˆì§€ ì•Šì„ ë•Œë§Œ Log í•¨ìˆ˜ í˜¸ì¶œ
+			Sleep(2000); // ëª¬ìŠ¤í„° í„´ í›„ íš¨ê³¼ ì—…ë°ì´íŠ¸ ì‹œê°„
+        }
+        if (m_bIsBattleOver) break;
+
+        m_CurrentTurn++;
+    }
+
+    EndBattle();
+}
+
+void BattleManager::ProcessPlayerTurn()
+{
+    m_player->GetAbilityComponent()->GetAttributeSet()->bIsDefending = false;
+    Log(L"ë¬´ì—‡ì„ í• ê¹Œ?");
+
+    // ë©”ë‰´ë¥¼ ì„ íƒí•˜ê¸° ì „ ìŒ“ì˜€ì„ì§€ ëª¨ë¥´ëŠ” ëª¨ë“  ì…ë ¥ ë¹„ì›€
+    ClearInputBuffer();
+
+    vector<wstring> options = { L"ê³µê²©", L"ë°©ì–´", L"ì•„ì´í…œ", L"ë„ë§ê°€ê¸°" };
+    int choice = SelectMenuVertical(options, 65, 22);
+
+    switch (choice)
+    {
+    case 0: // ê³µê²©
+    {
+        Log(L"ì‚¬ìš©í•  ìŠ¤í‚¬ì„ ì„ íƒí•˜ì„¸ìš”.");
+        AbilitySystemComponent* pASC = m_player->GetAbilityComponent();
+        const auto& equippedAbilities = pASC->GetEquippedAbilities();
+        vector<wstring> skillOptions;
+
+        for (const auto& skill : equippedAbilities)
+        {
+            if (skill) skillOptions.push_back(skill->AbilityName + L" (MP:" + to_wstring((int)skill->ManaCost) + L")");
+            else skillOptions.push_back(L"(ë¹„ì–´ìˆìŒ)");
+        }
+        skillOptions.push_back(L"ë’¤ë¡œê°€ê¸°");
+
+        int skillChoice = SelectMenuVertical(skillOptions, 65, 21);
+
+        // 'ë’¤ë¡œê°€ê¸°'ë¥¼ ì„ íƒí•˜ì§€ ì•Šì€ ê²½ìš°
+        if (skillChoice < skillOptions.size() - 1)
+        {
+            std::wstring resultLog = pASC->TryActivateAbility(skillChoice, m_monster);
+
+            // ë°›ì€ ë¡œê·¸ë¥¼ BattleManagerì˜ Log í•¨ìˆ˜ë¥¼ í†µí•´ UIì— í‘œì‹œ
+            Log(resultLog);
+
+            Sleep(2000); // ê²°ê³¼ë¥¼ ë³¼ ì‹œê°„
+        }
+        else // 'ë’¤ë¡œê°€ê¸°' ì„ íƒ ì‹œ
+        {
+            ProcessPlayerTurn(); // í–‰ë™ ì„ íƒìœ¼ë¡œ ë‹¤ì‹œ ëŒì•„ê°
+        }
+        break;
+    }
+    case 1: // ë°©ì–´
+        m_player->GetAbilityComponent()->GetAttributeSet()->bIsDefending = true;
+        Log(m_player->Name + L"ì€(ëŠ”) ë°©ì–´ íƒœì„¸ë¥¼ ê°–ì·„ë‹¤!");
+        Sleep(1500);
+        break;
+    case 2: // ì•„ì´í…œ
+        Log(L"ì•„ì´í…œ ê°€ë°©ì´ ë¹„ì–´ìˆìŠµë‹ˆë‹¤!");
+        Sleep(1500);
+        break;
+    case 3: // ë„ë§ê°€ê¸°
+        Log(L"ì„±ê³µì ìœ¼ë¡œ ë„ë§ì³¤ë‹¤!");
+        m_bIsBattleOver = true;
+        Sleep(1500);
+        break;
+    }
+}
+
+void BattleManager::ProcessEnemyTurn()
+{
+    Log(m_monster->Name + L"ì˜ í„´!");
+    Sleep(1500);
+    Log(m_monster->RunAI(m_player));
+    Sleep(2000);
+}
+
+void BattleManager::Log(const wstring& message)
+{
+    m_statusMessage = message;
+    Draw();
+}
+
+void BattleManager::CheckBattleStatus()
+{
+    if (m_monster->GetAbilityComponent()->GetAttributeSet()->HP.CurrentValue <= 0)
+    {
+        m_bIsBattleOver = true;
+        m_bPlayerWon = true;
+    }
+    else if (m_player->GetAbilityComponent()->GetAttributeSet()->HP.CurrentValue <= 0)
+    {
+        m_bIsBattleOver = true;
+        m_bPlayerWon = false;
+    }
+}
+
+void BattleManager::EndBattle()
+{
+    if (m_bPlayerWon)
+    {
+        Log(m_monster->Name + L"ì„(ë¥¼) ì“°ëŸ¬ëœ¨ë ¸ë‹¤! ìŠ¹ë¦¬!");
+    }
+    else if (m_bIsBattleOver) // ë„ë§ê°„ ê²½ìš°ê°€ ì•„ë‹ˆë©´ì„œ ì „íˆ¬ê°€ ëë‚¬ì„ ë•Œ
+    {
+        Log(m_player->Name + L"ì€(ëŠ”) ì“°ëŸ¬ì¡Œë‹¤...");
+    }
+    Sleep(3000);
+}
+
+void BattleManager::Draw() {
+    clearScreen();
+    gotoxy(0, 0);
+
+    AttributeSet* playerAttr = m_player->GetAbilityComponent()->GetAttributeSet();
+    AttributeSet* monsterAttr = m_monster->GetAbilityComponent()->GetAttributeSet();
+
+    DrawBox(45, 2, 30, 6);
+    gotoxy(47, 3); wcout << m_monster->Name << L"     Lv. " << monsterAttr->Level;
+    gotoxy(47, 4); wcout << DrawStatBar(L"HP", monsterAttr->HP.CurrentValue, monsterAttr->HP.BaseValue, 15);
+    gotoxy(49, 5); wcout << (int)monsterAttr->HP.CurrentValue << L" / " << (int)monsterAttr->HP.BaseValue;
+
+    DrawBox(2, 12, 30, 7);
+    gotoxy(4, 13); wcout << m_player->Name << L"      Lv. " << playerAttr->Level;
+    gotoxy(4, 14); wcout << DrawStatBar(L"HP", playerAttr->HP.CurrentValue, playerAttr->HP.BaseValue, 15);
+    gotoxy(6, 15); wcout << (int)playerAttr->HP.CurrentValue << L" / " << (int)playerAttr->HP.BaseValue;
+    gotoxy(4, 16); wcout << L"MP : " << (int)playerAttr->MP.CurrentValue << L" / " << (int)playerAttr->MP.BaseValue << wstring(15, L' ');
+
+    DrawBox(2, 20, 60, 8);
+    DrawBox(63, 20, 25, 8);
+    gotoxy(4, 22); wcout << wstring(58, L' ');
+    gotoxy(4, 22); wcout << m_statusMessage;
+
+    for (int i = 0; i < 6; ++i) {
+        gotoxy(64, 21 + i);
+        wcout << wstring(23, L' ');
+    }
+}
+std::wstring BattleManager::DrawStatBar(const std::wstring& label, float current, float max, int barLength) {
+    if (current < 0) current = 0;
+    float ratio = (max > 0) ? (current / max) : 0;
+    int filledLength = static_cast<int>(ratio * barLength);
+    wstring bar = label + L" [";
+    for (int i = 0; i < barLength; ++i) {
+        if (i < filledLength) bar += L"â– ";
+        else bar += L" ";
+    }
+    bar += L"]";
+    return bar;
+}
+void BattleManager::PlayIntroAnimation()
+{
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    ShowConsoleCursor(false);
+    clearScreen();
+
+    for (int i = 0; i < 3; ++i) {
+        system("color F4"); Sleep(80);
+        system("color 0F"); Sleep(80);
+    }
+
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(hConsole, &csbi);
+    int width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+    int height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+
+    // ì „ì²´ í™”ë©´ì„ ë¸”ë¡ìœ¼ë¡œ ì±„ìš°ê¸°
+    std::wstring blockLine(width, L'â–ˆ');
+    if (blockLine.length() % 2 != 0) blockLine += L" ";
+
+    for (int y = 0; y < height; ++y) {
+        SafeWriteUnicodeLine(hConsole, blockLine, y);
+    }
+
+    Sleep(100);
+
+    // ê°€ìš´ë°ì—ì„œ ì¢Œìš°ë¡œ ê°ˆë¼ì§€ëŠ” ì• ë‹ˆë©”ì´ì…˜
+    int centerX = width / 2;
+    for (int offset = 0; offset <= centerX; ++offset)
+    {
+        for (int y = 0; y < height; ++y)
+        {
+            // ì™¼ìª½ ì¹¸ ì§€ìš°ê¸°
+            if (centerX - offset >= 0) {
+                gotoxy(centerX - offset, y);
+                std::wcout << L" ";
+            }
+
+            // ì˜¤ë¥¸ìª½ ì¹¸ ì§€ìš°ê¸°
+            if (centerX + offset < width) {
+                gotoxy(centerX + offset, y);
+                std::wcout << L" ";
+            }
+        }
+        Sleep(5);
+    }
+
+    clearScreen();
+    ShowConsoleCursor(true);
+    system("color 0F");
+}#include "ConsoleUtils.h"
+#include <iostream>
+#include <conio.h>
+#include <vector>
+
+using namespace std;
+
+namespace ConsoleUtils {
+    static int g_nScreenIndex;
+    static HANDLE g_hBuffer[2];
+
+    void DrawBox(int x, int y, int width, int height) {
+        gotoxy(x, y); wcout << L"¦£";
+        for (int i = 0; i < width - 2; ++i) wcout << L"¦¡";
+        wcout << L"¦¤";
+        for (int i = 1; i < height - 1; ++i) {
+            gotoxy(x, y + i); wcout << L"¦¢";
+            gotoxy(x + width - 1, y + i); wcout << L"¦¢";
+        }
+        gotoxy(x, y + height - 1); wcout << L"¦¦";
+        for (int i = 0; i < width - 2; ++i) wcout << L"¦¡";
+        wcout << L"¦¥";
+    }
+
+    void gotoxy(int x, int y) {
+        COORD pos = { (SHORT)x, (SHORT)y };
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+    }
+
+    void ShowConsoleCursor(bool showFlag) {
+        HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+        CONSOLE_CURSOR_INFO cursorInfo;
+        GetConsoleCursorInfo(out, &cursorInfo);
+        cursorInfo.bVisible = showFlag;
+        SetConsoleCursorInfo(out, &cursorInfo);
+    }
+
+    void clearScreen() {
+        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+        CONSOLE_SCREEN_BUFFER_INFO csbi;
+        SMALL_RECT scrollRect;
+        COORD scrollTarget;
+        CHAR_INFO fill;
+
+        // Get the number of character cells in the current buffer.
+        if (!GetConsoleScreenBufferInfo(hConsole, &csbi))
+        {
+            return;
+        }
+
+        // Scroll the rectangle of the entire buffer.
+        scrollRect.Left = 0;
+        scrollRect.Top = 0;
+        scrollRect.Right = csbi.dwSize.X;
+        scrollRect.Bottom = csbi.dwSize.Y;
+
+        // Scroll it upwards off the top of the buffer with a destination of 0, -9999.
+        scrollTarget.X = 0;
+        scrollTarget.Y = (SHORT)(0 - csbi.dwSize.Y);
+
+        // Fill with empty spaces with the buffer's default text attribute.
+        fill.Char.UnicodeChar = TEXT(' ');
+        fill.Attributes = csbi.wAttributes;
+
+        ScrollConsoleScreenBuffer(hConsole, &scrollRect, NULL, scrollTarget, &fill);
+
+        // Move cursor to home
+        csbi.dwCursorPosition.X = 0;
+        csbi.dwCursorPosition.Y = 0;
+
+        SetConsoleCursorPosition(hConsole, csbi.dwCursorPosition);
+    }
+
+    int SelectMenuVertical(const vector<wstring>& options, int startX, int startY) {
+        ShowConsoleCursor(false);
+        int selection = 0;
+        int key;
+        while (true) {
+            for (int i = 0; i < options.size(); ++i) {
+                gotoxy(startX, startY + i);
+                if (i == selection) wcout << L"¢º " << options[i];
+                else wcout << L"  " << options[i] << L"  ";
+            }
+            key = _getch();
+            if (key == 224) {
+                key = _getch();
+                switch (key) {
+                case 72: selection = (selection == 0) ? options.size() - 1 : selection - 1; break;
+                case 80: selection = (selection == options.size() - 1) ? 0 : selection + 1; break;
+                }
+            }
+            else if (key == 13) {
+                ShowConsoleCursor(true);
+                return selection;
+            }
+        }
+    }
+}
+void ConsoleUtils::SafeWriteUnicodeLine(HANDLE hConsole, const std::wstring& line, SHORT y)
+{
+    DWORD written;
+    COORD pos = { 0, y };
+    SetConsoleCursorPosition(hConsole, pos);
+    WriteConsoleW(hConsole, line.c_str(), (DWORD)line.length(), &written, nullptr);
+}
+void ConsoleUtils::ClearInputBuffer()
+{
+    // _kbhit() : Å°º¸µå ÀÔ·ÂÀÌ ¹öÆÛ¿¡ ÀÖ´ÂÁö È®ÀÎÇÏ´Â ÇÔ¼ö. ÀÖÀ¸¸é true ¹İÈ¯.
+    // ¹öÆÛ¿¡ ÀÔ·ÂÀÌ ¾øÀ» ¶§±îÁö ·çÇÁ¸¦ µ¹¸ç _getch()·Î ¹®ÀÚ¸¦ ÀĞ¾îµé¿© ¼ÒÁø½ÃÅ´
+    while (_kbhit())
+    {
+        _getch();
+    }
+}#include "DamageUtils.h"
+#include "Actor.h"
+#include "AbilitySystemComponent.h"
+#include "AttributeSet.h"
+
+#include <random>
+
+namespace DamageUtils
+{
+    float CalculateDamage(const Actor* SourceActor, const Actor* TargetActor, float ADRatio, float APRatio, EDamageType DamageType)
+    {
+        if (!SourceActor || !TargetActor) return 0.0f;
+
+        const AttributeSet* SourceStats = SourceActor->GetAbilityComponent()->GetAttributeSet();
+        const AttributeSet* TargetStats = TargetActor->GetAbilityComponent()->GetAttributeSet();
+
+        if (!SourceStats || !TargetStats) return 0.0f;
+
+        float Damage = 0.0f;
+
+        // µ¥¹ÌÁö Å¸ÀÔ¿¡ µû¶ó °è»ê ¹æ½ÄÀ» ºĞ±â
+        switch (DamageType)
+        {
+        case EDamageType::Physical:
+            // ¹°¸® µ¥¹ÌÁö = (Èû * ¹°¸® °è¼ö) - (´ë»óÀÇ ¹æ¾î·Â)
+            Damage = SourceStats->Strength.CurrentValue * ADRatio;
+            Damage -= TargetStats->Defence.CurrentValue;
+            break;
+
+        case EDamageType::Magical:
+            // ¸¶¹ı µ¥¹ÌÁö = (Áö´É * ¸¶¹ı °è¼ö) - (´ë»óÀÇ ¸¶¹ı ÀúÇ×·Â)
+            Damage = SourceStats->Intelligence.CurrentValue * APRatio;
+            Damage -= TargetStats->MagicResistance.CurrentValue;
+            break;
+
+        case EDamageType::True:
+            // °íÁ¤ µ¥¹ÌÁö = (Èû * ¹°¸® °è¼ö) ¶Ç´Â (Áö´É * ¸¶¹ı °è¼ö). ¹æ¾î/ÀúÇ× ¹«½Ã (ÇöÀç ±¸Çö X)
+            break;
+
+        case EDamageType::None:
+        default:
+            break;
+        }
+
+        
+        {
+            // µ¥¹ÌÁö ÆíÂ÷¸¦ À§ÇÑ ³­¼ö ¹ß»ı ±¸°£
+            // staticÀ¸·Î ¼±¾ğÇÏ¿©, ÀÌ ÇÔ¼ö°¡ Ã³À½ È£ÃâµÉ ¶§ ´Ü ÇÑ ¹ø¸¸ »ı¼º
+            static std::random_device rd;  // ¿¹Ãø ºÒ°¡´ÉÇÑ ½Ãµå°ªÀ» »ı¼º
+            static std::mt19937 gen(rd()); // ½Ãµå°ªÀ¸·Î ¸Ş¸£¼¾ Æ®À§½ºÅÍ ¿£ÁøÀ» ÃÊ±âÈ­
+
+            // 0.95f ~ 1.15f »çÀÌÀÇ ½Ç¼ö¸¦ ±ÕµîÇÏ°Ô »ı¼ºÇÏ´Â ºĞÆ÷¸¦ Á¤ÀÇ (-15% ~ +15% ÆíÂ÷)
+            static std::uniform_real_distribution<float> distrib(0.95f, 1.15f);
+
+            // ÃÖÁ¾ µ¥¹ÌÁö¿¡ ·£´ı ¹èÀ²À» °öÇÕ´Ï´Ù.
+            if (Damage > 0)
+            {
+                Damage *= distrib(gen);
+            }
+        }
+
+        // ÃÖ¼Ò µ¥¹ÌÁö´Â 1·Î ¼³Á¤
+        if (Damage < 1.f)
+        {
+            Damage = 1.f;
+        }
+
+        return Damage;
+    }
+}#include "GameplayAbility.h"
+#include "GameplayEffect.h"
+
+GameplayAbility::GameplayAbility()
+{
+}
+
+
+bool GameplayAbility::CanActivateAbility(AbilitySystemComponent* SourceASC) const
+{
+    return true;
+}#include "GameplayEffect.h"
+
+GameplayEffect::GameplayEffect()
+{
+}
+
+GameplayEffect::~GameplayEffect()
+{
+}
+
+// °¡Àå ÇÙ½ÉÀûÀÎ ÇÔ¼ö
+// TargetAttributeNameÀ» ±â¹İÀ¸·Î TargetAttributeSetÀÇ ½ÇÁ¦ ¼Ó¼ºÀ» Ã£¾Æ
+// Magnitude¸¸Å­ ¼öÄ¡¸¦ º¯°æÇÏ´Â ÇÔ¼ö
+void GameplayEffect::Apply(AttributeSet* TargetAttributeSet) const
+{
+    // ´ë»óÀÇ AttributeSet À¯È¿¼º °Ë»ç
+    if (!TargetAttributeSet)
+    {
+        return;
+    }
+
+    // 1. ¸Ê¿¡¼­ TargetAttributeName¿¡ ÇØ´çÇÏ´Â ¼Ó¼ºÀ» find
+    auto it = TargetAttributeSet->AttributeMap.find(TargetAttributeName);
+
+	// 2. ¼Ó¼ºÀ» Á¤»óÀûÀ¸·Î Ã£¾Ò´ÂÁö °Ë»ç
+    if (it != TargetAttributeSet->AttributeMap.end())
+    {
+        // 3. ÇØ´ç ¼Ó¼ºÀÇ ÇöÀç °ªÀ» Magnitude ¸¸Å­ º¯°æ
+        // it->first´Â Å°("HP"), it->second´Â °ª(HP µ¥ÀÌÅÍÀÇ ÁÖ¼Ò)
+        FAttributeData* AttributeToChange = it->second;
+
+        // º¯°æ ÀüÀÇ °ªÀ» ±â·Ï
+        float OldValue = AttributeToChange->CurrentValue;
+
+        AttributeToChange->CurrentValue += Magnitude;
+
+        // AttributeSet¿¡°Ô "°ªÀÌ ¹Ù²î¾úÀ¸´Ï ÈÄÃ³¸®" ¶ó°í ¾Ë·ÁÁÜ
+        TargetAttributeSet->PostAttributeChange(*AttributeToChange, OldValue, AttributeToChange->CurrentValue);
+
+    }
+}
+
+std::unique_ptr<GameplayEffect> GameplayEffect::CreateInverseEffect() const
+{
+    // 1. »õ·Î¿î GameplayEffect °´Ã¼ »ı¼º
+    auto InverseEffect = std::make_unique<GameplayEffect>();
+
+	// 2. InverseEffectÀÇ ¼Ó¼ºµéÀ» ¼³Á¤
+    InverseEffect->EffectName = this->EffectName + L" (Á¦°Å)";
+    InverseEffect->TargetAttributeName = this->TargetAttributeName;
+
+    // 3. Àû¿ë ¹æ½ÄÀº Áï½Ã (Instant) ·Î Ã³¸®
+    InverseEffect->ApplicationType = EEffectApplication::Instant;
+
+    // 4. º¯°æ ¼öÄ¡(Magnitude) ¸¦ Á¤¹İ´ë·Î ¼³Á¤
+    InverseEffect->Magnitude = -this->Magnitude;
+
+    // 5. ¿Ï¼ºµÈ ¹İ´ë È¿°ú¸¦ ¹İÈ¯
+    return InverseEffect;
+}#include "Monster.h"
+#include "AbilitySystemComponent.h"
+#include "AttributeSet.h"
+
+Monster::Monster(const std::wstring& InName, float InHP, float InStrength, float InDefence)
+{
+    // »ı¼ºÀÚ¿¡¼­ ¹ŞÀº ÀÌ¸§À¸·Î ¼³Á¤
+    Name = InName;
+
+    // ASC¸¦ ÅëÇØ AttributeSet¿¡ Á¢±Ù
+    AttributeSet* MyStats = GetAbilityComponent()->GetAttributeSet();
+    if (MyStats)
+    {
+        // »ı¼ºÀÚ¿¡¼­ ¹ŞÀº °ªÀ¸·Î ¸ó½ºÅÍÀÇ ´É·ÂÄ¡¸¦ ¼³Á¤
+        MyStats->Level = 1;
+        MyStats->HP.BaseValue = InHP;
+        MyStats->HP.CurrentValue = InHP;
+
+        MyStats->Strength.BaseValue = InStrength;
+        MyStats->Strength.CurrentValue = InStrength;
+
+        MyStats->Defence.BaseValue = InDefence;
+        MyStats->Defence.CurrentValue = InDefence;
+    }
+}
+std::wstring Monster::RunAI(Actor* Target)
+{
+    if (GetAbilityComponent())
+    {
+        return GetAbilityComponent()->TryActivateAbility(0, Target);
+    }
+}#include "Player.h"
+#include "AbilitySystemComponent.h"
+#include "AttributeSet.h"
+
+Player::Player()
+{
+	// Player °´Ã¼ »ı¼º ½Ã ¹Ù·Î ÃÊ±âÈ­ ÇÔ¼ö È£Ãâ
+    Initialize();
+}
+
+void Player::Initialize()
+{
+    // ÇÃ·¹ÀÌ¾î ÀÌ¸§ ¼³Á¤
+    Name = L"¿ë»ç";
+
+    // ASC¸¦ ÅëÇØ AttributeSet¿¡ Á¢±Ù
+    AttributeSet* MyStats = GetAbilityComponent()->GetAttributeSet();
+    if (MyStats)
+    {
+        // ÇÃ·¹ÀÌ¾îÀÇ ÃÊ±â ´É·ÂÄ¡¸¦ ¼³Á¤
+        MyStats->Level = 1;
+        MyStats->HP.BaseValue = 150.f;
+        MyStats->HP.CurrentValue = 150.f;
+        MyStats->MP.BaseValue = 100.f;
+        MyStats->MP.CurrentValue = 100.f;
+
+        MyStats->Strength.BaseValue = 15.f;
+        MyStats->Strength.CurrentValue = 15.f;
+        MyStats->Defence.BaseValue = 10.f;
+        MyStats->Defence.CurrentValue = 10.f;
+        MyStats->Intelligence.CurrentValue = 10.f;
+        MyStats->Intelligence.BaseValue = 10.f;
+
+    }
+}
+
+void Player::Update()
+{
+    // TODO: ¸Å ÇÁ·¹ÀÓ¸¶´Ù ÇÃ·¹ÀÌ¾î°¡ Ã³¸®ÇØ¾ß ÇÒ ·ÎÁ÷ (¿¹: ÀÔ·Â Ã³¸®)
+}
+
+void Player::Render()
+{
+    // TODO: ÇÃ·¹ÀÌ¾îÀÇ Á¤º¸¸¦ È­¸é¿¡ ±×¸®´Â ·ÎÁ÷
+}ï»¿#include <iostream>
+#include <memory>
+#include <locale>
+#include <fcntl.h>
+#include <io.h>
+
+#include "Player.h"
+#include "Monster.h"
+#include "AB_NormalAttack.h"
+#include "BattleManager.h"
+#include "AbilitySystemComponent.h"
+#include "AB_PoisonCloud.h"
+
+
+using namespace std;
+
+int main()
+{
+	// í•œê¸€ ì§€ì›ì„ ìœ„í•œ ë¡œì¼€ì¼ ì„¤ì •
+    wcout.imbue(locale(""));
+
+    // 1. í”Œë ˆì´ì–´ì™€ ëª¬ìŠ¤í„° ìƒì„±
+    auto player = make_unique<Player>();
+    auto monster = make_unique<Monster>(L"ê³ ë¸”ë¦°", 70.f, 10.f, 5.f);
+
+    // 2. ê°ìì—ê²Œ 'ì¼ë°˜ ê³µê²©' ìŠ¤í‚¬ ë¶€ì—¬ ë° 0ë²ˆ ìŠ¬ë¡¯ì— ì¥ì°©
+    // í˜„ì¬ AI ëŠ” Monster í´ë˜ìŠ¤ì˜ RunAI() í•¨ìˆ˜ ì‚¬ìš© (0ë²ˆ ìŠ¤í‚¬ë§Œ ì‚¬ìš©í•˜ë„ë¡ êµ¬í˜„ë˜ì–´ ìˆìŒ)
+    auto playerAttack = make_unique<AB_NormalAttack>();
+    player->GetAbilityComponent()->GrantAbility(std::move(playerAttack));
+    player->GetAbilityComponent()->EquipAbility(0, player->GetAbilityComponent()->GetGrantedAbility(0));
+
+    auto poisonCloud = make_unique<AB_PoisonCloud>();
+    player->GetAbilityComponent()->GrantAbility(std::move(poisonCloud));
+    player->GetAbilityComponent()->EquipAbility(1, player->GetAbilityComponent()->GetGrantedAbility(1));
+
+    auto monsterAttack = make_unique<AB_NormalAttack>();
+    monster->GetAbilityComponent()->GrantAbility(std::move(monsterAttack));
+    monster->GetAbilityComponent()->EquipAbility(0, monster->GetAbilityComponent()->GetGrantedAbility(0));
+
+    // 3. ë°°í‹€ë§¤ë‹ˆì € ìƒì„± ë° ì „íˆ¬ ë£¨í”„ ì‹¤í–‰
+    BattleManager battleManager(player.get(), monster.get());
+    battleManager.Run();
+
+    return 0;
+}
