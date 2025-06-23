@@ -36,8 +36,6 @@ void Player::Initialize()
 
 
     }
-
-
     GetAbilityComponent()->GrantAbility(std::make_unique<AB_NormalAttack>());
     GetAbilityComponent()->EquipAbility(0, this->GetAbilityComponent()->GetGrantedAbility(0));
 

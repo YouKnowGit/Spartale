@@ -21,7 +21,6 @@ void ConsoleRenderer::Initialize()
     CONSOLE_SCREEN_BUFFER_INFO csbi;
     if (!GetConsoleScreenBufferInfo(m_hConsole, &csbi))
     {
-
         m_width = 80;
         m_height = 25;
     }
@@ -39,7 +38,6 @@ void ConsoleRenderer::Initialize()
     }
 
     // 읽어온 현재 창 크기에 맞춰 백 버퍼를 생성
-
     m_buffer = new CHAR_INFO[m_width * m_height];
 }
 
