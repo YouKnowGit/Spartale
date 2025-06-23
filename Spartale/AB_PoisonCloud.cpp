@@ -1,4 +1,4 @@
-#include "AB_PoisonCloud.h"
+ï»¿#include "AB_PoisonCloud.h"
 #include "GameplayEffect.h"
 #include "AbilitySystemComponent.h"
 #include "Actor.h"
@@ -9,25 +9,25 @@
 
 AB_PoisonCloud::AB_PoisonCloud()
 {
-    // ¾îºô¸®Æ¼ ±âº» Á¤º¸ ¼³Á¤
-    AbilityName = L"µ¶ ¾È°³";
-    AbilityDescription = L"´ë»ó¿¡°Ô 3ÅÏ°£ Áö¼ÓµÇ´Â µ¶ ÇÇÇØ¸¦ ÀÔÈü´Ï´Ù.";
+    // ì–´ë¹Œë¦¬í‹° ê¸°ë³¸ ì •ë³´ ì„¤ì •
+    AbilityName = L"ë… ì•ˆê°œ";
+    AbilityDescription = L"ëŒ€ìƒì—ê²Œ 3í„´ê°„ ì§€ì†ë˜ëŠ” ë… í”¼í•´ë¥¼ ì…í™ë‹ˆë‹¤.";
     ManaCost = 15.0f;
 
-    MyDamageType = EDamageType::Magical; // ÀÌ ½ºÅ³Àº '¹°¸®' Å¸ÀÔ
-    AD_Ratio = 0.0f; // EDamageType::Magical Å¸ÀÔÀº AD¸¦ »ç¿ëÇÏÁö ¾ÊÀ¸¹Ç·Î 0À¸·Î ¼³Á¤
-    AP_Ratio = 0.25f; // ¸¶¹ı ÇÇÇØ·® °è¼ö
+    MyDamageType = EDamageType::Magical; // ì´ ìŠ¤í‚¬ì€ 'ë¬¼ë¦¬' íƒ€ì…
+    AD_Ratio = 0.0f; // EDamageType::Magical íƒ€ì…ì€ ADë¥¼ ì‚¬ìš©í•˜ì§€ ì•Šìœ¼ë¯€ë¡œ 0ìœ¼ë¡œ ì„¤ì •
+    AP_Ratio = 0.25f; // ë§ˆë²• í”¼í•´ëŸ‰ ê³„ìˆ˜
 
-    // ½ºÅ³ ¼¼ºÎ ¼³Á¤°ª ÃÊ±âÈ­
+    // ìŠ¤í‚¬ ì„¸ë¶€ ì„¤ì •ê°’ ì´ˆê¸°í™”
     PoisonDuration = 3;
 }
 
 std::wstring AB_PoisonCloud::ActivateAbility(AbilitySystemComponent* SourceASC, Actor* Target)
 {
-    // ½ÃÀüÀÚ¿Í ´ë»óÀÌ À¯È¿ÇÑÁö È®ÀÎ
+    // ì‹œì „ìì™€ ëŒ€ìƒì´ ìœ íš¨í•œì§€ í™•ì¸
     if (!SourceASC || !Target)
     {
-        return L"´ë»óÀÌ ¾ø¾î °ø°İÇÒ ¼ö ¾ø½À´Ï´Ù.";
+        return L"ëŒ€ìƒì´ ì—†ì–´ ê³µê²©í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.";
     }
 
     const Actor* SourceActor = SourceASC->GetOwnerActor();
@@ -35,26 +35,26 @@ std::wstring AB_PoisonCloud::ActivateAbility(AbilitySystemComponent* SourceASC, 
 
     if (!TargetASC)
     {
-        return L"´ë»óÀÌ È¿°ú¸¦ ¹ŞÀ» ¼ö ¾ø½À´Ï´Ù.";
+        return L"ëŒ€ìƒì´ íš¨ê³¼ë¥¼ ë°›ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤.";
     }
-    // ½ºÅ³ÀÌ ÅÏ´ç ¾ó¸¶ÀÇ µ¥¹ÌÁö¸¦ ÁÙÁö °è»ê
+    // ìŠ¤í‚¬ì´ í„´ë‹¹ ì–¼ë§ˆì˜ ë°ë¯¸ì§€ë¥¼ ì¤„ì§€ ê³„ì‚°
     float DotDamage = DamageUtils::CalculateDamage(SourceActor, Target, this->AD_Ratio, this->AP_Ratio, this->MyDamageType);
 
-    // [È¿°ú¸¦ »ı¼º] ÇÏ°í °è»êµÈ µ¥¹ÌÁö(DotDamage)¸¦ Magnitude·Î ¼³Á¤ (Èü¿¡ ÇÒ´ç)
+    // [íš¨ê³¼ë¥¼ ìƒì„±] í•˜ê³  ê³„ì‚°ëœ ë°ë¯¸ì§€(DotDamage)ë¥¼ Magnitudeë¡œ ì„¤ì • (í™ì— í• ë‹¹)
     auto PoisonEffect = std::make_unique<GameplayEffect>();
-    PoisonEffect->EffectName = L"µ¶ ÇÇÇØ";
+    PoisonEffect->EffectName = L"ë… í”¼í•´";
     PoisonEffect->ApplicationType = EEffectApplication::Duration;
     PoisonEffect->Duration = this->PoisonDuration;
     PoisonEffect->bExecuteOnTurn = true;
     PoisonEffect->TargetAttributeName = "HP";
     PoisonEffect->Magnitude = -DotDamage;
-    PoisonEffect->SourceActor = SourceASC->GetOwnerActor(); // ½ÃÀüÀÚ ´©±¸ÀÎÁö ±â·Ï
+    PoisonEffect->SourceActor = SourceASC->GetOwnerActor(); // ì‹œì „ì ëˆ„êµ¬ì¸ì§€ ê¸°ë¡
 
     TargetASC->ApplyGameplayEffectToSelf(std::move(PoisonEffect));
 
-    // ·Î±× ¹İÈ¯
-    std::wstring LogMessage = SourceActor->Name + L"ÀÌ(°¡) "
-        + AbilityName + L"À»(¸¦) ½ÃÀüÇß½À´Ï´Ù!";
+    // ë¡œê·¸ ë°˜í™˜
+    std::wstring LogMessage = SourceActor->Name + L"ì´(ê°€) "
+        + AbilityName + L"ì„(ë¥¼) ì‹œì „í–ˆìŠµë‹ˆë‹¤!";
 
     return LogMessage;
 }

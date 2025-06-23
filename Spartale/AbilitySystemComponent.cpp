@@ -1,59 +1,59 @@
-#include "AbilitySystemComponent.h"
+ï»¿#include "AbilitySystemComponent.h"
 #include "AttributeSet.h"
 #include "GameplayAbility.h"
 #include "GameplayEffect.h"
 #include "Actor.h"
 
-#include <algorithm> // std::max »ç¿ëÀ» À§ÇØ Æ÷ÇÔ
-#include <iostream> // ·Î±× Ãâ·ÂÀ» À§ÇØ Æ÷ÇÔ
-#include <string> // std::wstring »ç¿ëÀ» À§ÇØ Æ÷ÇÔ
+#include <algorithm> // std::max ì‚¬ìš©ì„ ìœ„í•´ í¬í•¨
+#include <iostream> // ë¡œê·¸ ì¶œë ¥ì„ ìœ„í•´ í¬í•¨
+#include <string> // std::wstring ì‚¬ìš©ì„ ìœ„í•´ í¬í•¨
 
 AbilitySystemComponent::AbilitySystemComponent(Actor* Owner)
-    : OwnerActor(Owner) // ¸â¹ö ÀÌ´Ï¼È¶óÀÌÀú¸¦ »ç¿ëÇÏ¿© OwnerActor¸¦ ÃÊ±âÈ­ (Actor.cpp ¿¡¼­ »ç¿ëÇÔ)
+    : OwnerActor(Owner) // ë©¤ë²„ ì´ë‹ˆì…œë¼ì´ì €ë¥¼ ì‚¬ìš©í•˜ì—¬ OwnerActorë¥¼ ì´ˆê¸°í™” (Actor.cpp ì—ì„œ ì‚¬ìš©í•¨)
 {
-	// ÀÌ ÄÄÆ÷³ÍÆ®°¡ »ı¼ºµÉ ¶§, ÀÚ½ÅÀÇ AttributeSetÀ» »ı¼ºÇÏ¿© ¼ÒÀ¯ (¸ğµç Actor´Â AttributeSetÀ» ¼ÒÀ¯)
+	// ì´ ì»´í¬ë„ŒíŠ¸ê°€ ìƒì„±ë  ë•Œ, ìì‹ ì˜ AttributeSetì„ ìƒì„±í•˜ì—¬ ì†Œìœ  (ëª¨ë“  ActorëŠ” AttributeSetì„ ì†Œìœ )
     MyAttributeSet = std::make_unique<AttributeSet>(this);
 
-    // EquippedAbilities(ÀüÅõ ½Ã »ç¿ëÇÒ ½ºÅ³ 4°³) º¤ÅÍ¸¦ ¹Ì¸® 4Ä­(0, 1, 2, 3¹ø ½½·Ô)À¸·Î ÃÊ±âÈ­
+    // EquippedAbilities(ì „íˆ¬ ì‹œ ì‚¬ìš©í•  ìŠ¤í‚¬ 4ê°œ) ë²¡í„°ë¥¼ ë¯¸ë¦¬ 4ì¹¸(0, 1, 2, 3ë²ˆ ìŠ¬ë¡¯)ìœ¼ë¡œ ì´ˆê¸°í™”
     EquippedAbilities.resize(4, nullptr);
 }
 
-// unique_ptr »ç¿ëÇÏ´Ï ¼Ò¸êÀÚ´Â ±¸Çö¸¸
+// unique_ptr ì‚¬ìš©í•˜ë‹ˆ ì†Œë©¸ìëŠ” êµ¬í˜„ë§Œ
 AbilitySystemComponent::~AbilitySystemComponent()
 {
 }
 
-// AbilitySystemComponentÀÇ ÃÊ±âÈ­ ÇÔ¼ö
+// AbilitySystemComponentì˜ ì´ˆê¸°í™” í•¨ìˆ˜
 void AbilitySystemComponent::Initialize()
 {
 }
 
-// unique_ptrÀ» ÀÎÀÚ·Î ¹Ş¾Æ¼­ GrantedAbilities º¤ÅÍ¿¡ Ãß°¡. (½ºÅ³À» ¹è¿ì´Â ÇÔ¼ö)
+// unique_ptrì„ ì¸ìë¡œ ë°›ì•„ì„œ GrantedAbilities ë²¡í„°ì— ì¶”ê°€. (ìŠ¤í‚¬ì„ ë°°ìš°ëŠ” í•¨ìˆ˜)
 void AbilitySystemComponent::GrantAbility(std::unique_ptr<GameplayAbility> Ability)
 {
-	if (Ability) // nullptr Ã¼Å©¸¦ ÅëÇØ À¯È¿¼º °Ë»ç (¾ğ¸®¾óÀÇ IsValid ³ëµå ¿ªÇÒ)
+	if (Ability) // nullptr ì²´í¬ë¥¼ í†µí•´ ìœ íš¨ì„± ê²€ì‚¬ (ì–¸ë¦¬ì–¼ì˜ IsValid ë…¸ë“œ ì—­í• )
     {
         GrantedAbilities.push_back(std::move(Ability));
     }
 }
 
-// ½ºÅ³ÀÇ ÀÌ¸§À» ÅëÇØ ÇØ´ç ½ºÅ³À» Ã£°í Á¦°ÅÇÏ´Â ÇÔ¼ö
+// ìŠ¤í‚¬ì˜ ì´ë¦„ì„ í†µí•´ í•´ë‹¹ ìŠ¤í‚¬ì„ ì°¾ê³  ì œê±°í•˜ëŠ” í•¨ìˆ˜
 void AbilitySystemComponent::ClearAbility(GameplayAbility* Ability)
 {
 }
 
-// EquipAbility ´Â ÀüÅõ ½Ã »ç¿ëÇÒ 4°³ÀÇ ½ºÅ³À» ´ã¾Æ³õ´Â º¤ÅÍ
-// »ç¿ëÀÚ°¡ PauseMenu ¿¡¼­ ½ºÅ³À» ÀåÂøÇÏ°í ÇØÁ¦ÇÒ ¶§ »ç¿ëÇÏ´Â ÇÔ¼ö
+// EquipAbility ëŠ” ì „íˆ¬ ì‹œ ì‚¬ìš©í•  4ê°œì˜ ìŠ¤í‚¬ì„ ë‹´ì•„ë†“ëŠ” ë²¡í„°
+// ì‚¬ìš©ìê°€ PauseMenu ì—ì„œ ìŠ¤í‚¬ì„ ì¥ì°©í•˜ê³  í•´ì œí•  ë•Œ ì‚¬ìš©í•˜ëŠ” í•¨ìˆ˜
 void AbilitySystemComponent::EquipAbility(int32_t SlotIndex, GameplayAbility* Ability)
 {
-    // ½½·Ô ÀÎµ¦½º°¡ À¯È¿ÇÑ ¹üÀ§(0~3)ÀÎÁö È®ÀÎ
+    // ìŠ¬ë¡¯ ì¸ë±ìŠ¤ê°€ ìœ íš¨í•œ ë²”ìœ„(0~3)ì¸ì§€ í™•ì¸
     if (SlotIndex >= 0 && SlotIndex < EquippedAbilities.size())
     {
         EquippedAbilities[SlotIndex] = Ability;
     }
 }
 
-// ¹İ´ë·Î ½ºÅ³À» ÇØÁ¦ÇÏ´Â ÇÔ¼ö
+// ë°˜ëŒ€ë¡œ ìŠ¤í‚¬ì„ í•´ì œí•˜ëŠ” í•¨ìˆ˜
 void AbilitySystemComponent::UnEquipAbility(int32_t SlotIndex)
 {
     if (SlotIndex >= 0 && SlotIndex < EquippedAbilities.size())
@@ -62,44 +62,44 @@ void AbilitySystemComponent::UnEquipAbility(int32_t SlotIndex)
     }
 }
 
-// ÃÖÁ¾ÀûÀ¸·Î ½ºÅ³À» È°¼ºÈ­ÇÏ´Â ÇÔ¼ö (¹æ¾Æ¼è ¿ªÇÒ)
+// ìµœì¢…ì ìœ¼ë¡œ ìŠ¤í‚¬ì„ í™œì„±í™”í•˜ëŠ” í•¨ìˆ˜ (ë°©ì•„ì‡  ì—­í• )
 std::wstring AbilitySystemComponent::TryActivateAbility(int32_t SlotIndex, Actor* Target)
-{ // 1. ½½·Ô ÀÎµ¦½º°¡ À¯È¿ÇÑÁö, ÇØ´ç ½½·Ô¿¡ ¾îºô¸®Æ¼°¡ ÀåÂøµÇ¾î ÀÖ´ÂÁö È®ÀÎ
+{ // 1. ìŠ¬ë¡¯ ì¸ë±ìŠ¤ê°€ ìœ íš¨í•œì§€, í•´ë‹¹ ìŠ¬ë¡¯ì— ì–´ë¹Œë¦¬í‹°ê°€ ì¥ì°©ë˜ì–´ ìˆëŠ”ì§€ í™•ì¸
     if (SlotIndex < 0 || SlotIndex >= EquippedAbilities.size() || EquippedAbilities[SlotIndex] == nullptr)
     {
-        return L"ÇØ´ç ½½·Ô¿¡ ½ºÅ³ÀÌ ¾ø½À´Ï´Ù.";
+        return L"í•´ë‹¹ ìŠ¬ë¡¯ì— ìŠ¤í‚¬ì´ ì—†ìŠµë‹ˆë‹¤.";
     }
 
-    // 2. ÀåÂøµÈ ¾îºô¸®Æ¼¸¦ °¡Á®¿È
+    // 2. ì¥ì°©ëœ ì–´ë¹Œë¦¬í‹°ë¥¼ ê°€ì ¸ì˜´
     GameplayAbility* AbilityToActivate = EquippedAbilities[SlotIndex];
 
-    // 3. ÇØ´ç ¾îºô¸®Æ¼¸¦ Áö±İ »ç¿ëÇÒ ¼ö ÀÖ´ÂÁö È®ÀÎ (ºñ¿ë, ÄğÅ¸ÀÓ µî)
+    // 3. í•´ë‹¹ ì–´ë¹Œë¦¬í‹°ë¥¼ ì§€ê¸ˆ ì‚¬ìš©í•  ìˆ˜ ìˆëŠ”ì§€ í™•ì¸ (ë¹„ìš©, ì¿¨íƒ€ì„ ë“±)
     if (!AbilityToActivate->CanActivateAbility(this))
     {
-        return L"½ºÅ³À» »ç¿ëÇÒ ¼ö ¾ø½À´Ï´Ù. (ÄğÅ¸ÀÓ, ¸¶³ª ºÎÁ· µî)";
+        return L"ìŠ¤í‚¬ì„ ì‚¬ìš©í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤. (ì¿¨íƒ€ì„, ë§ˆë‚˜ ë¶€ì¡± ë“±)";
     }
 
-    // 4. ¸ğµç °Ë»ç¸¦ Åë°úÇßÀ¸¸é, ¾îºô¸®Æ¼¸¦ ÃÖÁ¾ÀûÀ¸·Î È°¼ºÈ­(»ç¿ë)
+    // 4. ëª¨ë“  ê²€ì‚¬ë¥¼ í†µê³¼í–ˆìœ¼ë©´, ì–´ë¹Œë¦¬í‹°ë¥¼ ìµœì¢…ì ìœ¼ë¡œ í™œì„±í™”(ì‚¬ìš©)
     std::wstring LogMessage = AbilityToActivate->ActivateAbility(this, Target);
 
-    // 5. ¾îºô¸®Æ¼ ½ÇÇà °á°ú·Î ¹ŞÀº ·Î±× ¸Ş½ÃÁö¸¦ ¹İÈ¯
+    // 5. ì–´ë¹Œë¦¬í‹° ì‹¤í–‰ ê²°ê³¼ë¡œ ë°›ì€ ë¡œê·¸ ë©”ì‹œì§€ë¥¼ ë°˜í™˜
     return LogMessage;
 }
 
 void AbilitySystemComponent::ApplyGameplayEffectToSelf(std::unique_ptr<GameplayEffect> Effect)
 {
-    // Effect Æ÷ÀÎÅÍ¿Í ÀÚ½ÅÀÇ AttributeSet À¯È¿¼º °Ë»ç
+    // Effect í¬ì¸í„°ì™€ ìì‹ ì˜ AttributeSet ìœ íš¨ì„± ê²€ì‚¬
     if (!Effect || !MyAttributeSet)
     {
         return;
     }
 
-	// ApplicationType¿¡ µû¶ó Case ºĞ±â Ã³¸®
+	// ApplicationTypeì— ë”°ë¼ Case ë¶„ê¸° ì²˜ë¦¬
     switch (Effect->ApplicationType)
     {
         case EEffectApplication::Instant:
         {
-            // Áï½Ã È¿°ú
+            // ì¦‰ì‹œ íš¨ê³¼
             Effect->Apply(MyAttributeSet.get());
             break;
         }
@@ -108,25 +108,25 @@ void AbilitySystemComponent::ApplyGameplayEffectToSelf(std::unique_ptr<GameplayE
         case EEffectApplication::Infinite:
         {
             bool bFoundAndRefreshed = false;
-            // ÇöÀç Àû¿ë ÁßÀÎ È¿°ú ¸ñ·Ï(ActiveEffects)À» È®ÀÎ
+            // í˜„ì¬ ì ìš© ì¤‘ì¸ íš¨ê³¼ ëª©ë¡(ActiveEffects)ì„ í™•ì¸
             for (FActiveGameplayEffect& ActiveEffect : this->ActiveEffects)
             {
-                // 'È¿°ú ÀÌ¸§'ÀÌ °°Àº °ÍÀÌ ÀÖ´ÂÁö È®ÀÎ
+                // 'íš¨ê³¼ ì´ë¦„'ì´ ê°™ì€ ê²ƒì´ ìˆëŠ”ì§€ í™•ì¸
                 if (ActiveEffect.SourceEffect->EffectName == Effect->EffectName)
                 {
-                    // °°Àº È¿°ú¸¦ Ã£¾Ò´Ù¸é »õ·Î Ãß°¡ÇÏ´Â ´ë½Å, ±âÁ¸ È¿°úÀÇ Áö¼Ó½Ã°£¸¸ °»½Å (µ¶¾È°³ µî ÁßÃ¸ ¹æÁö)
+                    // ê°™ì€ íš¨ê³¼ë¥¼ ì°¾ì•˜ë‹¤ë©´ ìƒˆë¡œ ì¶”ê°€í•˜ëŠ” ëŒ€ì‹ , ê¸°ì¡´ íš¨ê³¼ì˜ ì§€ì†ì‹œê°„ë§Œ ê°±ì‹  (ë…ì•ˆê°œ ë“± ì¤‘ì²© ë°©ì§€)
                     ActiveEffect.RemainingTurns = Effect->Duration;
                     bFoundAndRefreshed = true;
                     break;
                 }
             }
 
-            // Áßº¹µÈ È¿°ú¸¦ Ã£Áö ¸øÇÏ°í °»½ÅÇÏÁöµµ ¾Ê¾Ò´Ù¸é »õ·Î ¸ñ·Ï¿¡ Ãß°¡
+            // ì¤‘ë³µëœ íš¨ê³¼ë¥¼ ì°¾ì§€ ëª»í•˜ê³  ê°±ì‹ í•˜ì§€ë„ ì•Šì•˜ë‹¤ë©´ ìƒˆë¡œ ëª©ë¡ì— ì¶”ê°€
             if (!bFoundAndRefreshed)
             {
                 FActiveGameplayEffect NewActiveEffect;
                 NewActiveEffect.RemainingTurns = (Effect->ApplicationType == EEffectApplication::Infinite) ? -1 : Effect->Duration;
-                NewActiveEffect.SourceEffect = std::move(Effect); // ¼ÒÀ¯±Ç ÀÌÀü
+                NewActiveEffect.SourceEffect = std::move(Effect); // ì†Œìœ ê¶Œ ì´ì „
                 this->ActiveEffects.push_back(std::move(NewActiveEffect));
             }
 
@@ -146,28 +146,28 @@ std::wstring AbilitySystemComponent::UpdateActiveEffects()
 
         if (!Effect) continue;
 
-        // "¸Å ÅÏ ¹ßµ¿" È¿°ú Ã³¸®
+        // "ë§¤ í„´ ë°œë™" íš¨ê³¼ ì²˜ë¦¬
         if (Effect->bExecuteOnTurn)
         {
-            // ÀúÀåµÈ Magnitude¸¦ ±×´ë·Î »ç¿ë
+            // ì €ì¥ëœ Magnitudeë¥¼ ê·¸ëŒ€ë¡œ ì‚¬ìš©
             Effect->Apply(MyAttributeSet.get());
 
-            // ·Î±×¸¦ »ı¼º. Effect¿¡ ÀúÀåµÈ SourceActor¸¦ »ç¿ë
+            // ë¡œê·¸ë¥¼ ìƒì„±. Effectì— ì €ì¥ëœ SourceActorë¥¼ ì‚¬ìš©
             if (Effect->SourceActor)
             {
-                LogMessage += Effect->SourceActor->Name + L"ÀÇ " + Effect->EffectName + L" È¿°ú·Î "
-                    + OwnerActor->Name + L"ÀÌ(°¡) "
-                    + std::to_wstring(static_cast<int>(-Effect->Magnitude)) + L"ÀÇ ÇÇÇØ¸¦ ÀÔ¾ú½À´Ï´Ù.";
+                LogMessage += Effect->SourceActor->Name + L"ì˜ " + Effect->EffectName + L" íš¨ê³¼ë¡œ "
+                    + OwnerActor->Name + L"ì´(ê°€) "
+                    + std::to_wstring(static_cast<int>(-Effect->Magnitude)) + L"ì˜ í”¼í•´ë¥¼ ì…ì—ˆìŠµë‹ˆë‹¤.";
             }
         }
 
-        // ³²Àº ÅÏ °ü¸®
+        // ë‚¨ì€ í„´ ê´€ë¦¬
         if (ActiveEffect.RemainingTurns > 0)
         {
             ActiveEffect.RemainingTurns--;
         }
 
-        // È¿°ú ¸¸·á Ã³¸®
+        // íš¨ê³¼ ë§Œë£Œ ì²˜ë¦¬
         if (ActiveEffect.RemainingTurns == 0)
         {
             ActiveEffects.erase(ActiveEffects.begin() + i);
@@ -179,13 +179,13 @@ std::wstring AbilitySystemComponent::UpdateActiveEffects()
 // Getter
 GameplayAbility* AbilitySystemComponent::GetGrantedAbility(int32_t Index) const
 {
-    // Index°¡ À¯È¿ÇÑ ¹üÀ§(0ºÎÅÍ º¤ÅÍ Å©±â - 1±îÁö)¿¡ ÀÖ´ÂÁö È®ÀÎ
+    // Indexê°€ ìœ íš¨í•œ ë²”ìœ„(0ë¶€í„° ë²¡í„° í¬ê¸° - 1ê¹Œì§€)ì— ìˆëŠ”ì§€ í™•ì¸
         if (Index >= 0 && Index < GrantedAbilities.size())
         {
-            // unique_ptr·Î ÀúÀåµÈ ¾îºô¸®Æ¼ÀÇ ¼ø¼ö Æ÷ÀÎÅÍ(.get())¸¦ ¹İÈ¯
+            // unique_ptrë¡œ ì €ì¥ëœ ì–´ë¹Œë¦¬í‹°ì˜ ìˆœìˆ˜ í¬ì¸í„°(.get())ë¥¼ ë°˜í™˜
             return GrantedAbilities[Index].get();
         }
 
-    // À¯È¿ÇÏÁö ¾ÊÀº ÀÎµ¦½º¶ó¸é nullptrÀ» ¹İÈ¯
+    // ìœ íš¨í•˜ì§€ ì•Šì€ ì¸ë±ìŠ¤ë¼ë©´ nullptrì„ ë°˜í™˜
     return nullptr;
 }

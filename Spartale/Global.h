@@ -50,5 +50,7 @@ enum class EGameState
     World,
     Battle,
     MainMenu,
+    PauseMenu,
+    Iventory,
     Quit
 };

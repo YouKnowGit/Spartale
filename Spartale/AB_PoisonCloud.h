@@ -1,21 +1,21 @@
-#pragma once
+ï»¿#pragma once
 #include "GameplayAbility.h"
 
-// 'µ¶¾È°³' ¾îºô¸®Æ¼ Å¬·¡½º¸¦ Á¤ÀÇ
+// 'ë…ì•ˆê°œ' ì–´ë¹Œë¦¬í‹° í´ë˜ìŠ¤ë¥¼ ì •ì˜
 class AB_PoisonCloud : public GameplayAbility
 {
 public:
     AB_PoisonCloud();
     virtual ~AB_PoisonCloud() = default;
 
-    // GameplayAbilityÀÇ ¼ø¼ö °¡»ó ÇÔ¼ö ÀçÁ¤ÀÇ
+    // GameplayAbilityì˜ ìˆœìˆ˜ ê°€ìƒ í•¨ìˆ˜ ì¬ì •ì˜
     virtual std::wstring ActivateAbility(AbilitySystemComponent* SourceASC, Actor* Target) override;
     virtual void SetupEffects() override {}
 
 private:
-    // ÀÌ ½ºÅ³ÀÇ µ¥¹ÌÁö Å¸ÀÔ
+    // ì´ ìŠ¤í‚¬ì˜ ë°ë¯¸ì§€ íƒ€ì…
     EDamageType MyDamageType;
 
-    // ÀÌ ½ºÅ³ÀÇ ¼¼ºÎ ¼³Á¤°ª
-    int PoisonDuration;       // µ¶ Áö¼Ó½Ã°£ (ÅÏ)
+    // ì´ ìŠ¤í‚¬ì˜ ì„¸ë¶€ ì„¤ì •ê°’
+    int PoisonDuration;       // ë… ì§€ì†ì‹œê°„ (í„´)
 };

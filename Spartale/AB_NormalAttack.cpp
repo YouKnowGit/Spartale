@@ -1,54 +1,50 @@
-#include "AB_NormalAttack.h"
+ï»¿#include "AB_NormalAttack.h"
 #include "GameplayEffect.h"
 #include "AbilitySystemComponent.h"
 #include "Actor.h"
 #include "AttributeSet.h"
 #include "DamageUtils.h"
 #include <map>
-#include <string> // std::to_wstring »ç¿ëÀ» À§ÇØ Æ÷ÇÔ
+#include <string> // std::to_wstring ì‚¬ìš©ì„ ìœ„í•´ í¬í•¨
 
 AB_NormalAttack::AB_NormalAttack()
 {
-    // ¾îºô¸®Æ¼ ±âº» Á¤º¸ ¼³Á¤
-    AbilityName = L"ÀÏ¹İ °ø°İ";
-    AbilityDescription = L"´ë»ó¿¡°Ô ¹°¸® ÇÇÇØ¸¦ ÀÔÈü´Ï´Ù.";
-    MyDamageType = EDamageType::Physical; // ÀÌ ½ºÅ³Àº '¹°¸®' Å¸ÀÔ
-    AD_Ratio = 1.0f; // ÇÇÇØ·® °è¼ö. 1.0f´Â 'Èû' ´É·ÂÄ¡ÀÇ 100%¸¦ ÇÇÇØ·®À¸·Î »ç¿ëÇÑ´Ù´Â ÀÇ¹Ì
-	AP_Ratio = 0.0f; // EDamageType::Physical Å¸ÀÔÀº AP¸¦ »ç¿ëÇÏÁö ¾ÊÀ¸¹Ç·Î 0À¸·Î ¼³Á¤
-}
-
-void AB_NormalAttack::SetupEffects()
-{
+    // ì–´ë¹Œë¦¬í‹° ê¸°ë³¸ ì •ë³´ ì„¤ì •
+    AbilityName = L"ì¼ë°˜ ê³µê²©";
+    AbilityDescription = L"ëŒ€ìƒì—ê²Œ ë¬¼ë¦¬ í”¼í•´ë¥¼ ì…í™ë‹ˆë‹¤.";
+    MyDamageType = EDamageType::Physical; // ì´ ìŠ¤í‚¬ì€ 'ë¬¼ë¦¬' íƒ€ì…
+    AD_Ratio = 1.0f; // í”¼í•´ëŸ‰ ê³„ìˆ˜. 1.0fëŠ” 'í˜' ëŠ¥ë ¥ì¹˜ì˜ 100%ë¥¼ í”¼í•´ëŸ‰ìœ¼ë¡œ ì‚¬ìš©í•œë‹¤ëŠ” ì˜ë¯¸
+	AP_Ratio = 0.0f; // EDamageType::Physical íƒ€ì…ì€ APë¥¼ ì‚¬ìš©í•˜ì§€ ì•Šìœ¼ë¯€ë¡œ 0ìœ¼ë¡œ ì„¤ì •
 }
 
 std::wstring AB_NormalAttack::ActivateAbility(AbilitySystemComponent* SourceASC, Actor* Target)
 {
-    // ½ÃÀüÀÚ¿Í ´ë»óÀÌ À¯È¿ÇÑÁö È®ÀÎ
+    // ì‹œì „ìì™€ ëŒ€ìƒì´ ìœ íš¨í•œì§€ í™•ì¸
     if (!SourceASC || !Target)
     {
-        return L"´ë»óÀÌ ¾ø¾î °ø°İÇÒ ¼ö ¾ø½À´Ï´Ù.";
+        return L"ëŒ€ìƒì´ ì—†ì–´ ê³µê²©í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.";
     }
 
     const Actor* SourceActor = SourceASC->GetOwnerActor();
 
-    // 1. µ¥¹ÌÁö °è»êÀ» »õ·Î¿î DamageUtils ÇÔ¼ö¿¡ À§ÀÓ
+    // 1. ë°ë¯¸ì§€ ê³„ì‚°ì„ ìƒˆë¡œìš´ DamageUtils í•¨ìˆ˜ì— ìœ„ì„
     float Damage = DamageUtils::CalculateDamage(SourceActor, Target, this->AD_Ratio, this->AP_Ratio, this->MyDamageType);
 
-    // 2. È¿°ú¿¡ ´ëÇØ Á¤ÀÇÇÒ GameplayEffect¸¦ »ı¼º
+    // 2. íš¨ê³¼ì— ëŒ€í•´ ì •ì˜í•  GameplayEffectë¥¼ ìƒì„±
     auto DamageEffect = std::make_unique<GameplayEffect>();
-    DamageEffect->EffectName = L"µ¥¹ÌÁö";
+    DamageEffect->EffectName = L"ë°ë¯¸ì§€";
     DamageEffect->ApplicationType = EEffectApplication::Instant;
-	DamageEffect->TargetAttributeName = "HP";    // ´ë»óÀÇ HP ¼Ó¼º¿¡ Àû¿ë
-    DamageEffect->Magnitude = -Damage;   // HP ÇÇÇØÀÌ¹Ç·Î À½¼ö·Î ¼³Á¤
+	DamageEffect->TargetAttributeName = "HP";    // ëŒ€ìƒì˜ HP ì†ì„±ì— ì ìš©
+    DamageEffect->Magnitude = -Damage;   // HP í”¼í•´ì´ë¯€ë¡œ ìŒìˆ˜ë¡œ ì„¤ì •
 
-    // 3. ´ë»ó¿¡°Ô È¿°ú¸¦ Àû¿ë
+    // 3. ëŒ€ìƒì—ê²Œ íš¨ê³¼ë¥¼ ì ìš©
     Target->GetAbilityComponent()->ApplyGameplayEffectToSelf(std::move(DamageEffect));
 
-    // 4. ·Î±×¸¦ ¹İÈ¯
-    std::wstring LogMessage = SourceActor->Name + L"ÀÌ(°¡) "
-        + Target->Name + L"¿¡°Ô "
+    // 4. ë¡œê·¸ë¥¼ ë°˜í™˜
+    std::wstring LogMessage = SourceActor->Name + L"ì´(ê°€) "
+        + Target->Name + L"ì—ê²Œ "
         + std::to_wstring(static_cast<int>(Damage))
-        + L"ÀÇ ÇÇÇØ¸¦ ÀÔÇû½À´Ï´Ù.";
+        + L"ì˜ í”¼í•´ë¥¼ ì…í˜”ìŠµë‹ˆë‹¤.";
 
     return LogMessage;
 }

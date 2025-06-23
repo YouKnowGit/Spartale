@@ -29,6 +29,8 @@ public:
     float AD_Ratio = 0.0f; // 물리 계수
     float AP_Ratio = 0.0f; // 마법 계수
 
+	EDamageType DamageType = EDamageType::None; // 데미지 타입 (물리, 마법 등)
+
     // 이 어빌리티가 적용할 게임플레이 이펙트 목록 (어빌리티가 이펙트 객체들을 '소유')
 	// ex) 공격력 증가, 방어력 감소 등
     std::vector<std::unique_ptr<GameplayEffect>> EffectsToApply;
