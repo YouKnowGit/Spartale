@@ -37,6 +37,7 @@ public:
 
     // 이 어빌리티가 적용할 게임플레이 이펙트 목록 (어빌리티가 이펙트 객체들을 '소유')
     // ex) 공격력 증가, 방어력 감소 등
+
     std::vector<std::unique_ptr<GameplayEffect>> EffectsToApply;
 
     // 가상 함수: 이 어빌리티를 사용할 수 있는지 확인

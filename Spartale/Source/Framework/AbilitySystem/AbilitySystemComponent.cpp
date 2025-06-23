@@ -70,7 +70,6 @@ bool AbilitySystemComponent::CheckAndProcessLevelUp()
 
     return bLeveledUp;
 }
-
 // unique_ptr을 인자로 받아서 GrantedAbilities 벡터에 추가. (스킬을 배우는 함수)
 void AbilitySystemComponent::GrantAbility(std::unique_ptr<GameplayAbility> Ability)
 {
