@@ -2,8 +2,8 @@
 
 #include <string>
 #include <memory>
-#include "Global.h"
-#include "AttributeSet.h"
+#include "Core/Global.h"
+#include "Framework/AbilitySystem/AttributeSet.h"
 
 class Actor;
 

@@ -1,4 +1,4 @@
-#include "GameWorld.h"
+#include "Core/GameWorld.h"
 #include <iostream>
 #include <conio.h>
 
@@ -75,7 +75,7 @@ void GameWorld::ProcessInput()
                 break;
             }
 
-			// IsWalkable 체크 후 이동. NPC 등 다른 오브젝트에 의해 충돌 로직도 여기서 추가
+            // IsWalkable 체크 후 이동. NPC 등 다른 오브젝트에 의해 충돌 로직도 여기서 추가
             if (m_field.IsWalkable(nextLocation.X, nextLocation.Y))
             {
                 m_player->CurrentLocation = nextLocation;

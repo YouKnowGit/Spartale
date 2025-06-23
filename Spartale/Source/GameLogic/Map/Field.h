@@ -4,8 +4,8 @@
 #include <map>
 #include <utility>
 
-#include "Global.h"
-#include "ConsoleRenderer.h"
+#include "Core/Global.h"
+#include "Utils/ConsoleRenderer.h"
 
 class Actor;
 

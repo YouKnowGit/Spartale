@@ -1,7 +1,7 @@
 #pragma once
 #include <map>
 #include <string>
-#include "Global.h"
+#include "Core/Global.h"
 
 class AbilitySystemComponent;
 

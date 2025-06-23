@@ -1,8 +1,8 @@
-﻿#include "AbilitySystemComponent.h"
-#include "AttributeSet.h"
-#include "GameplayAbility.h"
-#include "GameplayEffect.h"
-#include "Actor.h"
+﻿#include "Framework/AbilitySystem/AbilitySystemComponent.h"
+#include "Framework/AbilitySystem/AttributeSet.h"
+#include "Framework/AbilitySystem/GameplayAbility.h"
+#include "Framework/AbilitySystem/GameplayEffect.h"
+#include "Core/Actor.h"
 
 #include <algorithm> // std::max 사용을 위해 포함
 #include <iostream> // 로그 출력을 위해 포함

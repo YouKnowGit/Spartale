@@ -1,6 +1,6 @@
-#include "GameplayAbility.h"
-#include "GameplayEffect.h"
-#include "AbilitySystemComponent.h"
+#include "Framework/AbilitySystem/GameplayAbility.h"
+#include "Framework/AbilitySystem/GameplayEffect.h"
+#include "Framework/AbilitySystem/AbilitySystemComponent.h"
 
 GameplayAbility::GameplayAbility()
 {

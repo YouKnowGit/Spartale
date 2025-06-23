@@ -6,16 +6,15 @@
 #include <conio.h>
 #include <Windows.h>
 
-#include "Player.h"
-#include "Monster.h"
-#include "AB_NormalAttack.h"
-#include "BattleManager.h"
-#include "AbilitySystemComponent.h"
-#include "AB_PoisonCloud.h"
-#include "ConsoleUtils.h"
-#include "Field.h"
-#include "GameWorld.h"
-#include "ConsoleRenderer.h"
+#include "GameLogic/Units/Player.h"
+#include "GameLogic/Units/Monster.h"
+#include "GameLogic/Skills/AB_NormalAttack.h"
+#include "GameLogic/BattleManager.h"
+#include "Framework/AbilitySystem/AbilitySystemComponent.h"
+#include "GameLogic/Skills/AB_PoisonCloud.h"
+#include "Utils/ConsoleUtils.h"
+#include "GameLogic/Map/Field.h"
+#include "Core/GameWorld.h"
 
 
 using namespace std;

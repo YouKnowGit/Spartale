@@ -3,7 +3,11 @@
 #include <string>
 #include <vector>
 #include <memory> 
-#include "Global.h"
+#include "Core/Global.h"
+
+class AbilitySystemComponent;
+class GameplayEffect;
+class Actor;
 
 class AbilitySystemComponent;
 class GameplayEffect;

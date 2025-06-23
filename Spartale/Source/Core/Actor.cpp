@@ -1,5 +1,5 @@
-#include "Actor.h"
-#include "AbilitySystemComponent.h"
+#include "Core/Actor.h"
+#include "Framework/AbilitySystem/AbilitySystemComponent.h"
 
 // Actor 가 보유한 AbilitySystemComponent 를 생성하여 소유
 Actor::Actor()

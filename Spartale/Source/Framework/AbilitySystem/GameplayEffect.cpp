@@ -1,4 +1,4 @@
-#include "GameplayEffect.h"
+#include "Framework/AbilitySystem/GameplayEffect.h"
 
 GameplayEffect::GameplayEffect()
 {
