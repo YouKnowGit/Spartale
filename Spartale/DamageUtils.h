@@ -1,16 +1,16 @@
 #pragma once
 #include "Global.h" // EDamageType
 
-// Àü¹æ ¼±¾ğ
+// ì „ë°© ì„ ì–¸
 class Actor;
 
 namespace DamageUtils
 {
-    // ¸ğµç µ¥¹ÌÁö °è»êÀ» Ã³¸®ÇÏ´Â ÅëÇÕ static ÇÔ¼ö
-    // Actor Æ÷ÀÎÅÍ¸¦ Á÷Á¢ ¹Ş¾Æ ÇÊ¿äÇÑ ¸ğµç ½ºÅÈ¿¡ Á¢±Ù °¡´É
-    float CalculateDamage(const Actor* SourceActor, 
-                                    const Actor* TargetActor, 
-                                    float ADRatio, 
-                                    float APRatio, 
-                                    EDamageType DamageType);
+    // ëª¨ë“  ë°ë¯¸ì§€ ê³„ì‚°ì„ ì²˜ë¦¬í•˜ëŠ” í†µí•© static í•¨ìˆ˜
+    // Actor í¬ì¸í„°ë¥¼ ì§ì ‘ ë°›ì•„ í•„ìš”í•œ ëª¨ë“  ìŠ¤íƒ¯ì— ì ‘ê·¼ ê°€ëŠ¥
+    float CalculateDamage(const Actor* SourceActor,
+        const Actor* TargetActor,
+        float ADRatio,
+        float APRatio,
+        EDamageType DamageType);
 }

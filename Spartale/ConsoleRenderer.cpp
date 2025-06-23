@@ -17,27 +17,27 @@ void ConsoleRenderer::Initialize()
 {
     m_hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-    // ÇöÀç ÄÜ¼Ö Ã¢ÀÇ Á¤º¸¸¦ ÀĞ¾î¿É´Ï´Ù.
+    // í˜„ì¬ ì½˜ì†” ì°½ì˜ ì •ë³´ë¥¼ ì½ìŒ
     CONSOLE_SCREEN_BUFFER_INFO csbi;
     if (!GetConsoleScreenBufferInfo(m_hConsole, &csbi))
     {
-        // ¿¡·¯ Ã³¸®
         m_width = 80;
         m_height = 25;
     }
     else
     {
-        // ÀĞ¾î¿Â ½ÇÁ¦ Ã¢ Å©±â¸¦ »ç¿ëÇÕ´Ï´Ù.
+        // ì½ì–´ì˜¨ ì‹¤ì œ ì°½ í¬ê¸°ë¥¼ ì‚¬ìš©
         m_width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
         m_height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
     }
 
-    // ÀÌÀü¿¡ ÇÒ´çµÈ ¹öÆÛ°¡ ÀÖ´Ù¸é ¾ÈÀüÇÏ°Ô »èÁ¦ÇÕ´Ï´Ù.
+    // ì´ì „ì— í• ë‹¹ëœ ë²„í¼ê°€ ìˆë‹¤ë©´ ì‚­ì œ
     if (m_buffer)
     {
         delete[] m_buffer;
     }
-    // ÀĞ¾î¿Â ÇöÀç Ã¢ Å©±â¿¡ ¸ÂÃç ¹é ¹öÆÛ¸¦ »ı¼ºÇÕ´Ï´Ù.
+
+    // ì½ì–´ì˜¨ í˜„ì¬ ì°½ í¬ê¸°ì— ë§ì¶° ë°± ë²„í¼ë¥¼ ìƒì„±
     m_buffer = new CHAR_INFO[m_width * m_height];
 }
 
@@ -66,6 +66,6 @@ void ConsoleRenderer::Clear()
     for (int i = 0; i < m_width * m_height; ++i)
     {
         m_buffer[i].Char.UnicodeChar = L' ';
-        m_buffer[i].Attributes = 0x000F; // ±âº» ¼Ó¼º (Èò»ö ±Û¾¾, °ËÀº ¹è°æ)
+        m_buffer[i].Attributes = 0x000F;  // ê¸°ë³¸ ì†ì„± (í°ìƒ‰ ê¸€ì”¨, ê²€ì€ ë°°ê²½)
     }
 }

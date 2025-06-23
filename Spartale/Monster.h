@@ -3,16 +3,16 @@
 
 #include <string>
 
-// Actor¸¦ »ó¼Ó¹Ş¾Æ Monster Å¬·¡½º¸¦ Á¤ÀÇ
+// Actorë¥¼ ìƒì†ë°›ì•„ Monster í´ë˜ìŠ¤ë¥¼ ì •ì˜
 class Monster : public Actor
 {
 public:
-    // ¸ó½ºÅÍÀÇ Á¾·ù¿¡ µû¶ó ´Ù¸¥ ÀÌ¸§°ú ½ºÅÈÀ» °¡Áú ¼ö ÀÖµµ·Ï »ı¼ºÀÚ¿¡¼­ °ªÀ» ¹ŞÀ½
+    // ëª¬ìŠ¤í„°ì˜ ì¢…ë¥˜ì— ë”°ë¼ ë‹¤ë¥¸ ì´ë¦„ê³¼ ìŠ¤íƒ¯ì„ ê°€ì§ˆ ìˆ˜ ìˆë„ë¡ ìƒì„±ìì—ì„œ ê°’ì„ ë°›ìŒ
     Monster(const std::wstring& InName, float InHP, float InStrength, float InDefence);
     virtual ~Monster() = default;
 
     std::wstring RunAI(Actor* Target);
 
-    // ¸ó½ºÅÍ´Â ActorÀÇ ±âº» Initialize, Update, Render¸¦ ±×´ë·Î »ç¿ë
-    // ¸ó½ºÅÍ¸¸ÀÇ Æ¯º°ÇÑ ·ÎÁ÷ÀÌ ÇÊ¿äÇÏ´Ù¸é ¿©±â¼­µµ ÀçÁ¤ÀÇÇÏ¿© Ã³¸®
+    // ëª¬ìŠ¤í„°ëŠ” Actorì˜ ê¸°ë³¸ Initialize, Update, Renderë¥¼ ê·¸ëŒ€ë¡œ ì‚¬ìš©
+    // ëª¬ìŠ¤í„°ë§Œì˜ íŠ¹ë³„í•œ ë¡œì§ì´ í•„ìš”í•˜ë‹¤ë©´ ì—¬ê¸°ì„œë„ ì¬ì •ì˜í•˜ì—¬ ì²˜ë¦¬
 };

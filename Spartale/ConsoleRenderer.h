@@ -8,16 +8,16 @@ public:
     ConsoleRenderer();
     ~ConsoleRenderer();
 
-    // ÁöÁ¤µÈ Å©±â·Î ¹öÆÛ¸¦ ÃÊ±âÈ­
+    // ì§€ì •ëœ í¬ê¸°ë¡œ ë²„í¼ë¥¼ ì´ˆê¸°í™”
     void Initialize();
 
-    // (x, y) À§Ä¡¿¡ ¹®ÀÚ ±×¸®±â
-    void Draw(int x, int y, wchar_t character, WORD attribute = 0x000F); // 0x000F: Èò»ö ±Û¾¾, °ËÀº ¹è°æ
+    // (x, y) ìœ„ì¹˜ì— ë¬¸ì ê·¸ë¦¬ê¸°
+    void Draw(int x, int y, wchar_t character, WORD attribute = 0x000F); // 0x000F: í°ìƒ‰ ê¸€ì”¨, ê²€ì€ ë°°ê²½
 
-    // ¹öÆÛÀÇ ¸ğµç ³»¿ëÀ» È­¸é¿¡ Ãâ·Â
+    // ë²„í¼ì˜ ëª¨ë“  ë‚´ìš©ì„ í™”ë©´ì— ì¶œë ¥
     void Render();
 
-    // ¹öÆÛ¸¦ ±ú²ıÇÏ°Ô Áö¿ì±â
+    // ë²„í¼ë¥¼ ê¹¨ë—í•˜ê²Œ ì§€ìš°ê¸°
     void Clear();
 
     // Getter
@@ -28,5 +28,5 @@ private:
     int m_width;
     int m_height;
     HANDLE m_hConsole;
-    CHAR_INFO* m_buffer; // ¹é ¹öÆÛ ¿ªÇÒÀ» ÇÒ ¸Ş¸ğ¸® °ø°£
+    CHAR_INFO* m_buffer; // ë°± ë²„í¼ ì—­í• ì„ í•  ë©”ëª¨ë¦¬ ê³µê°„
 };

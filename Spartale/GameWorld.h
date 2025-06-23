@@ -8,7 +8,7 @@
 class GameWorld
 {
 public:
-    // »ı¼ºÀÚ¿¡¼­ ÇÃ·¹ÀÌ¾î °´Ã¼¸¦ ¹ŞÀ½
+    // ìƒì„±ìì—ì„œ í”Œë ˆì´ì–´ ê°ì²´ë¥¼ ë°›ìŒ
     GameWorld(std::unique_ptr<Player> player);
     ~GameWorld() = default;
 
@@ -24,7 +24,7 @@ private:
     bool m_bIsRunning;
     int m_currentMapID;
 
-    // GameWorld´Â ÇÃ·¹ÀÌ¾î, ÇÊµå, ·»´õ·¯¸¦ °ü¸®
+    // GameWorldëŠ” í”Œë ˆì´ì–´, í•„ë“œ, ë Œë”ëŸ¬ë¥¼ ê´€ë¦¬
     std::unique_ptr<Player> m_player;
     Field m_field;
     ConsoleRenderer m_renderer;

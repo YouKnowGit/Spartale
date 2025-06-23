@@ -3,21 +3,21 @@
 #include <string>
 #include <vector>
 
-// Àü¹æ ¼±¾ğ
+// ì „ë°© ì„ ì–¸
 class Player;
 class Monster;
 class ConsoleRenderer;
 
-// ÀüÅõÀÇ ÇöÀç »óÅÂ¸¦ ¸íÈ®ÇÏ°Ô ³ªÅ¸³»´Â ¿­°ÅÇü
+// ì „íˆ¬ì˜ í˜„ì¬ ìƒíƒœë¥¼ ëª…í™•í•˜ê²Œ ë‚˜íƒ€ë‚´ëŠ” ì—´ê±°í˜•
 enum class EBattleState
 {
-    Intro,              // ÀüÅõ ½ÃÀÛ ¸Ş½ÃÁö Ç¥½Ã
-    PlayerActionSelect,   // ÇÃ·¹ÀÌ¾î Çàµ¿ ¼±ÅÃ (°ø°İ, ¹æ¾î...)
-    PlayerSkillSelect,    // ÇÃ·¹ÀÌ¾î ½ºÅ³ ¼±ÅÃ
-    ExecutingPlayerAction, // ÇÃ·¹ÀÌ¾î Çàµ¿ ½ÇÇà ¹× °á°ú Ç¥½Ã
-    EnemyTurn,            // Àû ÅÏ ½ÇÇà
-    TurnEnd,              // ÅÏ Á¾·á (Áö¼Ó È¿°ú µî Ã³¸®)
-    BattleOver            // ÀüÅõ Á¾·á ¸Ş½ÃÁö Ç¥½Ã
+    Intro,              // ì „íˆ¬ ì‹œì‘ ë©”ì‹œì§€ í‘œì‹œ
+    PlayerActionSelect,   // í”Œë ˆì´ì–´ í–‰ë™ ì„ íƒ (ê³µê²©, ë°©ì–´...)
+    PlayerSkillSelect,    // í”Œë ˆì´ì–´ ìŠ¤í‚¬ ì„ íƒ
+    ExecutingPlayerAction, // í”Œë ˆì´ì–´ í–‰ë™ ì‹¤í–‰ ë° ê²°ê³¼ í‘œì‹œ
+    EnemyTurn,            // ì  í„´ ì‹¤í–‰
+    TurnEnd,              // í„´ ì¢…ë£Œ (ì§€ì† íš¨ê³¼ ë“± ì²˜ë¦¬)
+    BattleOver            // ì „íˆ¬ ì¢…ë£Œ ë©”ì‹œì§€ í‘œì‹œ
 };
 
 class BattleManager {
@@ -25,21 +25,21 @@ public:
     BattleManager(Player* player, Monster* monster, ConsoleRenderer& renderer);
     ~BattleManager() = default;
 
-    // ÀÌ ÇÔ¼ö¸¦ È£ÃâÇÏ¸é ÀüÅõ°¡ ½ÃÀÛµÇ°í ³¡³¯ ¶§±îÁö ¸ğµç °ÍÀ» Ã³¸®
+    // ì´ í•¨ìˆ˜ë¥¼ í˜¸ì¶œí•˜ë©´ ì „íˆ¬ê°€ ì‹œì‘ë˜ê³  ëë‚  ë•Œê¹Œì§€ ëª¨ë“  ê²ƒì„ ì²˜ë¦¬
     void Run();
 
 private:
-    // ¸ŞÀÎ ·çÇÁ¿¡¼­ È£ÃâµÇ´Â ÇÙ½É ÇÔ¼öµé
-    void ProcessInput(); // Å°º¸µå ÀÔ·Â Ã³¸®
-    void Update();       // »óÅÂ¿¡ µû¸¥ °ÔÀÓ ·ÎÁ÷ ¾÷µ¥ÀÌÆ®
-    void Render();       // ÇöÀç »óÅÂ¸¦ È­¸é¿¡ ±×¸®±â
+    // ë©”ì¸ ë£¨í”„ì—ì„œ í˜¸ì¶œë˜ëŠ” í•µì‹¬ í•¨ìˆ˜ë“¤
+    void ProcessInput(); // í‚¤ë³´ë“œ ì…ë ¥ ì²˜ë¦¬
+    void Update();       // ìƒíƒœì— ë”°ë¥¸ ê²Œì„ ë¡œì§ ì—…ë°ì´íŠ¸
+    void Render();       // í˜„ì¬ ìƒíƒœë¥¼ í™”ë©´ì— ê·¸ë¦¬ê¸°
 
-    // ±×¸®±â ÇïÆÛ ÇÔ¼öµé
+    // ê·¸ë¦¬ê¸° í—¬í¼ í•¨ìˆ˜ë“¤
     void DrawUI();
     void DrawActionSelectMenu();
     void DrawSkillSelectMenu();
 
-    // ±âÅ¸ ÇïÆÛ ÇÔ¼öµé
+    // ê¸°íƒ€ í—¬í¼ í•¨ìˆ˜ë“¤
     void Log(const std::wstring& message);
     void LogAndWait(const std::wstring& message);
 
@@ -47,24 +47,24 @@ private:
     std::wstring DrawStatBar(const std::wstring& label, float current, float max, int barLength) const;
     void CheckBattleStatus();
 
-    // ¹®ÀÚ¿­ ±×¸®±â¸¦ À§ÇÑ À¯Æ¿¸®Æ¼
+    // ë¬¸ìì—´ ê·¸ë¦¬ê¸°ë¥¼ ìœ„í•œ ìœ í‹¸ë¦¬í‹°
     void DrawString(int x, int y, const std::wstring& str) const;
 
-	void PlayIntroAnimation();
+    void PlayIntroAnimation();
 
 private:
-    // ÇÙ½É ¸â¹ö º¯¼ö
+    // í•µì‹¬ ë©¤ë²„ ë³€ìˆ˜
     Player* m_player;
     Monster* m_monster;
-    ConsoleRenderer& m_renderer; // ÂüÁ¶·Î ¹Ş¾Æ¼­, ¼ÒÀ¯ÇÏÁö ¾ÊÀ½
+    ConsoleRenderer& m_renderer; // ì°¸ì¡°ë¡œ ë°›ì•„ì„œ, ì†Œìœ í•˜ì§€ ì•ŠìŒ
 
-    // ÀüÅõ »óÅÂ °ü¸® º¯¼ö
+    // ì „íˆ¬ ìƒíƒœ ê´€ë¦¬ ë³€ìˆ˜
     EBattleState m_battleState;
     bool m_bIsBattleOver;
     bool m_bPlayerWon;
     int m_CurrentTurn;
 
-    // UI ¹× ¸Ş½ÃÁö °ü·Ã º¯¼ö
+    // UI ë° ë©”ì‹œì§€ ê´€ë ¨ ë³€ìˆ˜
     std::wstring m_statusMessage;
     int m_currentMenuSelection;
     std::vector<std::wstring> m_currentMenuOptions;

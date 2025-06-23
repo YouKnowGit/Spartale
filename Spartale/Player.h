@@ -4,14 +4,14 @@
 
 enum class Direction { UP, DOWN, LEFT, RIGHT };
 
-// Actor¸¦ »ó¼Ó¹Ş¾Æ Player Å¬·¡½º¸¦ Á¤ÀÇÇÕ´Ï´Ù.
+// Actorë¥¼ ìƒì†ë°›ì•„ Player í´ë˜ìŠ¤ë¥¼ ì •ì˜í•©ë‹ˆë‹¤.
 class Player : public Actor
 {
 public:
     Player(std::wstring name);
     virtual ~Player() = default;
 
-    // ActorÀÇ °¡»ó ÇÔ¼öµéÀ» ÀçÁ¤ÀÇ(override)
+    // Actorì˜ ê°€ìƒ í•¨ìˆ˜ë“¤ì„ ì¬ì •ì˜(override)
     virtual void Initialize() override;
     virtual void Update() override;
     virtual void Render() override;

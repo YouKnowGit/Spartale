@@ -2,7 +2,7 @@
 #include <iostream>
 #include <conio.h>
 
-// »ı¼ºÀÚ
+// ìƒì„±ì
 GameWorld::GameWorld(std::unique_ptr<Player> player)
     : m_player(std::move(player)),
     m_bIsRunning(true),
@@ -12,10 +12,10 @@ GameWorld::GameWorld(std::unique_ptr<Player> player)
 
 void GameWorld::Initialize()
 {
-    // ·»´õ·¯ ÃÊ±âÈ­
+    // ë Œë”ëŸ¬ ì´ˆê¸°í™”
     m_renderer.Initialize();
 
-    // Ã¹ ¸Ê ·Îµå ¹× ÇÃ·¹ÀÌ¾î ÃÊ±â À§Ä¡ ¼³Á¤ (ÇÊ¿ä ½Ã)
+    // ì²« ë§µ ë¡œë“œ ë° í”Œë ˆì´ì–´ ìœ„ì¹˜ ì„¤ì •
     m_field.LoadMapFromFile("Town.json");
     m_player->CurrentLocation = { 5, 5 };
 }
@@ -32,7 +32,7 @@ void GameWorld::GameLoop()
     {
         Render();
         ProcessInput();
-        Sleep(16); // ¾à 60FPS
+        Sleep(16); // 60FPS
     }
 }
 
@@ -47,41 +47,41 @@ void GameWorld::ProcessInput()
             m_bIsRunning = false;
             return;
         }
-        // . . . ( ÇÊµå ³»¿¡¼­ ±¸ÇöÇÒ ±â´Éµé¿¡ ´ëÇÑ Å° ÀÔ·Â Ã³¸®´Â ¿©±â¼­ ex. 'g' ·Î »óÈ£ÀÛ¿ë µî ) . . .
+        // . . . ( í•„ë“œ ë‚´ì—ì„œ êµ¬í˜„í•  ê¸°ëŠ¥ë“¤ì— ëŒ€í•œ í‚¤ ì…ë ¥ ì²˜ë¦¬ëŠ” ì—¬ê¸°ì„œ ex. 'g' ë¡œ ìƒí˜¸ì‘ìš© ë“± ) . . .
 
         if (key == 224)
         {
             key = _getch();
             FMapLocation nextLocation = m_player->CurrentLocation;
 
-			// ÀÔ·Â¹ŞÀº Key °¡ 224(¹æÇâÅ°)ÀÎ °æ¿ì ¹æÇâ¿¡ ¸Â°Ô Player ÀÇ Position °ú Direction À» º¯°æ
+            // ì…ë ¥ë°›ì€ Key ê°€ 224(ë°©í–¥í‚¤)ì¸ ê²½ìš° ë°©í–¥ì— ë§ê²Œ Player ì˜ Position ê³¼ Direction ì„ ë³€ê²½
             switch (key)
             {
-            case 72: // À§ (Up)
+            case 72: // (Up)
                 nextLocation.Y--;
                 m_player->SetDirection(Direction::UP);
                 break;
-            case 80: // ¾Æ·¡ (Down)
+            case 80: // (Down)
                 nextLocation.Y++;
                 m_player->SetDirection(Direction::DOWN);
                 break;
-            case 75: // ¿ŞÂÊ (Left)
+            case 75: // (Left)
                 nextLocation.X--;
                 m_player->SetDirection(Direction::LEFT);
                 break;
-            case 77: // ¿À¸¥ÂÊ (Right)
+            case 77: // (Right)
                 nextLocation.X++;
                 m_player->SetDirection(Direction::RIGHT);
                 break;
             }
 
-			// IsWalkable Ã¼Å© ÈÄ ÀÌµ¿. NPC µî ´Ù¸¥ ¿ÀºêÁ§Æ®¿¡ ÀÇÇØ Ãæµ¹ ·ÎÁ÷µµ ¿©±â¼­ Ãß°¡
+			// IsWalkable ì²´í¬ í›„ ì´ë™. NPC ë“± ë‹¤ë¥¸ ì˜¤ë¸Œì íŠ¸ì— ì˜í•´ ì¶©ëŒ ë¡œì§ë„ ì—¬ê¸°ì„œ ì¶”ê°€
             if (m_field.IsWalkable(nextLocation.X, nextLocation.Y))
             {
                 m_player->CurrentLocation = nextLocation;
             }
 
-            // Æ÷Å» ÀÌµ¿ ·ÎÁ÷
+            // í¬íƒˆ ì´ë™ ë¡œì§
             const Portal* portal = m_field.GetPortalAt(m_player->CurrentLocation.X, m_player->CurrentLocation.Y);
             if (portal != nullptr)
             {
