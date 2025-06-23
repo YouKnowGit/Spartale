@@ -13,34 +13,34 @@ public:
     GameplayEffect();
     virtual ~GameplayEffect();
 
-    // ÀÌÆåÆ®ÀÇ ÀÌ¸§
+    // ì´í™íŠ¸ì˜ ì´ë¦„
     std::wstring EffectName;
 
-    // ÀÌÆåÆ® Àû¿ë ¹æ½Ä (Áï½Ã, Áö¼Ó, ¿µ±¸)
+    // ì´í™íŠ¸ ì ìš© ë°©ì‹ (ì¦‰ì‹œ, ì§€ì†, ì˜êµ¬)
     EEffectApplication ApplicationType;
 
-    // ÀÌÆåÆ®°¡ Àû¿ëµÉ ¼Ó¼ºÀÇ ÀÌ¸§ (¿¹: "HP", "Strength")
+    // ì´í™íŠ¸ê°€ ì ìš©ë  ì†ì„±ì˜ ì´ë¦„ (ì˜ˆ: "HP", "Strength")
     std::string TargetAttributeName;
 
-    EModifierOperation OperationType = EModifierOperation::Add; // ±âº»Àº µ¡¼À
+    EModifierOperation OperationType = EModifierOperation::Add; // ê¸°ë³¸ì€ ë§ì…ˆ
 
-    // È¿°úÀÇ Á¤¹İ´ë È¿°ú¸¦ »ı¼ºÇØ¼­ ¹İÈ¯ÇÏ´Â ÇÔ¼ö (Áö¼Ó È¿°ú¸¦ ¿ø»ó º¹±¸ÇÏ±â À§ÇØ »ç¿ë)
+    // íš¨ê³¼ì˜ ì •ë°˜ëŒ€ íš¨ê³¼ë¥¼ ìƒì„±í•´ì„œ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜ (ì§€ì† íš¨ê³¼ë¥¼ ì›ìƒ ë³µêµ¬í•˜ê¸° ìœ„í•´ ì‚¬ìš©)
     std::unique_ptr<GameplayEffect> CreateInverseEffect() const;
 
-    // Áö¼Ó ½Ã°£ (ÅÏ ´ÜÀ§)
+    // ì§€ì† ì‹œê°„ (í„´ ë‹¨ìœ„)
     int Duration = 0;
 
-    // µ¥¹ÌÁö Å¸ÀÔ
+    // ë°ë¯¸ì§€ íƒ€ì…
     EDamageType DamageType;
 
-    // º¯°æ ¼öÄ¡ (µ¥¹ÌÁö·®, È¸º¹·®, ½ºÅÈ Áõ°¡·® µî)
+    // ë³€ê²½ ìˆ˜ì¹˜ (ë°ë¯¸ì§€ëŸ‰, íšŒë³µëŸ‰, ìŠ¤íƒ¯ ì¦ê°€ëŸ‰ ë“±)
     float Magnitude = 0.0f;
 
     bool bExecuteOnTurn = false;
 
-    // È¿°ú ½ÃÀüÀÚ
+    // íš¨ê³¼ ì‹œì „ì
     Actor* SourceActor = nullptr;
 
-    // ÀÌ ÀÌÆåÆ®¸¦ ´ë»óÀÇ AttributeSet¿¡ ½ÇÁ¦·Î Àû¿ëÇÏ´Â ÇÔ¼ö
+    // ì´ ì´í™íŠ¸ë¥¼ ëŒ€ìƒì˜ AttributeSetì— ì‹¤ì œë¡œ ì ìš©í•˜ëŠ” í•¨ìˆ˜
     virtual void Apply(AttributeSet* TargetAttributeSet) const;
 };

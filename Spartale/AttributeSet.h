@@ -5,13 +5,13 @@
 
 class AbilitySystemComponent;
 
-// °¢ ´É·ÂÄ¡(Attribute)ÀÇ ÇöÀç °ª°ú ±âº» °ªÀ» ÀúÀåÇÏ´Â ±¸Á¶Ã¼
+// ê° ëŠ¥ë ¥ì¹˜(Attribute)ì˜ í˜„ì¬ ê°’ê³¼ ê¸°ë³¸ ê°’ì„ ì €ì¥í•˜ëŠ” êµ¬ì¡°ì²´
 struct FAttributeData
 {
-	float BaseValue = 0.0f; // ±âº» °ª(´É·ÂÄ¡ ¾ÆÀÌÅÛÀÌ³ª ½ºÅ³¿¡ ÀÇÇØ º¯°æµÇÁö ¾ÊÀ½)
-	float CurrentValue = 0.0f;  // ÇöÀç °ª(´É·ÂÄ¡ ¾ÆÀÌÅÛÀÌ³ª ½ºÅ³¿¡ ÀÇÇØ º¯°æµÉ ¼ö ÀÖÀ½)
+    float BaseValue = 0.0f; // ê¸°ë³¸ ê°’(ëŠ¥ë ¥ì¹˜ ì•„ì´í…œì´ë‚˜ ìŠ¤í‚¬ì— ì˜í•´ ë³€ê²½ë˜ì§€ ì•ŠìŒ)
+    float CurrentValue = 0.0f;  // í˜„ì¬ ê°’(ëŠ¥ë ¥ì¹˜ ì•„ì´í…œì´ë‚˜ ìŠ¤í‚¬ì— ì˜í•´ ë³€ê²½ë  ìˆ˜ ìˆìŒ)
 
-	// »ı¼ºÀÚ¸¦ ÅëÇØ ÇÏ³ªÀÇ °ªÀ¸·Î 2°³ÀÇ ¸â¹ö¸¦ ÃÊ±âÈ­ÇÒ ¼ö ÀÖµµ·Ï ¼³Á¤
+    // ìƒì„±ìë¥¼ í†µí•´ í•˜ë‚˜ì˜ ê°’ìœ¼ë¡œ 2ê°œì˜ ë©¤ë²„ë¥¼ ì´ˆê¸°í™”í•  ìˆ˜ ìˆë„ë¡ ì„¤ì •
     FAttributeData(float value = 0.0f) : BaseValue(value), CurrentValue(value) {}
 };
 class AttributeSet
@@ -20,43 +20,43 @@ public:
     AttributeSet(AbilitySystemComponent* OwnerComp);
     virtual ~AttributeSet() = default;
 
-    // ¼Ó¼º ÀÌ¸§À¸·Î ½ÇÁ¦ µ¥ÀÌÅÍ¿¡ Á¢±ÙÇÒ ¼ö ÀÖ°Ô ÇØÁÖ´Â ¸Ê
-	// ¼Ó¼º ÀÌ¸§Àº ¹®ÀÚ¿­·Î ÀúÀåµÇ¸ç, ÇØ´ç ¼Ó¼ºÀÇ FAttributeData Æ÷ÀÎÅÍ¸¦ ÂüÁ¶
+    // ì†ì„± ì´ë¦„ìœ¼ë¡œ ì‹¤ì œ ë°ì´í„°ì— ì ‘ê·¼í•  ìˆ˜ ìˆê²Œ í•´ì£¼ëŠ” ë§µ
+    // ì†ì„± ì´ë¦„ì€ ë¬¸ìì—´ë¡œ ì €ì¥ë˜ë©°, í•´ë‹¹ ì†ì„±ì˜ FAttributeData í¬ì¸í„°ë¥¼ ì°¸ì¡°
     std::map<std::string, FAttributeData*> AttributeMap;
 
     AbilitySystemComponent* OwningAbilitySystemComponent;
 
-    // --- ±âº» ½ºÅÈ (Primary Stats) ---
-    FAttributeData Strength;          // Èû
-    FAttributeData Agility;           // ¹ÎÃ¸
-    FAttributeData Intelligence;      // Áö´É
-    FAttributeData Defence;           // ¹æ¾î·Â
-    FAttributeData MagicResistance;   // ¸¶¹ı ÀúÇ×·Â
+    // --- ê¸°ë³¸ ìŠ¤íƒ¯ (Primary Stats) ---
+    FAttributeData Strength;          // í˜
+    FAttributeData Agility;           // ë¯¼ì²©
+    FAttributeData Intelligence;      // ì§€ëŠ¥
+    FAttributeData Defence;           // ë°©ì–´ë ¥
+    FAttributeData MagicResistance;   // ë§ˆë²• ì €í•­ë ¥
 
-    // --- ÀÚ¿ø (Resources) ---
+    // --- ìì› (Resources) ---
     FAttributeData HP;
     FAttributeData MP;
     FAttributeData BaseHP;
     FAttributeData BaseMP;
 
-    // °ñµå¿Í °æÇèÄ¡, ·¹º§
+    // ê³¨ë“œì™€ ê²½í—˜ì¹˜, ë ˆë²¨
     FAttributeData Gold;
     FAttributeData Experience;
     int Level = 1;
 
-    FAttributeData CriticalHitChance;          // Ä¡¸íÅ¸ È®·ü (¿¹: 0.05 = 5%)
-    FAttributeData CriticalHitDamageMultiplier; // Ä¡¸íÅ¸ ÇÇÇØ·® ¹èÀ² (¿¹: 1.5 = 150%)
+    FAttributeData CriticalHitChance;          // ì¹˜ëª…íƒ€ í™•ë¥  (ì˜ˆ: 0.05 = 5%)
+    FAttributeData CriticalHitDamageMultiplier; // ì¹˜ëª…íƒ€ í”¼í•´ëŸ‰ ë°°ìœ¨ (ì˜ˆ: 1.5 = 150%)
 
-    // --- ¸ŞÅ¸ µ¥ÀÌÅÍ (Meta Data) ---
-    bool bIsDefending = false; // ÇöÀç ¹æ¾î »óÅÂÀÎÁö ¿©ºÎ (¹æ¾î ½Ã½ºÅÛ Á¦°Å ½Ã »èÁ¦)
-    int AdditionalStatPoints = 0; // ºĞ¹è °¡´ÉÇÑ Ãß°¡ ½ºÅÈ Æ÷ÀÎÆ®
+    // --- ë©”íƒ€ ë°ì´í„° (Meta Data) ---
+    bool bIsDefending = false; // í˜„ì¬ ë°©ì–´ ìƒíƒœì¸ì§€ ì—¬ë¶€ (ë°©ì–´ ì‹œìŠ¤í…œ ì œê±° ì‹œ ì‚­ì œ)
+    int AdditionalStatPoints = 0; // ë¶„ë°° ê°€ëŠ¥í•œ ì¶”ê°€ ìŠ¤íƒ¯ í¬ì¸íŠ¸
 
-    // ´É·ÂÄ¡°¡ º¯°æµÇ±â Á÷Àü¿¡ È£ÃâµÉ ÇÔ¼ö
+    // ëŠ¥ë ¥ì¹˜ê°€ ë³€ê²½ë˜ê¸° ì§ì „ì— í˜¸ì¶œë  í•¨ìˆ˜
     virtual void PreAttributeChange(const FAttributeData& Attribute, float& NewValue);
 
-    // ´É·ÂÄ¡°¡ º¯°æµÈ Á÷ÈÄ¿¡ È£ÃâµÉ ÇÔ¼ö
+    // ëŠ¥ë ¥ì¹˜ê°€ ë³€ê²½ëœ ì§í›„ì— í˜¸ì¶œë  í•¨ìˆ˜
     virtual void PostAttributeChange(const FAttributeData& Attribute, float OldValue, float NewValue);
 
-    // Èû, Áö´É ½ºÅÈ¿¡ µû¶ó MaxHP, MaxMP¸¦ Àç°è»êÇÏ´Â ÇÔ¼ö
+    // í˜, ì§€ëŠ¥ ìŠ¤íƒ¯ì— ë”°ë¼ MaxHP, MaxMPë¥¼ ì¬ê³„ì‚°í•˜ëŠ” í•¨ìˆ˜
     void AdjustDependentAttributes();
 };

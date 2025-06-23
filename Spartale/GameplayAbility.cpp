@@ -11,19 +11,19 @@ bool GameplayAbility::CanActivateAbility(AbilitySystemComponent* SourceASC) cons
 {
     AttributeSet* SourceAttributeSet = SourceASC->GetAttributeSet();
 
-    // À¯È¿¼º °ËÁõ
+    // ìœ íš¨ì„± ê²€ì¦
     if (!SourceAttributeSet)
     {
         return false;
     }
 
-    // ¸¶³ª°¡ ÃæºĞÇÑÁö È®ÀÎ
+    // ë§ˆë‚˜ê°€ ì¶©ë¶„í•œì§€ í™•ì¸
     if (SourceAttributeSet->MP.CurrentValue < this->ManaCost)
     {
         return false;
     }
 
-	// . . . ÀÌ ¿ÜÀÇ ½ºÅ³ Á¶°ÇÀ» Ãß°¡·Î °ËÁõÇÏ¿© ½ºÅ³ °¡´É ¿©ºÎ ÆÇº° . . . (True/False ¹İÈ¯)
+    // . . . ì´ ì™¸ì˜ ìŠ¤í‚¬ ì¡°ê±´ì„ ì¶”ê°€ë¡œ ê²€ì¦í•˜ì—¬ ìŠ¤í‚¬ ê°€ëŠ¥ ì—¬ë¶€ íŒë³„ . . . (True/False ë°˜í™˜)
 
     return true;
 }

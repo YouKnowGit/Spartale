@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 
-// Àü¹æ ¼±¾ğ
+// ì „ë°© ì„ ì–¸
 class Actor;
 class AttributeSet;
 class GameplayAbility;
@@ -11,10 +11,10 @@ class GameplayEffect;
 
 struct FActiveGameplayEffect
 {
-    // ¾î¶² È¿°úÀÎÁö
+    // ì–´ë–¤ íš¨ê³¼ì¸ì§€
     std::unique_ptr<GameplayEffect> SourceEffect = nullptr;
 
-    // È¿°ú°¡ ¸î ÅÏ ³²¾Ò´ÂÁö (-1Àº ¿µ±¸ Áö¼Ó)
+    // íš¨ê³¼ê°€ ëª‡ í„´ ë‚¨ì•˜ëŠ”ì§€ (-1ì€ ì˜êµ¬ ì§€ì†)
     int RemainingTurns = 0;
 };
 
@@ -26,21 +26,21 @@ public:
 
     void Initialize();
 
-	// ÇØ´ç Owner °¡ ¼ÒÀ¯ÇÒ ½ºÅ³ ¸ñ·Ï: GrantAbility
+    // í•´ë‹¹ Owner ê°€ ì†Œìœ í•  ìŠ¤í‚¬ ëª©ë¡: GrantAbility
     void GrantAbility(std::unique_ptr<GameplayAbility> Ability);
     void ClearAbility(GameplayAbility* Ability);
 
-    // ÀüÅõ ½Ã »ç¿ëÇÒ 4°³ÀÇ ½ºÅ³: EquipAbility
+    // ì „íˆ¬ ì‹œ ì‚¬ìš©í•  4ê°œì˜ ìŠ¤í‚¬: EquipAbility
     void EquipAbility(int32_t SlotIndex, GameplayAbility* Ability);
     void UnEquipAbility(int32_t SlotIndex);
 
-	// ½ºÅ³ ¹× ¾ÆÀÌÅÛ »ç¿ë
-	// TryActivateAbility: ¾îºô¸®Æ¼¸¦ »ç¿ë(È°¼ºÈ­)ÇÏ´Â ÇÔ¼ö
-	// ApplyGameplayEffectToSelf: ÀÚ½Å¿¡°Ô °ÔÀÓÇÃ·¹ÀÌ È¿°ú¸¦ Àû¿ëÇÏ´Â ÇÔ¼ö
+    // ìŠ¤í‚¬ ë° ì•„ì´í…œ ì‚¬ìš©
+    // TryActivateAbility: ì–´ë¹Œë¦¬í‹°ë¥¼ ì‚¬ìš©(í™œì„±í™”)í•˜ëŠ” í•¨ìˆ˜
+    // ApplyGameplayEffectToSelf: ìì‹ ì—ê²Œ ê²Œì„í”Œë ˆì´ íš¨ê³¼ë¥¼ ì ìš©í•˜ëŠ” í•¨ìˆ˜
     std::wstring TryActivateAbility(int32_t SlotIndex, Actor* Target);
     void ApplyGameplayEffectToSelf(std::unique_ptr<GameplayEffect> Effect);
 
-	// Getter
+    // Getter
     Actor* GetOwnerActor() const { return OwnerActor; }
     AttributeSet* GetAttributeSet() const { return MyAttributeSet.get(); }
     GameplayAbility* GetGrantedAbility(int32_t Index) const;
@@ -49,18 +49,18 @@ public:
     std::wstring UpdateActiveEffects();
 
 protected:
-    // ÀÌ ÄÄÆ÷³ÍÆ®ÀÇ ¼ÒÀ¯ÀÚ 
+    // ì´ ì»´í¬ë„ŒíŠ¸ì˜ ì†Œìœ ì 
     Actor* OwnerActor;
 
-	// ÀÌ ÄÄÆ÷³ÍÆ®°¡ AttributeSet ¼ÒÀ¯ (ÀÌ¿¡ Á¢±ÙÇØ ´É·ÂÄ¡ °è»ê ¹× º¯°æ, protected ÀÌ¹Ç·Î Getter »ç¿ë)
+    // ì´ ì»´í¬ë„ŒíŠ¸ê°€ AttributeSet ì†Œìœ  (ì´ì— ì ‘ê·¼í•´ ëŠ¥ë ¥ì¹˜ ê³„ì‚° ë° ë³€ê²½, protected ì´ë¯€ë¡œ Getter ì‚¬ìš©)
     std::unique_ptr<AttributeSet> MyAttributeSet;
 
-    // ½ÀµæÇÑ ¸ğµç ¾îºô¸®Æ¼ ¸ñ·Ï (¼ÒÀ¯ÇÑ ÀüÃ¼ ½ºÅ³)
+    // ìŠµë“í•œ ëª¨ë“  ì–´ë¹Œë¦¬í‹° ëª©ë¡ (ì†Œìœ í•œ ì „ì²´ ìŠ¤í‚¬)
     std::vector<std::unique_ptr<GameplayAbility>> GrantedAbilities;
 
-    // ÀåÂøÇÑ ¾îºô¸®Æ¼ ¸ñ·Ï (»ç¿ëÀÚ°¡ Á¤ÇÑ 4°³ÀÇ ½ºÅ³)
+    // ì¥ì°©í•œ ì–´ë¹Œë¦¬í‹° ëª©ë¡ (ì‚¬ìš©ìê°€ ì •í•œ 4ê°œì˜ ìŠ¤í‚¬)
     std::vector<GameplayAbility*> EquippedAbilities;
 
-    // ÀÌ Ä³¸¯ÅÍ¿¡°Ô ÇöÀç Àû¿ë ÁßÀÎ ¸ğµç Áö¼Ó/¿µ±¸ È¿°ú ¸ñ·Ï (°Ô½ÃÆÇ ¿ªÇÒ)
+    // ì´ ìºë¦­í„°ì—ê²Œ í˜„ì¬ ì ìš© ì¤‘ì¸ ëª¨ë“  ì§€ì†/ì˜êµ¬ íš¨ê³¼ ëª©ë¡ (ê²Œì‹œíŒ ì—­í• )
     std::vector<FActiveGameplayEffect> ActiveEffects;
 };

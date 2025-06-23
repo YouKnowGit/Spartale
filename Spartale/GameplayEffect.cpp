@@ -8,53 +8,54 @@ GameplayEffect::~GameplayEffect()
 {
 }
 
-// °¡Àå ÇÙ½ÉÀûÀÎ ÇÔ¼ö
-// TargetAttributeNameÀ» ±â¹İÀ¸·Î TargetAttributeSetÀÇ ½ÇÁ¦ ¼Ó¼ºÀ» Ã£¾Æ
-// Magnitude¸¸Å­ ¼öÄ¡¸¦ º¯°æÇÏ´Â ÇÔ¼ö
+// ê°€ì¥ í•µì‹¬ì ì¸ í•¨ìˆ˜
+// TargetAttributeNameì„ ê¸°ë°˜ìœ¼ë¡œ TargetAttributeSetì˜ ì‹¤ì œ ì†ì„±ì„ ì°¾ì•„
+// Magnitudeë§Œí¼ ìˆ˜ì¹˜ë¥¼ ë³€ê²½í•˜ëŠ” í•¨ìˆ˜
 void GameplayEffect::Apply(AttributeSet* TargetAttributeSet) const
 {
-    // ´ë»óÀÇ AttributeSet À¯È¿¼º °Ë»ç
+    // ëŒ€ìƒì˜ AttributeSet ìœ íš¨ì„± ê²€ì‚¬
     if (!TargetAttributeSet)
     {
         return;
     }
 
-    // 1. ¸Ê¿¡¼­ TargetAttributeName¿¡ ÇØ´çÇÏ´Â ¼Ó¼ºÀ» find
+    // ë§µì—ì„œ TargetAttributeNameì— í•´ë‹¹í•˜ëŠ” ì†ì„±ì„ find
     auto it = TargetAttributeSet->AttributeMap.find(TargetAttributeName);
 
-	// 2. ¼Ó¼ºÀ» Á¤»óÀûÀ¸·Î Ã£¾Ò´ÂÁö °Ë»ç
+    // ì†ì„±ì„ ì •ìƒì ìœ¼ë¡œ ì°¾ì•˜ëŠ”ì§€ ê²€ì‚¬
     if (it != TargetAttributeSet->AttributeMap.end())
     {
-        // 3. ÇØ´ç ¼Ó¼ºÀÇ ÇöÀç °ªÀ» Magnitude ¸¸Å­ º¯°æ
-        // it->first´Â Å°("HP"), it->second´Â °ª(HP µ¥ÀÌÅÍÀÇ ÁÖ¼Ò)
+        // í•´ë‹¹ ì†ì„±ì˜ í˜„ì¬ ê°’ì„ Magnitude ë§Œí¼ ë³€ê²½
+        // it->firstëŠ” í‚¤("HP"), it->secondëŠ” ê°’(HP ë°ì´í„°ì˜ ì£¼ì†Œ)
         FAttributeData* AttributeToChange = it->second;
 
-        // º¯°æ ÀüÀÇ °ªÀ» ±â·Ï
+        // ë³€ê²½ ì „ì˜ ê°’ì„ ê¸°ë¡
         float OldValue = AttributeToChange->CurrentValue;
 
         AttributeToChange->CurrentValue += Magnitude;
 
-        // AttributeSet¿¡°Ô "°ªÀÌ ¹Ù²î¾úÀ¸´Ï ÈÄÃ³¸®" ¶ó°í ¾Ë·ÁÁÜ
+        // AttributeSetì—ê²Œ "ê°’ì´ ë°”ë€Œì—ˆìœ¼ë‹ˆ í›„ì²˜ë¦¬" ë¼ê³  ì•Œë ¤ì¤Œ
         TargetAttributeSet->PostAttributeChange(*AttributeToChange, OldValue, AttributeToChange->CurrentValue);
 
     }
 }
 
+// ì›ìƒë³µêµ¬ìš© GameplayEffect ìƒì„± í•¨ìˆ˜
 std::unique_ptr<GameplayEffect> GameplayEffect::CreateInverseEffect() const
 {
-    // 1. »õ·Î¿î GameplayEffect °´Ã¼ »ı¼º
+    // ìƒˆë¡œìš´ GameplayEffect ê°ì²´ ìƒì„±
     auto InverseEffect = std::make_unique<GameplayEffect>();
 
-	// 2. InverseEffectÀÇ ¼Ó¼ºµéÀ» ¼³Á¤
-    InverseEffect->EffectName = this->EffectName + L" (Á¦°Å)";
+    // InverseEffectì˜ ì†ì„±ë“¤ì„ ì„¤ì •
+    InverseEffect->EffectName = this->EffectName + L" (ï¿½ï¿½ï¿½ï¿½)";
     InverseEffect->TargetAttributeName = this->TargetAttributeName;
 
-    // 3. Àû¿ë ¹æ½ÄÀº Áï½Ã (Instant) ·Î Ã³¸®
+    // ì ìš© ë°©ì‹ì€ ì¦‰ì‹œ (Instant) ë¡œ ì²˜ë¦¬
     InverseEffect->ApplicationType = EEffectApplication::Instant;
 
-    // 4. º¯°æ ¼öÄ¡(Magnitude) ¸¦ Á¤¹İ´ë·Î ¼³Á¤
+    // ë³€ê²½ ìˆ˜ì¹˜(Magnitude) ë¥¼ ì •ë°˜ëŒ€ë¡œ ì„¤ì •
     InverseEffect->Magnitude = -this->Magnitude;
 
-    // 5. ¿Ï¼ºµÈ ¹İ´ë È¿°ú¸¦ ¹İÈ¯
+    // ì™„ì„±ëœ ë°˜ëŒ€ íš¨ê³¼ë¥¼ ë°˜í™˜
     return InverseEffect;
 }

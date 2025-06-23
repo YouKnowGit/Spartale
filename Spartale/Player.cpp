@@ -4,20 +4,20 @@
 
 Player::Player(std::wstring name)
 {
-    // ÇÃ·¹ÀÌ¾î ÀÌ¸§ ¼³Á¤
+    // Player ì´ë¦„ ì´ˆê¸°í™”
     Name = name;
 
-	// Player °´Ã¼ »ı¼º ½Ã ¹Ù·Î ÃÊ±âÈ­ ÇÔ¼ö È£Ãâ
+	// Player ì´ˆê¸°í™” í•¨ìˆ˜ í˜¸ì¶œ
     Initialize();
 }
 
 void Player::Initialize()
 {
-    // ASC¸¦ ÅëÇØ AttributeSet¿¡ Á¢±Ù
+    // ASCê°€ ë³´ìœ í•œ AttributeSet ì— ì ‘ê·¼
     AttributeSet* MyStats = GetAbilityComponent()->GetAttributeSet();
     if (MyStats)
     {
-        // ÇÃ·¹ÀÌ¾îÀÇ ÃÊ±â ´É·ÂÄ¡¸¦ ¼³Á¤
+		// Player ì´ˆê¸° Stats ì„¤ì •
         MyStats->Level = 1;
         MyStats->HP.BaseValue = 150.f;
         MyStats->HP.CurrentValue = 150.f;
@@ -33,7 +33,7 @@ void Player::Initialize()
 
     }
 
-    // ÇÊµå¿ë À§Ä¡ ¼³Á¤
+    // Player ìœ„ì¹˜ ë° ë°©í–¥ ê´€ë ¨ ë°ì´í„°
     m_x = 5;
     m_y = 5;
     m_direction = Direction::DOWN;
@@ -41,12 +41,10 @@ void Player::Initialize()
 
 void Player::Update()
 {
-    // TODO: ¸Å ÇÁ·¹ÀÓ¸¶´Ù ÇÃ·¹ÀÌ¾î°¡ Ã³¸®ÇØ¾ß ÇÒ ·ÎÁ÷ (¿¹: ÀÔ·Â Ã³¸®)
 }
 
 void Player::Render()
 {
-    // TODO: ÇÃ·¹ÀÌ¾îÀÇ Á¤º¸¸¦ È­¸é¿¡ ±×¸®´Â ·ÎÁ÷
 }
 
 void Player::SetDirection(Direction dir)

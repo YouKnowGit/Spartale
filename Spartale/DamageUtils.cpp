@@ -18,23 +18,23 @@ namespace DamageUtils
 
         float Damage = 0.0f;
 
-        // µ¥¹ÌÁö Å¸ÀÔ¿¡ µû¶ó °è»ê ¹æ½ÄÀ» ºĞ±â
+        // ë°ë¯¸ì§€ íƒ€ì…ì— ë”°ë¼ ê³„ì‚° ë°©ì‹ì„ ë¶„ê¸°
         switch (DamageType)
         {
         case EDamageType::Physical:
-            // ¹°¸® µ¥¹ÌÁö = (Èû * ¹°¸® °è¼ö) - (´ë»óÀÇ ¹æ¾î·Â)
+            // ë¬¼ë¦¬ ë°ë¯¸ì§€ = (í˜ * ë¬¼ë¦¬ ê³„ìˆ˜) - (ëŒ€ìƒì˜ ë°©ì–´ë ¥)
             Damage = SourceStats->Strength.CurrentValue * ADRatio;
             Damage -= TargetStats->Defence.CurrentValue;
             break;
 
         case EDamageType::Magical:
-            // ¸¶¹ı µ¥¹ÌÁö = (Áö´É * ¸¶¹ı °è¼ö) - (´ë»óÀÇ ¸¶¹ı ÀúÇ×·Â)
+            // ë§ˆë²• ë°ë¯¸ì§€ = (ì§€ëŠ¥ * ë§ˆë²• ê³„ìˆ˜) - (ëŒ€ìƒì˜ ë§ˆë²• ì €í•­ë ¥)
             Damage = SourceStats->Intelligence.CurrentValue * APRatio;
             Damage -= TargetStats->MagicResistance.CurrentValue;
             break;
 
         case EDamageType::True:
-            // °íÁ¤ µ¥¹ÌÁö = (Èû * ¹°¸® °è¼ö) ¶Ç´Â (Áö´É * ¸¶¹ı °è¼ö). ¹æ¾î/ÀúÇ× ¹«½Ã (ÇöÀç ±¸Çö X)
+            // ê³ ì • ë°ë¯¸ì§€ = (í˜ * ë¬¼ë¦¬ ê³„ìˆ˜) ë˜ëŠ” (ì§€ëŠ¥ * ë§ˆë²• ê³„ìˆ˜). ë°©ì–´/ì €í•­ ë¬´ì‹œ (í˜„ì¬ êµ¬í˜„ X)
             break;
 
         case EDamageType::None:
@@ -44,22 +44,22 @@ namespace DamageUtils
 
         
         {
-            // µ¥¹ÌÁö ÆíÂ÷¸¦ À§ÇÑ ³­¼ö ¹ß»ı ±¸°£
-            // staticÀ¸·Î ¼±¾ğÇÏ¿©, ÀÌ ÇÔ¼ö°¡ Ã³À½ È£ÃâµÉ ¶§ ´Ü ÇÑ ¹ø¸¸ »ı¼º
-            static std::random_device rd;  // ¿¹Ãø ºÒ°¡´ÉÇÑ ½Ãµå°ªÀ» »ı¼º
-            static std::mt19937 gen(rd()); // ½Ãµå°ªÀ¸·Î ¸Ş¸£¼¾ Æ®À§½ºÅÍ ¿£ÁøÀ» ÃÊ±âÈ­
+            // ë°ë¯¸ì§€ í¸ì°¨ë¥¼ ìœ„í•œ ë‚œìˆ˜ ë°œìƒ êµ¬ê°„
+            // staticìœ¼ë¡œ ì„ ì–¸í•˜ì—¬, ì´ í•¨ìˆ˜ê°€ ì²˜ìŒ í˜¸ì¶œë  ë•Œ ë‹¨ í•œ ë²ˆë§Œ ìƒì„±
+            static std::random_device rd;  // ì˜ˆì¸¡ ë¶ˆê°€ëŠ¥í•œ ì‹œë“œê°’ì„ ìƒì„±
+            static std::mt19937 gen(rd()); // ì‹œë“œê°’ìœ¼ë¡œ ë©”ë¥´ì„¼ íŠ¸ìœ„ìŠ¤í„° ì—”ì§„ì„ ì´ˆê¸°í™”
 
-            // 0.95f ~ 1.15f »çÀÌÀÇ ½Ç¼ö¸¦ ±ÕµîÇÏ°Ô »ı¼ºÇÏ´Â ºĞÆ÷¸¦ Á¤ÀÇ (-15% ~ +15% ÆíÂ÷)
+            // 0.95f ~ 1.15f ì‚¬ì´ì˜ ì‹¤ìˆ˜ë¥¼ ê· ë“±í•˜ê²Œ ìƒì„±í•˜ëŠ” ë¶„í¬ë¥¼ ì •ì˜ (-15% ~ +15% í¸ì°¨)
             static std::uniform_real_distribution<float> distrib(0.95f, 1.15f);
 
-            // ÃÖÁ¾ µ¥¹ÌÁö¿¡ ·£´ı ¹èÀ²À» °öÇÕ´Ï´Ù.
+            // ìµœì¢… ë°ë¯¸ì§€ì— ëœë¤ ë°°ìœ¨ì„ ê³±í•©ë‹ˆë‹¤.
             if (Damage > 0)
             {
                 Damage *= distrib(gen);
             }
         }
 
-        // ÃÖ¼Ò µ¥¹ÌÁö´Â 1·Î ¼³Á¤
+        // ìµœì†Œ ë°ë¯¸ì§€ëŠ” 1ë¡œ ì„¤ì •
         if (Damage < 1.f)
         {
             Damage = 1.f;

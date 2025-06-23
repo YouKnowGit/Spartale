@@ -9,46 +9,46 @@ class AbilitySystemComponent;
 class GameplayEffect;
 class Actor;
 
-// ½ºÅ³ÀÇ ±âº» Æ²ÀÌ µÇ´Â Ãß»ó Å¬·¡½º
+// ìŠ¤í‚¬ì˜ ê¸°ë³¸ í‹€ì´ ë˜ëŠ” ì¶”ìƒ í´ë˜ìŠ¤
 class GameplayAbility
 {
 public:
     GameplayAbility();
     virtual ~GameplayAbility() = default;
 
-    // ½ºÅ³ ÀÌ¸§ ¹× ¼³¸í
+    // ìŠ¤í‚¬ ì´ë¦„ ë° ì„¤ëª…
     std::wstring AbilityName;
     std::wstring AbilityDescription;
 
-    // »ç¿ë ºñ¿ë ¹× ÄğÅ¸ÀÓ
+    // ì‚¬ìš© ë¹„ìš© ë° ì¿¨íƒ€ì„
     float ManaCost = 0.0f;
-    int Cooldown = 0; // ÅÏ ´ÜÀ§ (¾ÆÁ÷ ±¸Çö X)
+    int Cooldown = 0; // í„´ ë‹¨ìœ„ (ì•„ì§ êµ¬í˜„ X)
     int CurrentCooldown = 0;
 
-    // ½ºÅ³ °è¼ö
-    float AD_Ratio = 0.0f; // ¹°¸® °è¼ö
-    float AP_Ratio = 0.0f; // ¸¶¹ı °è¼ö
+    // ìŠ¤í‚¬ ê³„ìˆ˜
+    float AD_Ratio = 0.0f; // ë¬¼ë¦¬ ê³„ìˆ˜
+    float AP_Ratio = 0.0f; // ë§ˆë²• ê³„ìˆ˜
 
-	EDamageType DamageType = EDamageType::None; // µ¥¹ÌÁö Å¸ÀÔ (¹°¸®, ¸¶¹ı µî)
+    EDamageType DamageType = EDamageType::None; // ë°ë¯¸ì§€ íƒ€ì… (ë¬¼ë¦¬, ë§ˆë²• ë“±)
 
-    // ÀÌ ¾îºô¸®Æ¼°¡ Àû¿ëÇÒ °ÔÀÓÇÃ·¹ÀÌ ÀÌÆåÆ® ¸ñ·Ï (¾îºô¸®Æ¼°¡ ÀÌÆåÆ® °´Ã¼µéÀ» '¼ÒÀ¯')
-	// ex) °ø°İ·Â Áõ°¡, ¹æ¾î·Â °¨¼Ò µî
+    // ì´ ì–´ë¹Œë¦¬í‹°ê°€ ì ìš©í•  ê²Œì„í”Œë ˆì´ ì´í™íŠ¸ ëª©ë¡ (ì–´ë¹Œë¦¬í‹°ê°€ ì´í™íŠ¸ ê°ì²´ë“¤ì„ 'ì†Œìœ ')
+    // ex) ê³µê²©ë ¥ ì¦ê°€, ë°©ì–´ë ¥ ê°ì†Œ ë“±
     std::vector<std::unique_ptr<GameplayEffect>> EffectsToApply;
 
-    // °¡»ó ÇÔ¼ö: ÀÌ ¾îºô¸®Æ¼¸¦ »ç¿ëÇÒ ¼ö ÀÖ´ÂÁö È®ÀÎ
-	// ex) ¸¶³ª°¡ ÃæºĞÇÑÁö, ÄğÅ¸ÀÓÀÌ ³¡³µ´ÂÁö µî
+    // ê°€ìƒ í•¨ìˆ˜: ì´ ì–´ë¹Œë¦¬í‹°ë¥¼ ì‚¬ìš©í•  ìˆ˜ ìˆëŠ”ì§€ í™•ì¸
+    // ex) ë§ˆë‚˜ê°€ ì¶©ë¶„í•œì§€, ì¿¨íƒ€ì„ì´ ëë‚¬ëŠ”ì§€ ë“±
     virtual bool CanActivateAbility(AbilitySystemComponent* SourceASC) const;
 
-    // ¼ø¼ö °¡»ó ÇÔ¼ö: ¾îºô¸®Æ¼¸¦ ½ÇÁ¦·Î ¹ßµ¿½ÃÅ°´Â ÇÔ¼ö
-	// SourceASC: ½ÃÀüÀÚ(ASC), Target: ´ë»ó(Actor)
-	// ¹İÈ¯°ªÀº ¾îºô¸®Æ¼ ¹ßµ¿ °á°ú ¸Ş½ÃÁö (¼º°ø/½ÇÆĞ µî)
-	// ´ë»óÀÚ¸¦ Actor·Î ¹Ş´Â ÀÌÀ¯´Â, ½ÃÀüÀÚ¿¡ ºñÇØ ¹Ù²ğ ¼ö ÀÖ´Â ´ë»óÀÌ ´Ù¾çÇÏ±â ¶§¹®
-    // ¡Ø »ç¿ëÇÒ ¶§ À¯ÀÇÇÏ¼¼¿ä.
-	// ¿¹½Ã: ActivateAbility(m_player->GetGetAbilityComponent(), Goblin);
-	// ½ºÅ³ ¸¸µé ¶§(ÆÄ»ı Å¬·¡½º Á¦ÀÛ ½Ã) ¹İµå½Ã ±¸ÇöÇØ¾ß ÇÔ
+    // ìˆœìˆ˜ ê°€ìƒ í•¨ìˆ˜: ì–´ë¹Œë¦¬í‹°ë¥¼ ì‹¤ì œë¡œ ë°œë™ì‹œí‚¤ëŠ” í•¨ìˆ˜
+    // SourceASC: ì‹œì „ì(ASC), Target: ëŒ€ìƒ(Actor)
+    // ë°˜í™˜ê°’ì€ ì–´ë¹Œë¦¬í‹° ë°œë™ ê²°ê³¼ ë©”ì‹œì§€ (ì„±ê³µ/ì‹¤íŒ¨ ë“±)
+    // ëŒ€ìƒìë¥¼ Actorë¡œ ë°›ëŠ” ì´ìœ ëŠ”, ì‹œì „ìì— ë¹„í•´ ë°”ë€” ìˆ˜ ìˆëŠ” ëŒ€ìƒì´ ë‹¤ì–‘í•˜ê¸° ë•Œë¬¸
+    // â€» ì‚¬ìš©í•  ë•Œ ìœ ì˜í•˜ì„¸ìš”.
+    // ì˜ˆì‹œ: ActivateAbility(m_player->GetGetAbilityComponent(), Goblin);
+    // ìŠ¤í‚¬ ë§Œë“¤ ë•Œ(íŒŒìƒ í´ë˜ìŠ¤ ì œì‘ ì‹œ) ë°˜ë“œì‹œ êµ¬í˜„í•´ì•¼ í•¨
     virtual std::wstring ActivateAbility(AbilitySystemComponent* SourceASC, Actor* Target) = 0;
 
 protected:
-    // ¾îºô¸®Æ¼°¡ »ı¼ºµÉ ¶§ ÇÊ¿äÇÑ ÀÌÆåÆ®µéÀ» ¼³Á¤ÇÏ´Â ÇïÆÛ ÇÔ¼ö
+    // ì–´ë¹Œë¦¬í‹°ê°€ ìƒì„±ë  ë•Œ í•„ìš”í•œ ì´í™íŠ¸ë“¤ì„ ì„¤ì •í•˜ëŠ” í—¬í¼ í•¨ìˆ˜
     virtual void SetupEffects() = 0;
 };

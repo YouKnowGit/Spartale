@@ -4,14 +4,14 @@
 
 Monster::Monster(const std::wstring& InName, float InHP, float InStrength, float InDefence)
 {
-    // »ý¼ºÀÚ¿¡¼­ ¹ÞÀº ÀÌ¸§À¸·Î ¼³Á¤
+	// Monster ì˜ ì´ë¦„ì„ ì„¤ì •
     Name = InName;
 
-    // ASC¸¦ ÅëÇØ AttributeSet¿¡ Á¢±Ù
+	// Actor ê°€ ë³´ìœ í•œ ASC ë¥¼ í†µí•´ AttributeSet ì— ì ‘ê·¼
     AttributeSet* MyStats = GetAbilityComponent()->GetAttributeSet();
     if (MyStats)
     {
-        // »ý¼ºÀÚ¿¡¼­ ¹ÞÀº °ªÀ¸·Î ¸ó½ºÅÍÀÇ ´É·ÂÄ¡¸¦ ¼³Á¤
+		// ëª¬ìŠ¤í„°ì˜ ê¸°ë³¸ ëŠ¥ë ¥ì¹˜ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.
         MyStats->Level = 1;
         MyStats->HP.BaseValue = InHP;
         MyStats->HP.CurrentValue = InHP;

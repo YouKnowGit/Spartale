@@ -1,10 +1,10 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <memory> // ½º¸¶Æ® Æ÷ÀÎÅÍ »ç¿ë
-#include "Global.h" // Global.h´Â FMapLocation Á¤ÀÇ Æ÷ÇÔ
+#include <memory> // ìŠ¤ë§ˆíŠ¸ í¬ì¸í„° ì‚¬ìš©
+#include "Global.h" // Global.hëŠ” FMapLocation ì •ì˜ í¬í•¨
 
-// ASC Àü¹æ ¼±¾ğ
+// ASC ì „ë°© ì„ ì–¸
 class AbilitySystemComponent;
 
 class Actor
@@ -13,10 +13,10 @@ public:
     Actor();
     virtual ~Actor() = default;
 
-	// Actor´Â ASC(Ability System Component)¸¦ ¼ÒÀ¯. ÀÌ¸¦ ÅëÇØ ´É·Â,»óÅÂ¸¦ °ü¸®
+    // ActorëŠ” ASC(Ability System Component)ë¥¼ ì†Œìœ . ì´ë¥¼ í†µí•´ ëŠ¥ë ¥,ìƒíƒœë¥¼ ê´€ë¦¬
     std::unique_ptr<AbilitySystemComponent> AbilityComponent;
 
-    // ±âº» Á¤º¸ (ÀÌ¸§ ¹× À§Ä¡)
+    // ê¸°ë³¸ ì •ë³´ (ì´ë¦„ ë° ìœ„ì¹˜)
     std::wstring Name;
     FMapLocation CurrentLocation;
 

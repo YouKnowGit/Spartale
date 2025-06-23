@@ -1,7 +1,7 @@
 #include "Actor.h"
 #include "AbilitySystemComponent.h"
 
-// »ý¼ºÀÚ: ÀÚ½ÅÀÇ AbilitySystemComponent¸¦ »ý¼ºÇÏ¿© ¼ÒÀ¯
+// Actor ê°€ ë³´ìœ í•œ AbilitySystemComponent ë¥¼ ìƒì„±í•˜ì—¬ ì†Œìœ 
 Actor::Actor()
 {
     this->AbilityComponent = std::make_unique<AbilitySystemComponent>(this);

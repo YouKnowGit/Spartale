@@ -1,137 +1,251 @@
 ﻿#include "BattleManager.h"
 #include "Player.h"
 #include "Monster.h"
+#include "ConsoleRenderer.h"
 #include "AttributeSet.h"
 #include "AbilitySystemComponent.h"
 #include "GameplayAbility.h"
-#include "ConsoleUtils.h"
 
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
-#include <fcntl.h>
-#include <io.h>
 
-using namespace std;
-using namespace ConsoleUtils;
-
-BattleManager::BattleManager(Player* player, Monster* monster)
-    : m_player(player), m_monster(monster),
-    m_bIsBattleOver(false), m_bPlayerWon(false), m_CurrentTurn(1)
+BattleManager::BattleManager(Player* player, Monster* monster, ConsoleRenderer& renderer)
+    : m_player(player),
+    m_monster(monster),
+    m_renderer(renderer),
+    m_bIsBattleOver(false),
+    m_bPlayerWon(false),
+    m_CurrentTurn(1),
+    m_battleState(EBattleState::Intro), // 전투는 '인트로' 상태에서 시작
+    m_currentMenuSelection(0)
 {
-    m_statusMessage = L"야생의 " + m_monster->Name + L"이(가) 나타났다!";
 }
 
-void BattleManager::Run() {
-    ShowConsoleCursor(false);
+void BattleManager::Run()
+{
     PlayIntroAnimation();
-
-    Log(m_statusMessage);
-    Sleep(1500);
-
-    while (!m_bIsBattleOver) {
-        Draw();
-        ProcessPlayerTurn();
-        CheckBattleStatus();
-        std::wstring playerLog = m_player->GetAbilityComponent()->UpdateActiveEffects();
-        if (!playerLog.empty())
-        {
-            Log(playerLog); // 로그가 비어있지 않을 때만 Log 함수 호출
-			Sleep(2000); // 플레이어 턴 후 효과 업데이트 시간
-        }
-        if (m_bIsBattleOver) break;
-
-        Draw();
-        ProcessEnemyTurn();
-        CheckBattleStatus();
-        std::wstring monsterLog = m_monster->GetAbilityComponent()->UpdateActiveEffects();
-        if (!monsterLog.empty())
-        {
-            Log(monsterLog); // 로그가 비어있지 않을 때만 Log 함수 호출
-			Sleep(2000); // 몬스터 턴 후 효과 업데이트 시간
-        }
-        if (m_bIsBattleOver) break;
-
-        m_CurrentTurn++;
+    while (!m_bIsBattleOver)
+    {
+        ProcessInput();
+        Update();
+        Render();
+        Sleep(16); // 약 60 FPS
     }
-
+    // 전투가 종료되면 EndBattle 호출
     EndBattle();
 }
 
-void BattleManager::ProcessPlayerTurn()
+void BattleManager::ProcessInput()
 {
-    m_player->GetAbilityComponent()->GetAttributeSet()->bIsDefending = false;
-    Log(L"무엇을 할까?");
+    if (!_kbhit()) return;
 
-    // 메뉴를 선택하기 전 쌓였을지 모르는 모든 입력 비움
-    ClearInputBuffer();
+    int key = _getch();
 
-    vector<wstring> options = { L"공격", L"방어", L"아이템", L"도망가기" };
-    int choice = SelectMenuVertical(options, 65, 22);
-
-    switch (choice)
+    // 메뉴 선택 상태일 때만 위/아래/엔터/ESC 키가 작동
+    if (m_battleState == EBattleState::PlayerActionSelect || m_battleState == EBattleState::PlayerSkillSelect)
     {
-    case 0: // 공격
+        if (key == 224) // 방향키
+        {
+            key = _getch();
+            if (key == 72) // 위
+                m_currentMenuSelection = (m_currentMenuSelection == 0) ? m_currentMenuOptions.size() - 1 : m_currentMenuSelection - 1;
+            if (key == 80) // 아래
+                m_currentMenuSelection = (m_currentMenuSelection + 1) % m_currentMenuOptions.size();
+        }
+        else if (key == 13) // 엔터: 선택 확정
+        {
+            m_battleState = EBattleState::ExecutingPlayerAction;
+        }
+        else if (key == 27) // ESC: 뒤로 가기
+        {
+            if (m_battleState == EBattleState::PlayerSkillSelect)
+                m_battleState = EBattleState::PlayerActionSelect;
+        }
+    }
+}
+
+void BattleManager::Update()
+{
+    CheckBattleStatus();
+    if (m_bIsBattleOver) return;
+
+    // 상태 머신: 현재 상태에 따라 다음 행동을 결정합니다.
+    switch (m_battleState)
     {
-        Log(L"사용할 스킬을 선택하세요.");
+    case EBattleState::Intro:
+        LogAndWait(L"야생의 " + m_monster->Name + L"이(가) 나타났다!");
+        m_battleState = EBattleState::PlayerActionSelect; // 바로 플레이어 선택으로 전환
+        break;
+
+    case EBattleState::PlayerActionSelect:
+        m_statusMessage = L"무엇을 할까?";
+        m_currentMenuOptions = { L"공격", L"방어", L"아이템", L"도망가기" };
+        break;
+
+    case EBattleState::PlayerSkillSelect:
+    {
+        m_statusMessage = L"사용할 스킬을 선택하세요.";
+        m_currentMenuOptions.clear();
         AbilitySystemComponent* pASC = m_player->GetAbilityComponent();
         const auto& equippedAbilities = pASC->GetEquippedAbilities();
-        vector<wstring> skillOptions;
-
         for (const auto& skill : equippedAbilities)
         {
-            if (skill) skillOptions.push_back(skill->AbilityName + L" (MP:" + to_wstring((int)skill->ManaCost) + L")");
-            else skillOptions.push_back(L"(비어있음)");
+            if (skill) m_currentMenuOptions.push_back(skill->AbilityName + L" (MP:" + std::to_wstring((int)skill->ManaCost) + L")");
+            else m_currentMenuOptions.push_back(L"(비어있음)");
         }
-        skillOptions.push_back(L"뒤로가기");
-
-        int skillChoice = SelectMenuVertical(skillOptions, 65, 21);
-
-        // '뒤로가기'를 선택하지 않은 경우
-        if (skillChoice < skillOptions.size() - 1)
-        {
-            std::wstring resultLog = pASC->TryActivateAbility(skillChoice, m_monster);
-
-            // 받은 로그를 BattleManager의 Log 함수를 통해 UI에 표시
-            Log(resultLog);
-
-            Sleep(2000); // 결과를 볼 시간
-        }
-        else // '뒤로가기' 선택 시
-        {
-            ProcessPlayerTurn(); // 행동 선택으로 다시 돌아감
-        }
-        break;
+        m_currentMenuOptions.push_back(L"뒤로가기");
     }
-    case 1: // 방어
-        m_player->GetAbilityComponent()->GetAttributeSet()->bIsDefending = true;
-        Log(m_player->Name + L"은(는) 방어 태세를 갖췄다!");
-        Sleep(1500);
-        break;
-    case 2: // 아이템
-        Log(L"아이템 가방이 비어있습니다!");
-        Sleep(1500);
-        break;
-    case 3: // 도망가기
-        Log(L"성공적으로 도망쳤다!");
-        m_bIsBattleOver = true;
-        Sleep(1500);
+    break;
+
+    case EBattleState::ExecutingPlayerAction:
+    {
+        int choice = m_currentMenuSelection;
+        m_currentMenuSelection = 0; // 메뉴 선택 인덱스 초기화
+
+        if (m_currentMenuOptions[0] == L"공격") // 현재 메뉴가 '행동 선택' 메뉴였다면
+        {
+            if (choice == 0) { // 공격
+                m_battleState = EBattleState::PlayerSkillSelect;
+            }
+            else if (choice == 1) { // 방어
+                m_player->GetAbilityComponent()->GetAttributeSet()->bIsDefending = true;
+                LogAndWait(m_player->Name + L"은(는) 방어 태세를 갖췄다!");
+                m_battleState = EBattleState::TurnEnd;
+            }
+            else if (choice == 2) { // 아이템
+                LogAndWait(L"아이템 가방이 비어있습니다!");
+                m_battleState = EBattleState::TurnEnd;
+            }
+            else if (choice == 3) { // 도망가기
+                LogAndWait(L"성공적으로 도망쳤다!");
+                m_bIsBattleOver = true; // 전투 종료 플래그 설정
+            }
+        }
+        else // 현재 메뉴가 '스킬 선택' 메뉴였다면
+        {
+            if (choice == m_currentMenuOptions.size() - 1) { // 뒤로가기
+                m_battleState = EBattleState::PlayerActionSelect;
+            }
+            else { // 스킬 사용
+                std::wstring resultLog = m_player->GetAbilityComponent()->TryActivateAbility(choice, m_monster);
+                LogAndWait(resultLog);
+                m_battleState = EBattleState::TurnEnd;
+            }
+        }
+    }
+    break;
+
+    case EBattleState::TurnEnd:
+        // 플레이어 행동 후 효과 처리
+    {
+        std::wstring playerLog = m_player->GetAbilityComponent()->UpdateActiveEffects();
+        if (!playerLog.empty()) { LogAndWait(playerLog); }
+        CheckBattleStatus();
+        if (m_bIsBattleOver) break;
+        m_battleState = EBattleState::EnemyTurn;
+    }
+    break;
+
+    case EBattleState::EnemyTurn:
+    {
+        LogAndWait(m_monster->Name + L"의 턴!");
+        //Render(); Sleep(1500);
+        LogAndWait(m_monster->RunAI(m_player));
+        //Render(); Sleep(1500);
+
+        // 몬스터 턴 후 효과 처리
+        std::wstring monsterLog = m_monster->GetAbilityComponent()->UpdateActiveEffects();
+        if (!monsterLog.empty()) { LogAndWait(monsterLog); }
+        CheckBattleStatus();
+        if (m_bIsBattleOver) break;
+
+        m_CurrentTurn++;
+        m_battleState = EBattleState::PlayerActionSelect; // 다시 플레이어 턴으로
+    }
+    break;
+
+    case EBattleState::BattleOver:
+        // 전투 종료 플래그만 설정하고 루프가 자연스럽게 끝나도록 둠
         break;
     }
 }
 
-void BattleManager::ProcessEnemyTurn()
+void BattleManager::Render()
 {
-    Log(m_monster->Name + L"의 턴!");
-    Sleep(1500);
-    Log(m_monster->RunAI(m_player));
-    Sleep(2000);
+    m_renderer.Clear();
+    DrawUI(); // UI 배경 및 정보 그리기
+
+    // 상태에 따라 메뉴 그리기
+    if (m_battleState == EBattleState::PlayerActionSelect)
+        DrawActionSelectMenu();
+    else if (m_battleState == EBattleState::PlayerSkillSelect)
+        DrawSkillSelectMenu();
+
+    m_renderer.Render();
 }
 
-void BattleManager::Log(const wstring& message)
+void BattleManager::DrawUI()
+{
+    AttributeSet* playerAttr = m_player->GetAbilityComponent()->GetAttributeSet();
+    AttributeSet* monsterAttr = m_monster->GetAbilityComponent()->GetAttributeSet();
+
+
+    auto DrawBox = [&](int x, int y, int width, int height) {
+        m_renderer.Draw(x, y, L'┌'); m_renderer.Draw(x + width - 1, y, L'┐');
+        m_renderer.Draw(x, y + height - 1, L'└'); m_renderer.Draw(x + width - 1, y + height - 1, L'┘');
+        for (int i = 1; i < width - 1; ++i) { m_renderer.Draw(x + i, y, L'─'); m_renderer.Draw(x + i, y + height - 1, L'─'); }
+        for (int i = 1; i < height - 1; ++i) { m_renderer.Draw(x, y + i, L'│'); m_renderer.Draw(x + width - 1, y + i, L'│'); }
+        };
+
+    // 몬스터 정보
+    DrawBox(45, 2, 30, 6);
+    DrawString(47, 3, m_monster->Name + L"      Lv. " + std::to_wstring(monsterAttr->Level));
+    DrawString(47, 4, DrawStatBar(L"HP", monsterAttr->HP.CurrentValue, monsterAttr->HP.BaseValue, 15));
+    DrawString(49, 5, std::to_wstring((int)monsterAttr->HP.CurrentValue) + L" / " + std::to_wstring((int)monsterAttr->HP.BaseValue));
+
+    // 플레이어 정보
+    DrawBox(2, 12, 30, 7);
+    DrawString(4, 13, m_player->Name + L"      Lv. " + std::to_wstring(playerAttr->Level));
+    DrawString(4, 14, DrawStatBar(L"HP", playerAttr->HP.CurrentValue, playerAttr->HP.BaseValue, 15));
+    DrawString(6, 15, std::to_wstring((int)playerAttr->HP.CurrentValue) + L" / " + std::to_wstring((int)playerAttr->HP.BaseValue));
+    DrawString(4, 16, L"MP : " + std::to_wstring((int)playerAttr->MP.CurrentValue) + L" / " + std::to_wstring((int)playerAttr->MP.BaseValue));
+
+    // 메시지 박스
+    DrawBox(2, 20, 60, 8);
+    DrawBox(63, 20, 25, 8);
+    DrawString(4, 22, m_statusMessage);
+}
+
+void BattleManager::DrawActionSelectMenu()
+{
+    for (size_t i = 0; i < m_currentMenuOptions.size(); ++i) {
+        std::wstring menuText = (i == m_currentMenuSelection) ? L"▶ " : L"  ";
+        menuText += m_currentMenuOptions[i];
+        DrawString(65, 22 + i, menuText);
+    }
+}
+
+void BattleManager::DrawSkillSelectMenu()
+{
+    for (size_t i = 0; i < m_currentMenuOptions.size(); ++i) {
+        std::wstring menuText = (i == m_currentMenuSelection) ? L"▶ " : L"  ";
+        menuText += m_currentMenuOptions[i];
+        DrawString(65, 22 + i, menuText);
+    }
+}
+
+void BattleManager::Log(const std::wstring& message)
 {
     m_statusMessage = message;
-    Draw();
+}
+void BattleManager::LogAndWait(const std::wstring& message)
+{
+    Log(message);// + L" (계속하려면 아무 키나 누르세요...)");
+
+    Render();
+    while (_kbhit()) _getch();
+	_getch(); // 아무 키나 누를 때까지 대기
 }
 
 void BattleManager::CheckBattleStatus()
@@ -154,46 +268,20 @@ void BattleManager::EndBattle()
     {
         Log(m_monster->Name + L"을(를) 쓰러뜨렸다! 승리!");
     }
-    else if (m_bIsBattleOver) // 도망간 경우가 아니면서 전투가 끝났을 때
+    else // 도망간 경우가 아니면서 전투가 끝났을 때
     {
         Log(m_player->Name + L"은(는) 쓰러졌다...");
     }
+    Render(); // 마지막 메시지 표시
     Sleep(3000);
 }
 
-void BattleManager::Draw() {
-    clearScreen();
-    gotoxy(0, 0);
-
-    AttributeSet* playerAttr = m_player->GetAbilityComponent()->GetAttributeSet();
-    AttributeSet* monsterAttr = m_monster->GetAbilityComponent()->GetAttributeSet();
-
-    DrawBox(45, 2, 30, 6);
-    gotoxy(47, 3); wcout << m_monster->Name << L"     Lv. " << monsterAttr->Level;
-    gotoxy(47, 4); wcout << DrawStatBar(L"HP", monsterAttr->HP.CurrentValue, monsterAttr->HP.BaseValue, 15);
-    gotoxy(49, 5); wcout << (int)monsterAttr->HP.CurrentValue << L" / " << (int)monsterAttr->HP.BaseValue;
-
-    DrawBox(2, 12, 30, 7);
-    gotoxy(4, 13); wcout << m_player->Name << L"      Lv. " << playerAttr->Level;
-    gotoxy(4, 14); wcout << DrawStatBar(L"HP", playerAttr->HP.CurrentValue, playerAttr->HP.BaseValue, 15);
-    gotoxy(6, 15); wcout << (int)playerAttr->HP.CurrentValue << L" / " << (int)playerAttr->HP.BaseValue;
-    gotoxy(4, 16); wcout << L"MP : " << (int)playerAttr->MP.CurrentValue << L" / " << (int)playerAttr->MP.BaseValue << wstring(15, L' ');
-
-    DrawBox(2, 20, 60, 8);
-    DrawBox(63, 20, 25, 8);
-    gotoxy(4, 22); wcout << wstring(58, L' ');
-    gotoxy(4, 22); wcout << m_statusMessage;
-
-    for (int i = 0; i < 6; ++i) {
-        gotoxy(64, 21 + i);
-        wcout << wstring(23, L' ');
-    }
-}
-std::wstring BattleManager::DrawStatBar(const std::wstring& label, float current, float max, int barLength) {
+std::wstring BattleManager::DrawStatBar(const std::wstring& label, float current, float max, int barLength) const
+{
     if (current < 0) current = 0;
     float ratio = (max > 0) ? (current / max) : 0;
     int filledLength = static_cast<int>(ratio * barLength);
-    wstring bar = label + L" [";
+    std::wstring bar = label + L" [";
     for (int i = 0; i < barLength; ++i) {
         if (i < filledLength) bar += L"■";
         else bar += L" ";
@@ -201,54 +289,68 @@ std::wstring BattleManager::DrawStatBar(const std::wstring& label, float current
     bar += L"]";
     return bar;
 }
+void BattleManager::DrawString(int x, int y, const std::wstring& str) const
+{
+    int currentX = x;
+    for (const auto& ch : str)
+    {
+        m_renderer.Draw(currentX, y, ch);
+
+        // 문자가 한글 범위에 속하는지 확인
+        if (ch >= L'가' && ch <= L'힣')
+        {
+            currentX += 2; // 한글이면 2칸 이동
+        }
+        else
+        {
+            currentX += 1; // 그 외에는 1칸 이동
+        }
+    }
+}
 void BattleManager::PlayIntroAnimation()
 {
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    ShowConsoleCursor(false);
-    clearScreen();
-
+    // 화면 깜빡임 효과 (색상 변경)
     for (int i = 0; i < 3; ++i) {
-        system("color F4"); Sleep(80);
-        system("color 0F"); Sleep(80);
+        // 모든 버퍼 셀의 색상 속성을 변경
+        for (int j = 0; j < m_renderer.GetWidth() * m_renderer.GetHeight(); ++j) {
+            m_renderer.Draw(j % m_renderer.GetWidth(), j / m_renderer.GetWidth(), L' ', 0xFF); // 빨간 배경, 흰 
+        }
+        m_renderer.Render();
+        Sleep(80);
+
+        for (int j = 0; j < m_renderer.GetWidth() * m_renderer.GetHeight(); ++j) {
+            m_renderer.Draw(j % m_renderer.GetWidth(), j / m_renderer.GetWidth(), L' ', 0x0F); // 검은 배경, 흰 글씨
+        }
+        m_renderer.Render();
+        Sleep(80);
     }
 
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
-    GetConsoleScreenBufferInfo(hConsole, &csbi);
-    int width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
-    int height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
-
-    // 전체 화면을 블록으로 채우기
-    std::wstring blockLine(width, L'█');
-    if (blockLine.length() % 2 != 0) blockLine += L" ";
-
-    for (int y = 0; y < height; ++y) {
-        SafeWriteUnicodeLine(hConsole, blockLine, y);
+    // 화면을 블록으로 채우기
+    for (int y = 0; y < m_renderer.GetHeight(); ++y) {
+        for (int x = 0; x < m_renderer.GetWidth(); ++x) {
+            m_renderer.Draw(x, y, L'█');
+        }
     }
-
+    m_renderer.Render();
     Sleep(100);
 
     // 가운데에서 좌우로 갈라지는 애니메이션
-    int centerX = width / 2;
+    int centerX = m_renderer.GetWidth() / 2;
     for (int offset = 0; offset <= centerX; ++offset)
     {
-        for (int y = 0; y < height; ++y)
+        for (int y = 0; y < m_renderer.GetHeight(); ++y)
         {
             // 왼쪽 칸 지우기
             if (centerX - offset >= 0) {
-                gotoxy(centerX - offset, y);
-                std::wcout << L" ";
+                m_renderer.Draw(centerX - offset, y, L' ');
             }
-
             // 오른쪽 칸 지우기
-            if (centerX + offset < width) {
-                gotoxy(centerX + offset, y);
-                std::wcout << L" ";
+            if (centerX + offset < m_renderer.GetWidth()) {
+                m_renderer.Draw(centerX + offset, y, L' ');
             }
         }
+        // 매 프레임마다 화면을 다시 그림
+        m_renderer.Render();
         Sleep(5);
     }
-
-    clearScreen();
-    ShowConsoleCursor(true);
-    system("color 0F");
 }

@@ -2,9 +2,9 @@
 #include "AbilitySystemComponent.h"
 
 AttributeSet::AttributeSet(AbilitySystemComponent* OwnerComp)
-	: OwningAbilitySystemComponent(OwnerComp) // ¸â¹ö ÀÌ´Ï¼È¶óÀÌÀú¸¦ »ç¿ëÇØ OwningAbilitySystemComponent ÃÊ±âÈ­
+	: OwningAbilitySystemComponent(OwnerComp) // ë©¤ë²„ ì´ë‹ˆì…œë¼ì´ì €ë¥¼ ì‚¬ìš©í•´ OwningAbilitySystemComponent ì´ˆê¸°í™”
 {
-    // °¢ ¼Ó¼ºÀÇ ÀÌ¸§°ú ¸Ş¸ğ¸® ÁÖ¼Ò¸¦ ¸Ê¿¡ µî·Ï
+    // ê° ì†¡ì„±ì˜ ì´ë¦„ê³¼ ë©”ëª¨ë¦¬ ì£¼ì†Œë¥¼ ë§µì— ë“±ë¡
     AttributeMap["HP"] = &HP;
     AttributeMap["MP"] = &MP;
     AttributeMap["BaseHP"] = &BaseHP;
@@ -19,7 +19,7 @@ AttributeSet::AttributeSet(AbilitySystemComponent* OwnerComp)
     AttributeMap["CriticalHitChance"] = &CriticalHitChance;
     AttributeMap["CriticalHitDamageMultiplier"] = &CriticalHitDamageMultiplier;
 
-    // . . . ( »õ·Î¿î ½ºÅÈ Ãß°¡ ½Ã ¿©±â¿¡ Ãß°¡ ) . . .
+    // . . . ( ìƒˆë¡œìš´ ìŠ¤íƒ¯ ì¶”ê°€ ì‹œ ì—¬ê¸°ì— ì¶”ê°€ ) . . .
 }
 
 void AttributeSet::PreAttributeChange(const FAttributeData& Attribute, float& NewValue)
@@ -28,18 +28,18 @@ void AttributeSet::PreAttributeChange(const FAttributeData& Attribute, float& Ne
 
 void AttributeSet::PostAttributeChange(const FAttributeData& Attribute, float OldValue, float NewValue)
 {
-    // Æ÷ÀÎÅÍ ºñ±³¸¦ ÅëÇØ ¾î¶² ¼Ó¼ºÀÌ º¯°æµÇ¾ú´ÂÁö È®ÀÎ
+    // í¬ì¸í„° ë¹„êµë¥¼ í†µí•´ ì–´ë–¤ ì†ì„±ì´ ë³€ê²½ë˜ì—ˆëŠ”ì§€ í™•ì¸
     if (&Attribute == &HP)
     {
-        // HP°¡ º¯°æµÇ¾ú´Ù¸é, 0°ú ÃÖ´ë HP »çÀÌÀÇ °ªÀ¸·Î º¸Á¤ÇÕ´Ï´Ù.
+		// HP ê°€ ë³€ê²½ë˜ì—ˆë‹¤ë©´, 0 ê³¼ BaseHP ì‚¬ì´ì˜ ê°’ìœ¼ë¡œ ë³´ì • (ìŒìˆ˜ ë°©ì§€ ë° ìµœëŒ€ê°’ ì œí•œ)
         HP.CurrentValue = std::max(0.0f, HP.CurrentValue);
-        HP.CurrentValue = std::min(HP.BaseValue, HP.CurrentValue); // ÃÖ´ë Ã¼·ÂÀ» ³ÑÁö ¾Êµµ·Ï
+        HP.CurrentValue = std::min(HP.BaseValue, HP.CurrentValue);
     }
     else if (&Attribute == &MP)
     {
-        // MP°¡ º¯°æµÇ¾ú´Ù¸é, 0°ú ÃÖ´ë MP »çÀÌÀÇ °ªÀ¸·Î º¸Á¤ÇÕ´Ï´Ù.
+		// MP ê°€ ë³€ê²½ë˜ì—‡ë‹¤ë©´, 0 ê³¼ BaseMP ì‚¬ì´ì˜ ê°’ìœ¼ë¡œ ë³´ì • (ìŒìˆ˜ ë°©ì§€ ë° ìµœëŒ€ê°’ ì œí•œ)
         MP.CurrentValue = std::max(0.0f, MP.CurrentValue);
-        MP.CurrentValue = std::min(MP.BaseValue, MP.CurrentValue); // ÃÖ´ë ¸¶³ª¸¦ ³ÑÁö ¾Êµµ·Ï
+        MP.CurrentValue = std::min(MP.BaseValue, MP.CurrentValue);
     }
 }
 

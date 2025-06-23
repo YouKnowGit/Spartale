@@ -1,41 +1,41 @@
 #pragma once
 /*********************************************/
-/* ÀÌ ÆÄÀÏÀº ÄÚµå¿¡ »ç¿ëµÉ Àü¹ÝÀûÀÎ ¿­°ÅÇüÀ» Á¤ÀÇ*/
+/* ì´ íŒŒì¼ì€ ì½”ë“œì— ì‚¬ìš©ë  ì „ë°˜ì ì¸ ì—´ê±°í˜•ì„ ì •ì˜*/
 /**********************************************/
 
-// ¸Ê »óÀÇ À§Ä¡¸¦ ³ªÅ¸³»´Â °£´ÜÇÑ ±¸Á¶Ã¼
+// ë§µ ìƒì˜ ìœ„ì¹˜ë¥¼ ë‚˜íƒ€ë‚´ëŠ” ê°„ë‹¨í•œ êµ¬ì¡°ì²´
 struct FMapLocation
 {
     int X = 0;
     int Y = 0;
 };
 
-// °ÔÀÓÇÃ·¹ÀÌ ÀÌÆåÆ®ÀÇ Àû¿ë ¹æ½ÄÀ» Á¤ÀÇÇÏ´Â ¿­°ÅÇü
+// ê²Œìž„í”Œë ˆì´ ì´íŽ™íŠ¸ì˜ ì ìš© ë°©ì‹ì„ ì •ì˜í•˜ëŠ” ì—´ê±°í˜•
 enum class EEffectApplication
 {
-    Instant,    // Áï½Ã Àû¿ë
-    Duration,   // Áö¼Ó ½Ã°£ µ¿¾È Àû¿ë
-    Infinite    // ¿µ±¸ Àû¿ë
+    Instant,    // ì¦‰ì‹œ ì ìš©
+    Duration,   // ì§€ì† ì‹œê°„ ë™ì•ˆ ì ìš©
+    Infinite    // ì˜êµ¬ ì ìš©
 };
 
-// µ¥¹ÌÁöÀÇ ¼Ó¼ºÀ» Á¤ÀÇÇÏ´Â ¿­°ÅÇü
+// ë°ë¯¸ì§€ì˜ ì†ì„±ì„ ì •ì˜í•˜ëŠ” ì—´ê±°í˜•
 enum class EDamageType
 {
     None,
-    Physical, // ¹°¸®
-    Magical,  // ¸¶¹ý
-    True      // °íÁ¤
+    Physical, // ë¬¼ë¦¬
+    Magical,  // ë§ˆë²•
+    True      // ê³ ì •
 };
 
-// °ÔÀÓÇÃ·¹ÀÌ ÀÌÆåÆ®ÀÇ Àû¿ë ¹æ½Ä¿¡ µû¸¥ Áö¼Ó ½Ã°£ ´ÜÀ§¸¦ Á¤ÀÇÇÏ´Â ¿­°ÅÇü
+// ê²Œìž„í”Œë ˆì´ ì´íŽ™íŠ¸ì˜ ì ìš© ë°©ì‹ì— ë”°ë¥¸ ì§€ì† ì‹œê°„ ë‹¨ìœ„ë¥¼ ì •ì˜í•˜ëŠ” ì—´ê±°í˜•
 enum class EModifierOperation
 {
-    Add,       // ´õÇÏ±â (±âº»)
-    Multiply,  // °öÇÏ±â
-    Override   // µ¤¾î¾²±â
+    Add,       // ë”í•˜ê¸° (ê¸°ë³¸)
+    Multiply,  // ê³±í•˜ê¸°
+    Override   // ë®ì–´ì“°ê¸°
 };
 
-// Field ¿¡¼­ÀÇ Å¸ÀÏ Å¸ÀÔÀ» Á¤ÀÇÇÏ´Â ¿­°ÅÇü
+// Field ì—ì„œì˜ íƒ€ì¼ íƒ€ìž…ì„ ì •ì˜í•˜ëŠ” ì—´ê±°í˜•
 enum class TileType
 {
     EMPTY = 0,
@@ -44,7 +44,7 @@ enum class TileType
     PORTAL = 3
 };
 
-// °ÔÀÓÀÇ ÇöÀç »óÅÂ¸¦ ³ªÅ¸³»´Â ¿­°ÅÇü
+// ê²Œìž„ì˜ í˜„ìž¬ ìƒíƒœë¥¼ ë‚˜íƒ€ë‚´ëŠ” ì—´ê±°í˜•
 enum class EGameState
 {
     World,
