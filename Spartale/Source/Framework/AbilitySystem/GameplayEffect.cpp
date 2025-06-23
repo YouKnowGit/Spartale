@@ -59,3 +59,8 @@ std::unique_ptr<GameplayEffect> GameplayEffect::CreateInverseEffect() const
     // 완성된 반대 효과를 반환
     return InverseEffect;
 }
+
+void GameplayEffect::Remove(AttributeSet* TargetAttributeSet) const
+{
+    //내부로직 다시 짜주세용 ^^;
+}

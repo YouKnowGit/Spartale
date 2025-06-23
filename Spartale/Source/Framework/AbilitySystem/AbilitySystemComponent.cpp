@@ -8,6 +8,13 @@
 #include <iostream> // 로그 출력을 위해 포함
 #include <string> // std::wstring 사용을 위해 포함
 
+
+AbilitySystemComponent::AbilitySystemComponent()
+{
+    MyAttributeSet = std::make_unique<AttributeSet>(this);
+    EquippedAbilities.resize(4, nullptr);
+}
+
 AbilitySystemComponent::AbilitySystemComponent(Actor* Owner)
     : OwnerActor(Owner) // 멤버 이니셜라이저를 사용하여 OwnerActor를 초기화 (Actor.cpp 에서 사용함)
 {

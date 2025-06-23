@@ -21,6 +21,8 @@ struct FActiveGameplayEffect
 class AbilitySystemComponent
 {
 public:
+
+    AbilitySystemComponent();
     AbilitySystemComponent(Actor* Owner);
     ~AbilitySystemComponent();
 

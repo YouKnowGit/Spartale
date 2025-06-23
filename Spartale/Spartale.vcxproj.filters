@@ -48,103 +48,53 @@
     <ClCompile Include="Spartale.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="AbilitySystemComponent.cpp">
-      <Filter>소스 파일\Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="AttributeSet.cpp">
-      <Filter>소스 파일\Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="GameplayEffect.cpp">
-      <Filter>소스 파일\Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="GameplayAbility.cpp">
-      <Filter>소스 파일\Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Actor.cpp">
-      <Filter>소스 파일\Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="DamageUtils.cpp">
-      <Filter>소스 파일\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="ConsoleUtils.cpp">
-      <Filter>소스 파일\Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>소스 파일\Actors</Filter>
-    </ClCompile>
-    <ClCompile Include="Monster.cpp">
-      <Filter>소스 파일\Actors</Filter>
-    </ClCompile>
-    <ClCompile Include="AB_NormalAttack.cpp">
-      <Filter>소스 파일\Skills</Filter>
-    </ClCompile>
-    <ClCompile Include="BattleManager.cpp">
-      <Filter>소스 파일\Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="EquipmentSlot.cpp">
-      <Filter>소스 파일\Equipment</Filter>
-    </ClCompile>
-    <ClCompile Include="EquipItem.cpp">
-      <Filter>소스 파일\Equipment</Filter>
-    </ClCompile>
-    <ClCompile Include="ItemBase.cpp">
-      <Filter>소스 파일\Equipment</Filter>
-    </ClCompile>
+    <ClCompile Include="Source\GameLogic\Items\EquipItem.cpp" />
+    <ClCompile Include="Source\GameLogic\Items\EquipmentSlot.cpp" />
+    <ClCompile Include="Source\GameLogic\Items\HealthPotion.cpp" />
+    <ClCompile Include="Source\GameLogic\Items\ItemBase.cpp" />
+    <ClCompile Include="Source\GameLogic\Map\Field.cpp" />
+    <ClCompile Include="Source\GameLogic\Skills\AB_NormalAttack.cpp" />
+    <ClCompile Include="Source\GameLogic\Skills\AB_PoisonCloud.cpp" />
+    <ClCompile Include="Source\GameLogic\Units\Monster.cpp" />
+    <ClCompile Include="Source\GameLogic\Units\Player.cpp" />
+    <ClCompile Include="Source\GameLogic\BattleManager.cpp" />
+    <ClCompile Include="Source\Utils\ConsoleRenderer.cpp" />
+    <ClCompile Include="Source\Utils\ConsoleUtils.cpp" />
+    <ClCompile Include="Source\Utils\DamageUtils.cpp" />
+    <ClCompile Include="Source\Framework\AbilitySystem\AbilitySystemComponent.cpp" />
+    <ClCompile Include="Source\Framework\AbilitySystem\AttributeSet.cpp" />
+    <ClCompile Include="Source\Framework\AbilitySystem\GameplayAbility.cpp" />
+    <ClCompile Include="Source\Framework\AbilitySystem\GameplayEffect.cpp" />
+    <ClCompile Include="Source\Core\Actor.cpp" />
+    <ClCompile Include="Source\Core\GameWorld.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AB_NormalAttack.h">
-      <Filter>헤더 파일\Skills</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>헤더 파일\Actors</Filter>
-    </ClInclude>
-    <ClInclude Include="Monster.h">
-      <Filter>헤더 파일\Actors</Filter>
-    </ClInclude>
-    <ClInclude Include="AttributeSet.h">
-      <Filter>헤더 파일\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="AbilitySystemComponent.h">
-      <Filter>헤더 파일\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="GameplayAbility.h">
-      <Filter>헤더 파일\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="GameplayEffect.h">
-      <Filter>헤더 파일\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Global.h">
-      <Filter>헤더 파일\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="Actor.h">
-      <Filter>헤더 파일\Framework</Filter>
-    </ClInclude>
-    <ClInclude Include="ConsoleUtils.h">
-      <Filter>헤더 파일\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="DamageUtils.h">
-      <Filter>헤더 파일\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="BattleManager.h">
-      <Filter>헤더 파일\Systems</Filter>
-    </ClInclude>
-    <ClInclude Include="EquipmentSlot.h">
-      <Filter>헤더 파일\Equipment</Filter>
-    </ClInclude>
-    <ClInclude Include="EquipSlotType.h">
-      <Filter>헤더 파일\Equipment</Filter>
-    </ClInclude>
-    <ClInclude Include="EquipItem.h">
-      <Filter>헤더 파일\Equipment</Filter>
-    </ClInclude>
-    <ClInclude Include="HealthPotion.h">
-      <Filter>헤더 파일\Equipment</Filter>
-    </ClInclude>
-    <ClInclude Include="ItemBase.h">
-      <Filter>헤더 파일\Equipment</Filter>
-    </ClInclude>
-    <ClInclude Include="Sword.h">
-      <Filter>헤더 파일\Equipment</Filter>
-    </ClInclude>
+    <ClInclude Include="Source\GameLogic\Items\EquipItem.h" />
+    <ClInclude Include="Source\GameLogic\Items\EquipmentSlot.h" />
+    <ClInclude Include="Source\GameLogic\Items\EquipSlotType.h" />
+    <ClInclude Include="Source\GameLogic\Items\HealthPotion.h" />
+    <ClInclude Include="Source\GameLogic\Items\ItemBase.h" />
+    <ClInclude Include="Source\GameLogic\Items\Sword.h" />
+    <ClInclude Include="Source\GameLogic\Map\Field.h" />
+    <ClInclude Include="Source\GameLogic\Skills\AB_NormalAttack.h" />
+    <ClInclude Include="Source\GameLogic\Skills\AB_PoisonCloud.h" />
+    <ClInclude Include="Source\GameLogic\Units\Monster.h" />
+    <ClInclude Include="Source\GameLogic\Units\Player.h" />
+    <ClInclude Include="Source\GameLogic\BattleManager.h" />
+    <ClInclude Include="Source\Utils\ConsoleRenderer.h" />
+    <ClInclude Include="Source\Utils\ConsoleUtils.h" />
+    <ClInclude Include="Source\Utils\DamageUtils.h" />
+    <ClInclude Include="Source\Framework\AbilitySystem\GameplayEffect.h" />
+    <ClInclude Include="Source\Framework\AbilitySystem\AbilitySystemComponent.h" />
+    <ClInclude Include="Source\Framework\AbilitySystem\AttributeSet.h" />
+    <ClInclude Include="Source\Framework\AbilitySystem\GameplayAbility.h" />
+    <ClInclude Include="Source\Core\Actor.h" />
+    <ClInclude Include="Source\Core\GameWorld.h" />
+    <ClInclude Include="Source\Core\Global.h" />
+    <ClInclude Include="include\json.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Field_1.json" />
+    <None Include="Data\Town.json" />
   </ItemGroup>
 </Project>
