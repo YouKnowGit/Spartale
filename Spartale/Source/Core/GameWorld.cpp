@@ -1,17 +1,20 @@
 #include "Core/GameWorld.h"
 #include "Framework/AbilitySystem/AttributeSet.h"
 #include "Framework/AbilitySystem/AbilitySystemComponent.h"
-#include "GameLogic/Skills/AB_NormalAttack.h"
-#include "GameLogic/Skills/AB_PoisonCloud.h"
 #include "GameLogic/MainMenu.h"
 #include "GameLogic/PauseMenu.h"
 #include "GameLogic/BattleManager.h"
 #include "GameLogic/DataManager.h"
 #include "GameLogic/Units/Monster.h"
+#include "GameLogic/Skills/SkillFactory.h"
+#include "Utils/StringUtils.h"
 
 #include <iostream>
 #include <conio.h>
 #include <memory>
+#include <mmsystem.h>
+
+#pragma comment(lib, "winmm.lib")
 // 생성자
 GameWorld::GameWorld(std::unique_ptr<Player> player)
     : m_player(std::move(player)),
@@ -164,6 +167,7 @@ void GameWorld::StartBattle()
         // 몬스터 생성에 실패하면 (예: 데이터베이스에 없는 ID) 전투를 시작하지 않습니다.
         return;
     }
+
     // 전투 실행 및 결과 처리
     BattleManager battleManager(m_player.get(), monster.get(), m_renderer);
     EBattleResult result = battleManager.Run(); // 전투 결과를 받음
@@ -214,14 +218,22 @@ std::unique_ptr<Monster> GameWorld::CreateRandomizedMonster(const std::string& m
     // --- 데이터 기반 스킬 부여 로직 (이전과 동일) ---
     if (!data->skillIds.empty())
     {
+        // 몬스터가 가진 모든 스킬을 부여 (JSON 에서 설정)
         for (const std::string& skillId : data->skillIds)
         {
-            if (skillId == "normal_attack")
-                monster->GetAbilityComponent()->GrantAbility(std::make_unique<AB_NormalAttack>());
-            else if (skillId == "poison_cloud")
-                monster->GetAbilityComponent()->GrantAbility(std::make_unique<AB_PoisonCloud>());
+            monster->GetAbilityComponent()->GrantAbility(SkillFactory::CreateSkill(skillId));
         }
-        monster->GetAbilityComponent()->EquipAbility(0, monster->GetAbilityComponent()->GetGrantedAbility(0));
+
+        // 부여된 모든 스킬을 전투 슬롯 0, 1, 2, 3번에 순서대로 장착
+        const auto& grantedAbilities = monster->GetAbilityComponent()->GetGrantedAbilities();
+        for (size_t i = 0; i < grantedAbilities.size(); ++i)
+        {
+            // 최대 4개의 슬롯
+            if (i >= 4) break;
+
+            // i번 슬롯에 i번째로 부여된 스킬을 장착
+            monster->GetAbilityComponent()->EquipAbility(static_cast<int32_t>(i), grantedAbilities[i].get());
+        }
     }
 
     return monster;

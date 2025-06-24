@@ -102,10 +102,11 @@ bool Field::LoadMapFromFile(const std::string& mapFilePath)
     mapFile.close();
 
     // 디버깅 로그
+    /*
     std::cout << "Map loaded: " << mapFilePath << std::endl;
     std::cout << "Dimensions: " << m_width << " x " << m_height << std::endl;
     std::cout << "Portal count: " << m_portals.size() << std::endl;
-    
+    */
     //system("pause");
 
     return true;

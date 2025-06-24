@@ -1,7 +1,8 @@
 #include "GameLogic/Units/Player.h"
-#include "GameLogic/Skills/AB_NormalAttack.h"
+#include "GameLogic/Skills/SkillFactory.h"
 #include "Framework/AbilitySystem/AbilitySystemComponent.h"
 #include "Framework/AbilitySystem/AttributeSet.h"
+#include "Framework/AbilitySystem/GameplayAbility.h"
 
 Player::Player(std::wstring name)
 {
@@ -33,15 +34,21 @@ void Player::Initialize()
         MyStats->Defence.CurrentValue = 10.f;
         MyStats->Intelligence.CurrentValue = 10.f;
         MyStats->Intelligence.BaseValue = 10.f;
-
-
     }
-    GetAbilityComponent()->GrantAbility(std::make_unique<AB_NormalAttack>());
+    const std::vector<std::string> allSkillIDs = {
+        "SK_NormalAttack",
+    };
+    for (const auto& id : allSkillIDs)
+    {
+        GetAbilityComponent()->GrantAbility(SkillFactory::CreateSkill(id));
+    }
+
+    // 기본 공격만 0번 슬롯에 장착
     GetAbilityComponent()->EquipAbility(0, this->GetAbilityComponent()->GetGrantedAbility(0));
 
     // Player 위치 및 방향 관련 데이터
-    m_x = 5;
-    m_y = 5;
+    CurrentLocation.X = 5;
+    CurrentLocation.Y = 5;
     m_direction = Direction::DOWN;
 }
 

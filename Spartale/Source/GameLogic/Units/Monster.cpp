@@ -3,12 +3,15 @@
 #include "Framework/AbilitySystem/AttributeSet.h"
 
 #include <vector>
-#include <random>
 
 Monster::Monster(const std::wstring& InName, float InHP, float InStrength, float InDefence, int level)
 {
 	// Monster 의 이름을 설정
     Name = InName;
+
+    // 난수용 설정
+    std::random_device rd;
+    m_rng.seed(rd());
 
 	// Actor 가 보유한 ASC 를 통해 AttributeSet 에 접근
     AttributeSet* MyStats = GetAbilityComponent()->GetAttributeSet();
@@ -50,13 +53,18 @@ std::wstring Monster::RunAI(Actor* Target)
     }
 
     // 사용 가능한 스킬 중 하나를 랜덤하게 선택
-    static std::mt19937 rng(std::random_device{}());
     std::uniform_int_distribution<int> dist(0, static_cast<int>(availableSkillSlots.size()) - 1);
-    int randomSlotIndex = availableSkillSlots[dist(rng)];
+    int randomSlotIndex = availableSkillSlots[dist(m_rng)];
 
-    // --- 수정된 부분 ---
     // 선택된 스킬을 사용하고, 결과(FActivationResult)를 받음
     FActivationResult result = GetAbilityComponent()->TryActivateAbility(randomSlotIndex, Target);
+
+    if (!result.bSuccess) 
+    {
+        // TryActivateAbility 에서 False 가 넘어올 경우 방어 태세를 시전함
+        GetAbilityComponent()->GetAttributeSet()->bIsDefending = true;
+        result.LogMessage = Name + L"은(는) 방어 태세를 갖췄다!";
+    }
 
     // 결과 구조체에서 로그 메시지만을 반환
     return result.LogMessage;

@@ -55,12 +55,15 @@ private:
     // 오른쪽 화면 Clear 함수
     void ClearRightPane();
 
-    void DrawString(int x, int y, const std::wstring& str, WORD attributes = 0x000F);
     bool IsSkillEquipped(const GameplayAbility* skill) const;
 
 private:
     ConsoleRenderer& m_renderer;
     Player& m_player;
+
+    // 스킬북 화면에 보여줄 스킬 개수와 스크롤(페이지) 변수
+    int m_skillListScrollOffset; 
+    const int m_skillListVisibleCount = 10;
 
     // 상태 관리 변수
     bool m_bIsRunning;
@@ -73,4 +76,9 @@ private:
     int m_skillBookSlotSelection;    // 스킬북: 현재 선택된 장착 슬롯 (0~3)
     int m_skillSelectionListCursor;  // 스킬 목록: 현재 선택된 스킬 커서
     int m_slotIndexToModify;         // 스킬을 장착할 슬롯 인덱스 임시 저장
+
+    const wchar_t* m_navigateSoundPath;
+    const wchar_t* m_confirmSoundPath;
+    const wchar_t* m_rejectSoundPath;
+    const wchar_t* m_escSoundPath;
 };

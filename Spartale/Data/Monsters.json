@@ -8,7 +8,9 @@
     "intelligence": 3,
     "defence": 6,
     "magicResistance": 2,
-    "skills": [ "normal_attack" ]
+    "skills": [
+      "SK_NormalAttack"
+    ]
   },
   "slime_weak": {
     "name": "허약한 슬라임",
@@ -19,7 +21,9 @@
     "intelligence": 1,
     "defence": 2,
     "magicResistance": 0,
-    "skills": [ "normal_attack" ]
+    "skills": [
+      "SK_NormalAttack"
+    ]
   },
   "goblin_shaman": {
     "name": "고블린 주술사",
@@ -31,6 +35,9 @@
     "intelligence": 15,
     "defence": 4,
     "magicResistance": 10,
-    "skills": [ "poison_cloud", "normal_attack" ]
+    "skills": [
+      "SK_PoisonCloud",
+      "SK_NormalAttack"
+    ]
   }
 }

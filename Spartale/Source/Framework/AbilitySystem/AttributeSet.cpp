@@ -7,8 +7,9 @@ AttributeSet::AttributeSet(AbilitySystemComponent* OwnerComp)
     // 각 송성의 이름과 메모리 주소를 맵에 등록
     AttributeMap["HP"] = &HP;
     AttributeMap["MP"] = &MP;
-    AttributeMap["BaseHP"] = &BaseHP;
-    AttributeMap["BaseMP"] = &BaseMP;
+    // Base 능력치 제거
+    //AttributeMap["BaseHP"] = &BaseHP;
+    //AttributeMap["BaseMP"] = &BaseMP;
     AttributeMap["Strength"] = &Strength;
     AttributeMap["Agility"] = &Agility;
     AttributeMap["Intelligence"] = &Intelligence;

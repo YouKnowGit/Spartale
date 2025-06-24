@@ -69,3 +69,19 @@ void ConsoleRenderer::Clear()
         m_buffer[i].Attributes = 0x000F;  // 기본 속성 (흰색 글씨, 검은 배경)
     }
 }
+
+void ConsoleRenderer::DrawString(int x, int y, const std::wstring& str, WORD attributes)
+{
+    int currentX = x;
+    for (const auto& ch : str)
+    {
+        this->Draw(currentX, y, ch, attributes);
+
+        if (ch >= L'가' && ch <= L'힣') {
+            currentX += 2;
+        }
+        else {
+            currentX += 1;
+        }
+    }
+}

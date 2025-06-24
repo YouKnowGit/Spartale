@@ -4,13 +4,13 @@
 #include "Framework/AbilitySystem/AbilitySystemComponent.h"
 #include "Framework/AbilitySystem/AttributeSet.h"
 
-#include "GameLogic/Skills/AB_NormalAttack.h"
-#include "GameLogic/Skills/AB_PoisonCloud.h"
-
 #include <conio.h>
 #include <iomanip> 
 #include <sstream> 
 #include <algorithm> // std::find
+#include <mmsystem.h>
+
+#pragma comment(lib, "winmm.lib")
 
 void DrawBar(ConsoleRenderer& renderer, int x, int y, int width, float current, float max, WORD attribute);
 
@@ -24,14 +24,20 @@ PauseMenu::PauseMenu(ConsoleRenderer& renderer, Player& player)
     m_statSelection(0),
     m_skillBookSlotSelection(0),
     m_skillSelectionListCursor(0),
-    m_slotIndexToModify(0)
+    m_slotIndexToModify(0),
+    m_skillListScrollOffset(0)
 {
+    m_navigateSoundPath = L"Sounds/UI/pausemenu_select.wav"; // 메뉴 이동 효과음
+    m_confirmSoundPath = L"Sounds/UI/pausemenu_confirm.wav";   // 메뉴 선택 효과음
+    m_rejectSoundPath = L"Sounds/UI/menu_reject2.wav";   // 메뉴 선택 효과음
+    m_escSoundPath = L"Sounds/UI/mainmenu_select.wav"; // 메뉴 이동 효과음
 }
 
 EPauseMenuResult PauseMenu::Run()
 {
     m_renderer.Clear();
 
+    PlaySound(m_escSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
     while (m_bIsRunning)
     {
         ProcessInput();
@@ -49,6 +55,7 @@ void PauseMenu::ProcessInput()
     // ESC 키는 현재 상태에 따라 다르게 동작
     if (key == 27) // ESC
     {
+        PlaySound(m_escSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
         switch (m_currentPaneState)
         {
         case ERightPaneState::MainMenu: // 메인 메뉴에서 누르면 PauseMenu 종료
@@ -97,33 +104,6 @@ void PauseMenu::Render()
 
 // --- 입력 처리 함수들 ---
 
-void PauseMenu::ProcessMainMenuInput(int key)
-{
-    const std::vector<std::wstring> options = { L"스탯 분배", L"인벤토리", L"스킬북", L"저장", L"메인메뉴로 나가기" };
-    if (key == 224)
-    {
-        key = _getch();
-        if (key == 72) // 위쪽 화살표
-        {
-            // 선택 인덱스를 1 감소. 0보다 작아지면 마지막 인덱스로 순환
-            m_mainMenuSelection = (m_mainMenuSelection == 0) ? static_cast<int>(options.size()) - 1 : m_mainMenuSelection - 1;
-        }
-        else if (key == 80) // 아래쪽 화살표
-        {
-            // 선택 인덱스를 1 증가. 마지막 인덱스를 넘어가면 0으로 순환
-            m_mainMenuSelection = (m_mainMenuSelection + 1) % static_cast<int>(options.size());
-        }
-    }
-    else if (key == 13) // 엔터
-    {
-        switch (m_mainMenuSelection)
-        {
-        case 0: m_currentPaneState = ERightPaneState::StatDistribution; m_statSelection = 0; break;
-        case 2: m_currentPaneState = ERightPaneState::SkillBook; m_skillBookSlotSelection = 0; break;
-        case 4: m_bIsRunning = false; m_result = EPauseMenuResult::GoToMainMenu; break;
-        }
-    }
-}
 
 void PauseMenu::ProcessStatDistributionInput(int key)
 {
@@ -133,15 +113,22 @@ void PauseMenu::ProcessStatDistributionInput(int key)
     {
         key = _getch();
         if (key == 72) // 위
+        {
+            PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
             m_statSelection = (m_statSelection == 0) ? statCount - 1 : m_statSelection - 1;
+        }
         else if (key == 80) // 아래
+        {
+            PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
             m_statSelection = (m_statSelection + 1) % statCount;
+        }
     }
     else if (key == 13) // 엔터: 스탯 포인트 분배
     {
         AttributeSet* stats = m_player.GetAbilityComponent()->GetAttributeSet();
         if (stats && stats->AdditionalStatPoints > 0)
         {
+            PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
             stats->AdditionalStatPoints--;
             switch (m_statSelection)
             {
@@ -160,11 +147,13 @@ void PauseMenu::ProcessStatDistributionInput(int key)
             }
             stats->AdjustDependentAttributes(); 
         }
+        else // 보너스 스탯이 없으면 reject
+        {
+            PlaySound(m_rejectSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+        }
     }
 }
 
-
-// --- 그리기 함수들 ---
 
 void PauseMenu::DrawMainMenuOptions()
 {
@@ -184,17 +173,17 @@ void PauseMenu::DrawMainMenuOptions()
         int currentY = boxY + i * 3;
 
         // --- 박스 테두리 그리기 ---
-        DrawString(boxX, currentY, L"┌" + std::wstring(boxInnerWidth, L'─') + L"┐");
-        DrawString(boxX, currentY + 2, L"└" + std::wstring(boxInnerWidth, L'─') + L"┘");
+        m_renderer.DrawString(boxX, currentY, L"┌" + std::wstring(boxInnerWidth, L'─') + L"┐");
+        m_renderer.DrawString(boxX, currentY + 2, L"└" + std::wstring(boxInnerWidth, L'─') + L"┘");
 
         // --- 박스 내용 그리기 ---
-        DrawString(boxX, currentY + 1, L"│");
-        DrawString(boxX + boxInnerWidth + 1, currentY + 1, L"│");
-        DrawString(boxX + 2, currentY + 1, options[i]);
+        m_renderer.DrawString(boxX, currentY + 1, L"│");
+        m_renderer.DrawString(boxX + boxInnerWidth + 1, currentY + 1, L"│");
+        m_renderer.DrawString(boxX + 2, currentY + 1, options[i]);
 
         if (i == m_mainMenuSelection)
         {
-            DrawString(boxX + boxInnerWidth - 2, currentY + 1, L"◀");
+            m_renderer.DrawString(boxX + boxInnerWidth - 2, currentY + 1, L"◀");
         }
     }
 }
@@ -217,13 +206,13 @@ void PauseMenu::DrawStatDistributionScreen()
     int titleWidth = 0;
     for (wchar_t c : title) { titleWidth += (c >= L'가' && c <= L'힣') ? 2 : 1; }
     int padding = (boxInnerWidth - titleWidth) / 2;
-    DrawString(boxX, boxY, L"┌" + std::wstring(padding, L'─') + title + std::wstring(boxInnerWidth - padding - titleWidth, L'─') + L"┐");
+    m_renderer.DrawString(boxX, boxY, L"┌" + std::wstring(padding, L'─') + title + std::wstring(boxInnerWidth - padding - titleWidth, L'─') + L"┐");
 
     for (int i = 1; i < 13; ++i) // 박스 높이를 13으로 설정
     {
-        DrawString(boxX, boxY + i, L"│" + std::wstring(boxInnerWidth, L' ') + L"│");
+        m_renderer.DrawString(boxX, boxY + i, L"│" + std::wstring(boxInnerWidth, L' ') + L"│");
     }
-    DrawString(boxX, boxY + 13, L"└" + std::wstring(boxInnerWidth, L'─') + L"┘");
+    m_renderer.DrawString(boxX, boxY + 13, L"└" + std::wstring(boxInnerWidth, L'─') + L"┘");
 
     // --- 내용 채우기 ---
     int contentX = boxX + 2;
@@ -231,14 +220,14 @@ void PauseMenu::DrawStatDistributionScreen()
 
     // 분배 가능 포인트 표시
     std::wstring pointText = L"분배 가능한 포인트: " + std::to_wstring(stats->AdditionalStatPoints);
-    DrawString(contentX, contentY, pointText);
+    m_renderer.DrawString(contentX, contentY, pointText);
 
     // 구분선
-    DrawString(boxX, contentY + 2, L"├" + std::wstring(boxInnerWidth, L'─') + L"┤");
+    m_renderer.DrawString(boxX, contentY + 2, L"├" + std::wstring(boxInnerWidth, L'─') + L"┤");
 
     // 스탯 목록 표시
     contentY += 4;
-    const std::vector<std::wstring> statNames = { L"힘", L"민첩", L"지능" };
+    const std::vector<std::wstring> statNames = { L" 힘", L" 민첩", L" 지능" };
     const std::vector<float> statValues = { stats->Strength.CurrentValue, stats->Agility.CurrentValue, stats->Intelligence.CurrentValue };
 
     for (size_t i = 0; i < statNames.size(); ++i)
@@ -254,14 +243,14 @@ void PauseMenu::DrawStatDistributionScreen()
         }
 
         // 스탯 이름 (왼쪽 정렬)
-        DrawString(contentX, currentStatY, cursor + statNames[i]);
+        m_renderer.DrawString(contentX, currentStatY, cursor + statNames[i]);
         // 스탯 값 (오른쪽 정렬)
         std::wstring valueStr = std::to_wstring(static_cast<int>(statValues[i]));
-        DrawString(boxX + boxInnerWidth - 1 - valueStr.length(), currentStatY, valueStr, attributes);
+        m_renderer.DrawString(boxX + boxInnerWidth - 1 - valueStr.length(), currentStatY, valueStr, attributes);
     }
 
     // 하단 안내 메시지 표시
-    DrawString(m_renderer.GetWidth() / 2 + 3, m_renderer.GetHeight() - 2, L"[Enter: 포인트 분배 | ESC: 뒤로 가기]");
+    m_renderer.DrawString(m_renderer.GetWidth() / 2 + 3, m_renderer.GetHeight() - 6, L"[Enter: 포인트 분배 | ESC: 뒤로 가기]");
 
 }
 void PauseMenu::ProcessSkillBookInput(int key)
@@ -270,12 +259,19 @@ void PauseMenu::ProcessSkillBookInput(int key)
     {
         key = _getch();
         if (key == 72) // 위
+        {
+            PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
             m_skillBookSlotSelection = (m_skillBookSlotSelection == 0) ? 3 : m_skillBookSlotSelection - 1;
+        }
         else if (key == 80) // 아래
+        {
+            PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
             m_skillBookSlotSelection = (m_skillBookSlotSelection == 3) ? 0 : m_skillBookSlotSelection + 1;
+        }
     }
     else if (key == 13) // 엔터: 스킬 변경 시작
     {
+        PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
         m_slotIndexToModify = m_skillBookSlotSelection;
         m_skillSelectionListCursor = 0;
         m_currentPaneState = ERightPaneState::SkillSelection;
@@ -292,7 +288,7 @@ void PauseMenu::DrawSkillBookScreen()
     int boxInnerWidth = 24;
     int boxHeight = 4; // 각 슬롯 박스의 높이
 
-    DrawString(boxX, boxY, L"    [ 전투 스킬 장착 ]");
+    m_renderer.DrawString(boxX, boxY, L"    [ 전투 스킬 장착 ]");
     boxY += 2; // 타이틀 아래로 Y좌표 이동
 
     // 4개의 장착 슬롯
@@ -302,69 +298,121 @@ void PauseMenu::DrawSkillBookScreen()
         if (i == m_skillBookSlotSelection)
         {
             // 2. 선택되었다면, 박스 왼쪽에 커서(▶)를 그립니다.
-            DrawString(boxX - 2, currentY + (boxHeight / 2), L"▶");
+            m_renderer.DrawString(boxX - 2, currentY + (boxHeight / 2), L"▶");
         }
 
         // 박스 테두리 그리기
-        DrawString(boxX, currentY, L"┌" + std::wstring(boxInnerWidth, L'─') + L"┐");
-        for (int h = 1; h < boxHeight; ++h) DrawString(boxX, currentY + h, L"│" + std::wstring(boxInnerWidth, L' ') + L"│");
-        DrawString(boxX, currentY + boxHeight, L"└" + std::wstring(boxInnerWidth, L'─') + L"┘");
+        m_renderer.DrawString(boxX, currentY, L"┌" + std::wstring(boxInnerWidth, L'─') + L"┐");
+        for (int h = 1; h < boxHeight; ++h) m_renderer.DrawString(boxX, currentY + h, L"│" + std::wstring(boxInnerWidth, L' ') + L"│");
+        m_renderer.DrawString(boxX, currentY + boxHeight, L"└" + std::wstring(boxInnerWidth, L'─') + L"┘");
 
         // 박스 안에 내용 채우기
         GameplayAbility* equipped = m_player.GetAbilityComponent()->GetEquippedAbilities()[i];
         std::wstring skillName = equipped ? equipped->AbilityName : L"( 비어있음 )";
         std::wstring costText = equipped ? L"MP " + std::to_wstring(static_cast<int>(equipped->ManaCost)) : L"";
 
-        DrawString(boxX + 2, currentY + 1, L"슬롯 " + std::to_wstring(i + 1));
-        DrawString(boxX + 2, currentY + 2, skillName); // 스킬 이름
-        DrawString(boxX + boxInnerWidth - costText.length(), currentY + 3, costText); // 마나 소모량
+        m_renderer.DrawString(boxX + 2, currentY + 1, L"슬롯 " + std::to_wstring(i + 1));
+        m_renderer.DrawString(boxX + 2, currentY + 2, skillName); // 스킬 이름
+        m_renderer.DrawString(boxX + boxInnerWidth - costText.length(), currentY + 3, costText); // 마나 소모량
     }
 
     // 하단 안내 메시지
-    DrawString(m_renderer.GetWidth() / 2 + 3, m_renderer.GetHeight() - 4, L"[Enter: 스킬 변경 | ESC: 뒤로 가기]");
+    m_renderer.DrawString(m_renderer.GetWidth() / 2 + 3, m_renderer.GetHeight() - 4, L"[Enter: 스킬 변경 | ESC: 뒤로 가기]");
 }
 
 void PauseMenu::DrawSkillSelectionScreen()
 {
     ClearRightPane();
-    int x = m_renderer.GetWidth() / 2 + 3;
-    int y = 8;
 
-    DrawString(x, y++, L"[ 장착할 스킬 선택 ]");
-    y++;
+    int listX = m_renderer.GetWidth() / 2 + 5;
+    int listY = 8;
+    m_renderer.DrawString(listX, listY++, L"[ 장착할 스킬 선택 ]");
+    listY += 2;
 
     const auto& grantedAbilities = m_player.GetAbilityComponent()->GetGrantedAbilities();
+    int abilityCount = static_cast<int>(grantedAbilities.size());
 
+    // --- 스크롤되는 스킬 목록 출력 ---
     if (grantedAbilities.empty())
     {
-        DrawString(x, y, L"보유한 스킬이 없습니다.");
+        m_renderer.DrawString(listX, listY - 1, L"보유한 스킬이 없습니다.");
     }
     else
     {
-        for (size_t i = 0; i < grantedAbilities.size(); ++i)
+        // 스크롤바 위쪽 화살표 표시
+        if (m_skillListScrollOffset > 0)
         {
-            GameplayAbility* currentSkill = grantedAbilities[i].get();
+            m_renderer.DrawString(listX + 10, listY - 1, L"▲");
+        }
+
+        // 화면에 보여줄 개수만큼만 반복
+        for (int i = 0; i < m_skillListVisibleCount; ++i)
+        {
+            int skillIndex = m_skillListScrollOffset + i;
+            if (skillIndex >= abilityCount) break;
+
+            GameplayAbility* currentSkill = grantedAbilities[skillIndex].get();
+
+            // 커서와 스킬 기본 텍스트를 준비
+            std::wstring cursor = (skillIndex == m_skillSelectionListCursor) ? L"▶ " : L"  ";
+            std::wstring skillText = cursor + currentSkill->AbilityName;
+
             bool bIsEquipped = IsSkillEquipped(currentSkill);
 
-            // 장착된 스킬은 회색으로, [장착 중] 표시 추가
+            // 장착된 스킬이면, 텍스트 뒤에 "[장착중]" 라벨을 추가
             if (bIsEquipped)
             {
-                DrawString(x, y + i, L"  " + currentSkill->AbilityName + L" [장착 중]");
-                continue;
+                skillText += L" [장착중]";
             }
 
-            // 장착되지 않은 스킬만 커서 및 하이라이트 표시
-            std::wstring cursor = (i == m_skillSelectionListCursor) ? L"▶ " : L"  ";
-            DrawString(x, y + i, cursor + currentSkill->AbilityName);
+            // 최종 skillText 출력
+            m_renderer.DrawString(listX + 2, listY + i + 1, skillText);
+        }
+
+        // 스크롤바 아래쪽 화살표 표시
+        if (m_skillListScrollOffset + m_skillListVisibleCount < abilityCount)
+        {
+            m_renderer.DrawString(listX + 10, listY + m_skillListVisibleCount + 2, L"▼");
         }
     }
-    DrawString(m_renderer.GetWidth() / 2 + 3, m_renderer.GetHeight() - 4, L"[Enter: 스킬 장착 | ESC: 취소]");
+
+    // --- 선택된 스킬 정보창 출력 (기존과 동일하지만 위치 조정) ---
+    GameplayAbility* highlightedSkill = nullptr;
+    if (!grantedAbilities.empty())
+    {
+        highlightedSkill = grantedAbilities[m_skillSelectionListCursor].get();
+    }
+
+    if (highlightedSkill)
+    {
+        int boxY = m_renderer.GetHeight() - 9;
+        int boxX = m_renderer.GetWidth() / 2 + 3;
+        int boxWidth = m_renderer.GetWidth() - boxX - 10;
+
+        m_renderer.DrawString(boxX, boxY, L"┌" + std::wstring(boxWidth, L'─') + L"┐");
+        m_renderer.DrawString(boxX, boxY + 1, L"│" + std::wstring(boxWidth, L' ') + L"│");
+        m_renderer.DrawString(boxX, boxY + 2, L"│" + std::wstring(boxWidth, L' ') + L"│");
+        m_renderer.DrawString(boxX, boxY + 3, L"└" + std::wstring(boxWidth, L'─') + L"┘");
+
+        int contentX = boxX + 2;
+        int contentY = boxY + 1;
+
+        std::wstring title = L"[" + highlightedSkill->AbilityName + L"]";
+        std::wstring mana = L"MP " + std::to_wstring(static_cast<int>(highlightedSkill->ManaCost));
+        m_renderer.DrawString(contentX, contentY, title);
+        m_renderer.DrawString(contentX + boxWidth - mana.length() - 1, contentY, mana);
+
+        m_renderer.DrawString(contentX, contentY + 1, highlightedSkill->AbilityDescription);
+    }
 }
 
 void PauseMenu::ProcessSkillSelectionInput(int key)
 {
     const auto& grantedAbilities = m_player.GetAbilityComponent()->GetGrantedAbilities();
     if (grantedAbilities.empty()) return;
+
+    // 습득 스킬 개수를 읽어와서 저장
+    int abilityCount = static_cast<int>(grantedAbilities.size());
 
     // 장착 가능한 어빌리티 목록 생성
     std::vector<int> availableSkillIndices;
@@ -384,40 +432,57 @@ void PauseMenu::ProcessSkillSelectionInput(int key)
     {
         // 현재 커서가 가리키는 스킬이 장착 가능한지 다시 한번 확인
         bool bCanEquip = std::find(availableSkillIndices.begin(), availableSkillIndices.end(), m_skillSelectionListCursor) != availableSkillIndices.end();
+        PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
 
         if (bCanEquip)
         {
             GameplayAbility* selectedAbility = m_player.GetAbilityComponent()->GetGrantedAbility(m_skillSelectionListCursor);
             m_player.GetAbilityComponent()->EquipAbility(m_slotIndexToModify, selectedAbility);
             m_currentPaneState = ERightPaneState::SkillBook;
+            PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
         }
         return; // 장착 불가능한 스킬이면 종료
     }
 
-    // --- 3. 방향키 입력 처리 (장착 가능한 스킬만 탐색) ---
-    if (key == 224)
+    if (key == 224) // 방향키
     {
-        // 현재 커서가 availableSkillIndices의 몇 번째에 있는지 find
-        auto it = std::find(availableSkillIndices.begin(), availableSkillIndices.end(), m_skillSelectionListCursor);
-        int currentPos = (it == availableSkillIndices.end()) ? -1 : std::distance(availableSkillIndices.begin(), it);
-
-        // currentPos가 -1이면, 현재 커서가 장착된 스킬 위에 있다는 의미이므로, 가장 가까운 유효 인덱스로 이동
-        if (currentPos == -1) currentPos = 0;
-
         key = _getch();
+        PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+
         if (key == 72) // 위
         {
-            currentPos = (currentPos == 0) ? availableSkillIndices.size() - 1 : currentPos - 1;
+            m_skillSelectionListCursor = (m_skillSelectionListCursor == 0) ? abilityCount - 1 : m_skillSelectionListCursor - 1;
+
+            // 커서가 스크롤 영역 위로 벗어나면 스크롤을 올립니다.
+            if (m_skillSelectionListCursor < m_skillListScrollOffset)
+            {
+                m_skillListScrollOffset = m_skillSelectionListCursor;
+            }
+            // 맨 마지막 항목으로 순환했을 때, 스크롤도 맨 아래로 이동합니다.
+            if (m_skillSelectionListCursor == abilityCount - 1)
+            {
+                m_skillListScrollOffset = (std::max)(0, abilityCount - m_skillListVisibleCount);
+            }
         }
         else if (key == 80) // 아래
         {
-            currentPos = (currentPos + 1) % availableSkillIndices.size();
-        }
+            m_skillSelectionListCursor = (m_skillSelectionListCursor == abilityCount - 1) ? 0 : m_skillSelectionListCursor + 1;
 
-        // 새로운 커서 위치를 실제 인덱스로 변환하여 업데이트
-        m_skillSelectionListCursor = availableSkillIndices[currentPos];
+            // 커서가 스크롤 영역 아래로 벗어나면 스크롤을 내립니다.
+            if (m_skillSelectionListCursor >= m_skillListScrollOffset + m_skillListVisibleCount)
+            {
+                m_skillListScrollOffset = m_skillSelectionListCursor - m_skillListVisibleCount + 1;
+            }
+            // 맨 첫 항목으로 순환했을 때, 스크롤도 맨 위로 이동합니다.
+            if (m_skillSelectionListCursor == 0)
+            {
+                m_skillListScrollOffset = 0;
+            }
+        }
     }
 }
+
+// 스킬북) 스킬이 장착이 된 상태인지 판별하는 함수
 bool PauseMenu::IsSkillEquipped(const GameplayAbility* skill) const
 {
     if (!skill) return false; // 스킬 포인터가 유효하지 않으면 false
@@ -436,20 +501,34 @@ bool PauseMenu::IsSkillEquipped(const GameplayAbility* skill) const
     return false; // 못 찾았으면 false
 }
 
-void PauseMenu::DrawString(int x, int y, const std::wstring& str, WORD attributes)
+// PauseMenu 전체 입력 처리 함수
+void PauseMenu::ProcessMainMenuInput(int key)
 {
-    int currentX = x;
-    for (const auto& ch : str)
+    const std::vector<std::wstring> options = { L"스탯 분배", L"인벤토리", L"스킬북", L"저장", L"메인메뉴로 나가기" };
+    if (key == 224)
     {
-        // 네 번째 인자로 받은 attributes를 Draw 함수에 넘겨줍니다.
-        m_renderer.Draw(currentX, y, ch, attributes);
-        if (ch >= L'가' && ch <= L'힣')
+        key = _getch();
+        if (key == 72) // 위쪽 화살표
         {
-            currentX += 2;
+            // 선택 인덱스를 1 감소. 0보다 작아지면 마지막 인덱스로 순환
+            PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+            m_mainMenuSelection = (m_mainMenuSelection == 0) ? static_cast<int>(options.size()) - 1 : m_mainMenuSelection - 1;
         }
-        else
+        else if (key == 80) // 아래쪽 화살표
         {
-            currentX += 1;
+            // 선택 인덱스를 1 증가. 마지막 인덱스를 넘어가면 0으로 순환
+            PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+            m_mainMenuSelection = (m_mainMenuSelection + 1) % static_cast<int>(options.size());
+        }
+    }
+    else if (key == 13) // 엔터
+    {
+        PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+        switch (m_mainMenuSelection)
+        {
+        case 0: m_currentPaneState = ERightPaneState::StatDistribution; m_statSelection = 0; break;
+        case 2: m_currentPaneState = ERightPaneState::SkillBook; m_skillBookSlotSelection = 0; break;
+        case 4: m_bIsRunning = false; m_result = EPauseMenuResult::GoToMainMenu; break;
         }
     }
 }
@@ -466,51 +545,52 @@ void PauseMenu::DrawPlayerInfo()
     int midX = panelX + panelWidth / 2;
 
     // 메인 패널 프레임 그리기
-    DrawString(panelX, panelY, L"╔" + std::wstring(panelWidth - 2, L'═') + L"╗");
-    for (int i = 1; i < panelHeight; ++i) DrawString(panelX, panelY + i, L"║" + std::wstring(panelWidth - 2, L' ') + L"║");
-    DrawString(panelX, panelY + panelHeight, L"╚" + std::wstring(panelWidth - 2, L'═') + L"╝");
+    m_renderer.DrawString(panelX, panelY, L"╔" + std::wstring(panelWidth - 2, L'═') + L"╗");
+    for (int i = 1; i < panelHeight; ++i) m_renderer.DrawString(panelX, panelY + i, L"║" + std::wstring(panelWidth - 2, L' ') + L"║");
+    m_renderer.DrawString(panelX, panelY + panelHeight, L"╚" + std::wstring(panelWidth - 2, L'═') + L"╝");
     std::wstring title = L"P A U S E D";
-    DrawString(panelX + (panelWidth - title.length()) / 2, panelY + 2, title);
-    DrawString(panelX, panelY + 4, L"╠" + std::wstring(panelWidth - 2, L'═') + L"╣");
-    DrawString(midX, panelY, L"╦");
-    DrawString(midX, panelY + 4, L"╬");
-    for (int i = 5; i < panelHeight; ++i) DrawString(midX, panelY + i, L"║");
-    DrawString(midX, panelY + panelHeight, L"╩");
+    m_renderer.DrawString(panelX + (panelWidth - title.length()) / 2, panelY + 2, title);
+    m_renderer.DrawString(panelX, panelY + 4, L"╠" + std::wstring(panelWidth - 2, L'═') + L"╣");
+    m_renderer.DrawString(midX, panelY, L"╦");
+    m_renderer.DrawString(midX, panelY + 4, L"╬");
+    for (int i = 5; i < panelHeight; ++i) m_renderer.DrawString(midX, panelY + i, L"║");
+    m_renderer.DrawString(midX, panelY + panelHeight, L"╩");
 
     int infoX = panelX + 3;
     int infoY = panelY + 6;
 
-    DrawString(infoX, infoY++, L"이름: " + m_player.Name);
-    DrawString(infoX, infoY++, L"레벨: " + std::to_wstring(stats->Level));
+    m_renderer.DrawString(infoX, infoY++, L"이름: " + m_player.Name);
+    m_renderer.DrawString(infoX, infoY++, L"레벨: " + std::to_wstring(stats->Level));
     infoY++;
 
     std::wstringstream hpStream;
     hpStream << L"HP  [" << static_cast<int>(stats->HP.CurrentValue) << L" / " << static_cast<int>(stats->HP.BaseValue) << L"]";
-    DrawString(infoX, infoY++, hpStream.str());
+    m_renderer.DrawString(infoX, infoY++, hpStream.str());
     DrawBar(m_renderer, infoX, infoY, midX - infoX - 4, stats->HP.CurrentValue, stats->HP.BaseValue, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
     infoY += 2;
 
     std::wstringstream mpStream;
     mpStream << L"MP  [" << static_cast<int>(stats->MP.CurrentValue) << L" / " << static_cast<int>(stats->MP.BaseValue) << L"]";
-    DrawString(infoX, infoY++, mpStream.str());
+    m_renderer.DrawString(infoX, infoY++, mpStream.str());
     DrawBar(m_renderer, infoX, infoY, midX - infoX - 4, stats->MP.CurrentValue, stats->MP.BaseValue, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
     infoY += 2;
 
     std::wstringstream expStream;
     float requiredExp = 100.0f * stats->Level;
     expStream << L"EXP [" << static_cast<int>(stats->Experience.CurrentValue) << L" / " << static_cast<int>(requiredExp) << L"]";
-    DrawString(infoX, infoY++, expStream.str());
+    m_renderer.DrawString(infoX, infoY++, expStream.str());
     DrawBar(m_renderer, infoX, infoY, midX - infoX - 4, stats->Experience.CurrentValue, requiredExp, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
     infoY += 3;
 
-    DrawString(infoX, infoY++, L"힘        : " + std::to_wstring(static_cast<int>(stats->Strength.CurrentValue)));
-    DrawString(infoX, infoY++, L"민첩      : " + std::to_wstring(static_cast<int>(stats->Agility.CurrentValue)));
-    DrawString(infoX, infoY++, L"지능      : " + std::to_wstring(static_cast<int>(stats->Intelligence.CurrentValue)));
-    DrawString(infoX, infoY++, L"방어력    : " + std::to_wstring(static_cast<int>(stats->Defence.CurrentValue)));
+    m_renderer.DrawString(infoX, infoY++, L"힘        : " + std::to_wstring(static_cast<int>(stats->Strength.CurrentValue)));
+    m_renderer.DrawString(infoX, infoY++, L"민첩      : " + std::to_wstring(static_cast<int>(stats->Agility.CurrentValue)));
+    m_renderer.DrawString(infoX, infoY++, L"지능      : " + std::to_wstring(static_cast<int>(stats->Intelligence.CurrentValue)));
+    m_renderer.DrawString(infoX, infoY++, L"방어력    : " + std::to_wstring(static_cast<int>(stats->Defence.CurrentValue)));
     infoY++;
-    DrawString(infoX, infoY++, L"골드      : " + std::to_wstring(static_cast<int>(stats->Gold.CurrentValue)) + L" G");
+    m_renderer.DrawString(infoX, infoY++, L"골드      : " + std::to_wstring(static_cast<int>(stats->Gold.CurrentValue)) + L" G");
 }
 
+// 좌측 상태창: 체력, 마나, 경험치 바 그리는 함수
 void DrawBar(ConsoleRenderer& renderer, int x, int y, int width, float current, float max, WORD attribute)
 {
     float ratio = (max > 0) ? (current / max) : 0;
@@ -522,6 +602,8 @@ void DrawBar(ConsoleRenderer& renderer, int x, int y, int width, float current, 
     }
 }
 
+
+// 우측 화면 지우는 함수
 void PauseMenu::ClearRightPane()
 {
     // 레이아웃 좌표 계산
@@ -538,6 +620,6 @@ void PauseMenu::ClearRightPane()
 
     for (int i = 0; i < contentHeight; ++i)
     {
-        DrawString(contentStartX, contentStartY + i, std::wstring(contentWidth, L' '));
+        m_renderer.DrawString(contentStartX, contentStartY + i, std::wstring(contentWidth, L' '));
     }
 }

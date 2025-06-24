@@ -1,4 +1,5 @@
 #include "GameLogic/DataManager.h"
+#include "Utils/StringUtils.h"
 #include <fstream>
 #include <json.hpp> // JSON 라이브러리
 #include <Windows.h>
@@ -31,20 +32,14 @@ void DataManager::LoadMonsterData(const std::string& path)
 
         MonsterData monsterData;
 
-        // UTF-8(string)을 유니코드(wstring)로 변환
-        std::string utf8Name = monsterJson["name"];
-        int wlen = MultiByteToWideChar(CP_UTF8, 0, utf8Name.c_str(), -1, NULL, 0);
-        if (wlen > 0) {
-            wchar_t* wstr = new wchar_t[wlen];
-            MultiByteToWideChar(CP_UTF8, 0, utf8Name.c_str(), -1, wstr, wlen);
-            monsterData.name = wstr;
-            delete[] wstr;
-        }
+        // StringUtils::ConverToWstring 함수로 UTF8 -> 유니코드 변환
+        monsterData.name = StringUtils::ConvertToWstring(monsterJson.value("name", ""));
+
 
         // 속성에 관한 데이터 추출. 뽑아오는데 값이 없으면 오른쪽 값을 사용
         monsterData.baseLevel = monsterJson.value("level", 1);
         monsterData.baseHp = monsterJson.value("hp", 50.f);
-        monsterData.baseHp = monsterJson.value("mp", 50.f);
+        monsterData.baseMp = monsterJson.value("mp", 50.f);
         monsterData.baseStrength = monsterJson.value("strength", 5.f);
         monsterData.baseDefence = monsterJson.value("defence", 0.f);
         monsterData.baseAgility = monsterJson.value("agility", 5.f);
@@ -54,14 +49,77 @@ void DataManager::LoadMonsterData(const std::string& path)
 
         if (monsterJson.contains("skills"))
         {
-            // 3. 스킬 목록을 순회하는 부분도 더 안전한 방식으로 수정
+            // 스킬 목록을 순회
             for (const json& skillIdJson : monsterJson["skills"])
             {
                 // .get<string>() 을 통해 명시적으로 타입을 변환하여 오류 방지
                 monsterData.skillIds.push_back(skillIdJson.get<std::string>());
+
             }
         }
         m_monsterDatabase[id] = monsterData;
+    }
+}
+void DataManager::LoadSkillData(const std::string& path)
+{
+    std::ifstream file(path);
+    if (!file.is_open()) { return; }
+
+    json data = json::parse(file);
+    file.close();
+
+    for (auto& element : data.items())
+    {
+        const std::string& skillId = element.key();
+        const json& skillJson = element.value();
+
+        SkillData skillData;
+        skillData.id = skillId;
+
+        // 이름, 설명 등 기본 정보 파싱 (문자열은 UTF8 -> 유니코드 변환)
+        skillData.name = StringUtils::ConvertToWstring(skillJson.value("name", ""));
+        skillData.description = StringUtils::ConvertToWstring(skillJson.value("description", ""));
+        skillData.manaCost = skillJson.value("mana_cost", 0.0f);
+        skillData.soundId = skillJson.value("sound_id", "");
+
+        // 'effects' 배열 파싱
+        if (skillJson.contains("effects"))
+        {
+            for (const auto& effectJson : skillJson["effects"])
+            {
+                EffectData effectData;
+                effectData.applyTo = effectJson.value("apply_to", "Target");
+                effectData.effectName = effectJson.value("effect_name", "Effect");
+                effectData.targetAttribute = effectJson.value("target_attribute", "HP");
+                effectData.duration = effectJson.value("duration", 0);
+                effectData.executeOnTurn = effectJson.value("execute_on_turn", false);
+
+                // 적용 타입 (string -> enum)
+                std::string appTypeStr = effectJson.value("application_type", "Instant");
+                if (appTypeStr == "Duration") effectData.applicationType = EEffectApplication::Duration;
+                else if (appTypeStr == "Infinite") effectData.applicationType = EEffectApplication::Infinite;
+                else effectData.applicationType = EEffectApplication::Instant;
+
+                // Magnitude 정보 파싱
+                if (effectJson.contains("magnitude"))
+                {
+                    const auto& magJson = effectJson["magnitude"];
+                    effectData.magnitudeCalculation = magJson.value("calculation", "Flat");
+                    effectData.baseValue = magJson.value("base_value", 0.0f);
+                    effectData.adRatio = magJson.value("ad_ratio", 0.0f);
+                    effectData.apRatio = magJson.value("ap_ratio", 0.0f);
+                    effectData.isHeal = magJson.value("is_heal", false);
+
+                    std::string damageTypeStr = magJson.value("damage_type", "None");
+                    if (damageTypeStr == "Physical") effectData.damageType = EDamageType::Physical;
+                    else if (damageTypeStr == "Magical") effectData.damageType = EDamageType::Magical;
+                    else if (damageTypeStr == "True") effectData.damageType = EDamageType::True;
+                    else effectData.damageType = EDamageType::None;
+                }
+                skillData.effects.push_back(effectData);
+            }
+        }
+        m_skillDatabase[skillId] = skillData;
     }
 }
 
@@ -69,6 +127,15 @@ const MonsterData* DataManager::GetMonsterData(const std::string& monsterId) con
 {
     auto it = m_monsterDatabase.find(monsterId);
     if (it != m_monsterDatabase.end())
+    {
+        return &it->second;
+    }
+    return nullptr;
+}
+const SkillData* DataManager::GetSkillData(const std::string& skillId) const
+{
+    auto it = m_skillDatabase.find(skillId);
+    if (it != m_skillDatabase.end())
     {
         return &it->second;
     }
