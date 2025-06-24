@@ -2,6 +2,9 @@
 #include "Utils/ConsoleRenderer.h"
 #include <conio.h>
 #include <windows.h>
+#include <mmsystem.h>
+
+#pragma comment(lib, "winmm.lib")
 
 MainMenu::MainMenu(ConsoleRenderer& renderer)
     : m_renderer(renderer),
@@ -10,6 +13,9 @@ MainMenu::MainMenu(ConsoleRenderer& renderer)
     m_nextState(EGameState::MainMenu)
 {
     m_menuOptions = { L"새 게임", L"불러오기", L"설정", L"크레딧", L"게임 종료" };
+
+    m_navigateSoundPath = L"Sounds/UI/mainmenu_select.wav"; // 메뉴 이동 효과음
+    m_confirmSoundPath = L"Sounds/UI/mainmenu_confirm.wav";   // 메뉴 선택 효과음
 }
 
 EGameState MainMenu::Run()
@@ -34,10 +40,12 @@ void MainMenu::ProcessInput()
         if (key == 72) // 위
         {
             m_currentSelection = (m_currentSelection == 0) ? static_cast<int>(m_menuOptions.size()) - 1 : m_currentSelection - 1;
+            PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
         }
         else if (key == 80) // 아래
         {
             m_currentSelection = (m_currentSelection + 1) % static_cast<int>(m_menuOptions.size());
+            PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
         }
     }
     else if (key == 13) // 엔터
@@ -63,13 +71,15 @@ void MainMenu::Render()
     int guideX = m_renderer.GetWidth() - visualWidth - 2;
     int guideY = m_renderer.GetHeight() - 2;
 
-    DrawString(guideX, guideY, guide);
+    m_renderer.DrawString(guideX, guideY, guide);
 
     m_renderer.Render();
 }
 
 void MainMenu::OnEnterPressed()
 {
+    PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+
     switch (m_currentSelection)
     {
     case 0: // 새 게임
@@ -86,23 +96,6 @@ void MainMenu::OnEnterPressed()
         m_nextState = EGameState::Quit;
         m_bIsRunning = false;
         break;
-    }
-}
-
-void MainMenu::DrawString(int x, int y, const std::wstring& str)
-{
-    int currentX = x;
-    for (const auto& ch : str)
-    {
-        m_renderer.Draw(currentX, y, ch);
-        if (ch >= L'가' && ch <= L'힣')
-        {
-            currentX += 2;
-        }
-        else
-        {
-            currentX += 1;
-        }
     }
 }
 
@@ -151,15 +144,15 @@ void MainMenu::DrawMenuOptions()
 
         if (i == m_currentSelection)
         {
-            DrawString(boxStartX, currentY - 1, L"┏" + std::wstring(boxWidth, L'━') + L"┓");
-            DrawString(boxStartX, currentY, L"┃" + textToDraw + L" ◀ ");
-            DrawString(boxStartX, currentY + 1, L"┗" + std::wstring(boxWidth, L'━') + L"┛");
+            m_renderer.DrawString(boxStartX, currentY - 1, L"┏" + std::wstring(boxWidth, L'━') + L"┓");
+            m_renderer.DrawString(boxStartX, currentY, L"┃" + textToDraw + L" ◀ ");
+            m_renderer.DrawString(boxStartX, currentY + 1, L"┗" + std::wstring(boxWidth, L'━') + L"┛");
         }
         else
         {
-            DrawString(boxStartX, currentY - 1, L"┌" + std::wstring(boxWidth, L'─') + L"┐");
-            DrawString(boxStartX, currentY, L"│" + textToDraw + L"   ");
-            DrawString(boxStartX, currentY + 1, L"└" + std::wstring(boxWidth, L'─') + L"┘");
+            m_renderer.DrawString(boxStartX, currentY - 1, L"┌" + std::wstring(boxWidth, L'─') + L"┐");
+            m_renderer.DrawString(boxStartX, currentY, L"│" + textToDraw + L"   ");
+            m_renderer.DrawString(boxStartX, currentY + 1, L"└" + std::wstring(boxWidth, L'─') + L"┘");
         }
     }
 }

@@ -6,15 +6,13 @@
 #include <conio.h>
 #include <Windows.h>
 
+#include "Framework/AbilitySystem/AbilitySystemComponent.h"
+#include "Utils/ConsoleUtils.h"
+#include "Core/GameWorld.h"
 #include "GameLogic/Units/Player.h"
 #include "GameLogic/Units/Monster.h"
-#include "GameLogic/Skills/AB_NormalAttack.h"
-#include "GameLogic/BattleManager.h"
-#include "Framework/AbilitySystem/AbilitySystemComponent.h"
-#include "GameLogic/Skills/AB_PoisonCloud.h"
-#include "Utils/ConsoleUtils.h"
 #include "GameLogic/Map/Field.h"
-#include "Core/GameWorld.h"
+#include "GameLogic/BattleManager.h"
 #include "GameLogic/DataManager.h"
 #include "GameLogic/MainMenu.h"
 
@@ -30,6 +28,7 @@ int main()
     auto player = make_unique<Player>(L"주인공");
 
     DataManager::GetInstance().LoadMonsterData("Data/Monsters.json");
+    DataManager::GetInstance().LoadSkillData("Data/Skills.json");
     EGameState currentState = EGameState::MainMenu;
 
     ConsoleRenderer renderer;

@@ -36,8 +36,10 @@ public:
     // --- 자원 (Resources) ---
     FAttributeData HP;
     FAttributeData MP;
-    FAttributeData BaseHP;
-    FAttributeData BaseMP;
+
+    // Base 능력치 제거
+    //FAttributeData BaseHP;
+    //FAttributeData BaseMP;
 
     // 골드와 경험치, 레벨
     FAttributeData Gold;

@@ -139,8 +139,8 @@
     <ClCompile Include="Source\GameLogic\MainMenu.cpp" />
     <ClCompile Include="Source\GameLogic\Map\Field.cpp" />
     <ClCompile Include="Source\GameLogic\PauseMenu.cpp" />
-    <ClCompile Include="Source\GameLogic\Skills\AB_NormalAttack.cpp" />
-    <ClCompile Include="Source\GameLogic\Skills\AB_PoisonCloud.cpp" />
+    <ClCompile Include="Source\GameLogic\Skills\GenericAbility.cpp" />
+    <ClCompile Include="Source\GameLogic\Skills\SkillFactory.cpp" />
     <ClCompile Include="Source\GameLogic\Units\Monster.cpp" />
     <ClCompile Include="Source\GameLogic\Units\Player.cpp" />
     <ClCompile Include="Source\Utils\ConsoleRenderer.cpp" />
@@ -152,6 +152,7 @@
     <None Include="Data\Field_1.json" />
     <None Include="Data\Monsters.json" />
     <None Include="Data\Town.json" />
+    <None Include="Data\Skills.json" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\json.hpp" />
@@ -167,13 +168,28 @@
     <ClInclude Include="Source\GameLogic\MainMenu.h" />
     <ClInclude Include="Source\GameLogic\Map\Field.h" />
     <ClInclude Include="Source\GameLogic\PauseMenu.h" />
-    <ClInclude Include="Source\GameLogic\Skills\AB_NormalAttack.h" />
-    <ClInclude Include="Source\GameLogic\Skills\AB_PoisonCloud.h" />
+    <ClInclude Include="Source\GameLogic\Skills\GenericAbility.h" />
+    <ClInclude Include="Source\GameLogic\Skills\SkillFactory.h" />
     <ClInclude Include="Source\GameLogic\Units\Monster.h" />
     <ClInclude Include="Source\GameLogic\Units\Player.h" />
     <ClInclude Include="Source\Utils\ConsoleRenderer.h" />
     <ClInclude Include="Source\Utils\ConsoleUtils.h" />
     <ClInclude Include="Source\Utils\DamageUtils.h" />
+    <ClInclude Include="Source\Utils\SoundUtils.h" />
+    <ClInclude Include="Source\Utils\StringUtils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Sounds\BGM\battle_bgm.wav" />
+    <Media Include="Sounds\BGM\Town_bgm.wav" />
+    <Media Include="Sounds\BGM\Field_1_bgm.wav" />
+    <Media Include="Sounds\enemy_encounter.wav" />
+    <Media Include="Sounds\Skills\normal_attack_sound.wav" />
+    <Media Include="Sounds\UI\mainmenu_confirm.wav" />
+    <Media Include="Sounds\UI\mainmenu_select.wav" />
+    <Media Include="Sounds\UI\menu_reject.wav" />
+    <Media Include="Sounds\UI\menu_reject2.wav" />
+    <Media Include="Sounds\UI\pausemenu_confirm.wav" />
+    <Media Include="Sounds\UI\pausemenu_select.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

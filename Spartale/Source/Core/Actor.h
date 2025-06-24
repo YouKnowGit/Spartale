@@ -33,6 +33,4 @@ public:
 
 protected:
     int ActorID;
-    int m_x;
-    int m_y;
 };

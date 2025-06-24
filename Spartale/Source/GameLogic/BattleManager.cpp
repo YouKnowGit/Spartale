@@ -11,6 +11,9 @@
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
+#include <mmsystem.h>
+
+#pragma comment(lib, "winmm.lib")
 
 BattleManager::BattleManager(Player* player, Monster* monster, ConsoleRenderer& renderer)
     : m_player(player),
@@ -87,6 +90,10 @@ void BattleManager::Update()
     case EBattleState::PlayerActionSelect:
         m_statusMessage = L"무엇을 할까?";
         m_currentMenuOptions = { L"공격", L"방어", L"아이템", L"도망가기" };
+
+        // 턴 처음 부분에서 방어 여부 초기화
+        m_player->GetAbilityComponent()->GetAttributeSet()->bIsDefending = false;
+        m_monster->GetAbilityComponent()->GetAttributeSet()->bIsDefending = false;
         break;
 
     case EBattleState::PlayerSkillSelect:
@@ -221,38 +228,38 @@ void BattleManager::DrawUI()
 
     // 몬스터 정보
     DrawBox(45, 2, 30, 6);
-    DrawString(47, 3, m_monster->Name + L"      Lv. " + std::to_wstring(monsterAttr->Level));
-    DrawString(47, 4, DrawStatBar(L"HP", monsterAttr->HP.CurrentValue, monsterAttr->HP.BaseValue, 15));
-    DrawString(49, 5, std::to_wstring((int)monsterAttr->HP.CurrentValue) + L" / " + std::to_wstring((int)monsterAttr->HP.BaseValue));
+    m_renderer.DrawString(47, 3, m_monster->Name + L"      Lv. " + std::to_wstring(monsterAttr->Level));
+    m_renderer.DrawString(47, 4, DrawStatBar(L"HP", monsterAttr->HP.CurrentValue, monsterAttr->HP.BaseValue, 15));
+    m_renderer.DrawString(49, 5, std::to_wstring((int)monsterAttr->HP.CurrentValue) + L" / " + std::to_wstring((int)monsterAttr->HP.BaseValue));
 
     // 플레이어 정보
     DrawBox(2, 12, 30, 7);
-    DrawString(4, 13, m_player->Name + L"      Lv. " + std::to_wstring(playerAttr->Level));
-    DrawString(4, 14, DrawStatBar(L"HP", playerAttr->HP.CurrentValue, playerAttr->HP.BaseValue, 15));
-    DrawString(6, 15, std::to_wstring((int)playerAttr->HP.CurrentValue) + L" / " + std::to_wstring((int)playerAttr->HP.BaseValue));
-    DrawString(4, 16, L"MP : " + std::to_wstring((int)playerAttr->MP.CurrentValue) + L" / " + std::to_wstring((int)playerAttr->MP.BaseValue));
+    m_renderer.DrawString(4, 13, m_player->Name + L"      Lv. " + std::to_wstring(playerAttr->Level));
+    m_renderer.DrawString(4, 14, DrawStatBar(L"HP", playerAttr->HP.CurrentValue, playerAttr->HP.BaseValue, 15));
+    m_renderer.DrawString(6, 15, std::to_wstring((int)playerAttr->HP.CurrentValue) + L" / " + std::to_wstring((int)playerAttr->HP.BaseValue));
+    m_renderer.DrawString(4, 16, L"MP : " + std::to_wstring((int)playerAttr->MP.CurrentValue) + L" / " + std::to_wstring((int)playerAttr->MP.BaseValue));
 
     // 메시지 박스
     DrawBox(2, 20, 79, 8);
     DrawBox(82, 20, 25, 8);
-    DrawString(4, 22, m_statusMessage);
+    m_renderer.DrawString(4, 22, m_statusMessage);
 }
 
 void BattleManager::DrawActionSelectMenu()
 {
     for (size_t i = 0; i < m_currentMenuOptions.size(); ++i) {
-        std::wstring menuText = (i == m_currentMenuSelection) ? L"▶ " : L"  ";
+        std::wstring menuText = (i == m_currentMenuSelection) ? L"▶  " : L"   ";
         menuText += m_currentMenuOptions[i];
-        DrawString(84, 22 + i, menuText);
+        m_renderer.DrawString(84, 22 + i, menuText);
     }
 }
 
 void BattleManager::DrawSkillSelectMenu()
 {
     for (size_t i = 0; i < m_currentMenuOptions.size(); ++i) {
-        std::wstring menuText = (i == m_currentMenuSelection) ? L"▶ " : L"  ";
+        std::wstring menuText = (i == m_currentMenuSelection) ? L"▶  " : L"   ";
         menuText += m_currentMenuOptions[i];
-        DrawString(84, 22 + i, menuText);
+        m_renderer.DrawString(84, 22 + i, menuText);
     }
 }
 
@@ -346,26 +353,10 @@ std::wstring BattleManager::DrawStatBar(const std::wstring& label, float current
     bar += L"]";
     return bar;
 }
-void BattleManager::DrawString(int x, int y, const std::wstring& str) const
-{
-    int currentX = x;
-    for (const auto& ch : str)
-    {
-        m_renderer.Draw(currentX, y, ch);
-
-        // 문자가 한글 범위에 속하는지 확인
-        if (ch >= L'가' && ch <= L'힣')
-        {
-            currentX += 2; // 한글이면 2칸 이동
-        }
-        else
-        {
-            currentX += 1; // 그 외에는 1칸 이동
-        }
-    }
-}
 void BattleManager::PlayIntroAnimation()
 {
+
+
     // 화면 깜빡임 효과 (색상 변경)
     for (int i = 0; i < 3; ++i) {
         // 모든 버퍼 셀의 색상 속성을 변경

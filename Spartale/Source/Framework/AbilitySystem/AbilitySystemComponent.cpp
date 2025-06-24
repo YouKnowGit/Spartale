@@ -80,8 +80,31 @@ void AbilitySystemComponent::GrantAbility(std::unique_ptr<GameplayAbility> Abili
 }
 
 // 스킬의 이름을 통해 해당 스킬을 찾고 제거하는 함수
-void AbilitySystemComponent::ClearAbility(GameplayAbility* Ability)
+void AbilitySystemComponent::ClearAbility(GameplayAbility* AbilityToRemove)
 {
+    if (!AbilityToRemove)    return;
+
+    for (size_t i = 0; i < EquippedAbilities.size(); i++) 
+    {
+        if (EquippedAbilities[i] == AbilityToRemove)
+        {
+            // EquippedAbilities(현재 장착중인 스킬) 에 AbilityToRemove 가 있다면 UnEquipAbility 함수 호출
+            // 해당 함수에서 자동적으로 nullptr 설정
+            UnEquipAbility(i);
+        }
+    }
+
+    for (auto itr = GrantedAbilities.begin(); itr != GrantedAbilities.end(); ++itr)
+    {
+        // itr이 가리키는 unique_ptr가 관리하는 포인터 주소를 비교
+        if (itr->get() == AbilityToRemove)
+        {
+            // 멤버 변수에서 직접 erase를 호출
+            GrantedAbilities.erase(itr);
+            // 삭제 완료 시 바로 break
+            break;
+        }
+    }
 }
 
 // EquipAbility 는 전투 시 사용할 4개의 스킬을 담아놓는 벡터

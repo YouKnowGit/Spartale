@@ -2,6 +2,7 @@
 #include "Source/Core/Actor.h"
 
 #include <string>
+#include <random>
 
 // Actor를 상속받아 Monster 클래스를 정의
 class Monster : public Actor
@@ -15,4 +16,8 @@ public:
 
     // 몬스터는 Actor의 기본 Initialize, Update, Render를 그대로 사용
     // 몬스터만의 특별한 로직이 필요하다면 여기서도 재정의하여 처리
+
+private:
+    // 난수용 변수
+    std::mt19937 m_rng;
 };

@@ -4,21 +4,19 @@
 #include <vector>
 #include <memory> 
 #include "Core/Global.h"
+#include "GameLogic/DataManager.h"
 
 class AbilitySystemComponent;
 class GameplayEffect;
 class Actor;
-
-class AbilitySystemComponent;
-class GameplayEffect;
-class Actor;
+class DataManager;
 
 // 스킬의 기본 틀이 되는 추상 클래스
 class GameplayAbility
 {
 public:
     GameplayAbility();
-    virtual ~GameplayAbility() = default;
+    virtual ~GameplayAbility();
 
     // 스킬 이름 및 설명
     std::wstring AbilityName;
@@ -34,6 +32,9 @@ public:
     float AP_Ratio = 0.0f; // 마법 계수
 
     EDamageType DamageType = EDamageType::None; // 데미지 타입 (물리, 마법 등)
+
+    // 사운드 이름
+    std::string soundId;
 
     // 이 어빌리티가 적용할 게임플레이 이펙트 목록 (어빌리티가 이펙트 객체들을 '소유')
     // ex) 공격력 증가, 방어력 감소 등
@@ -52,6 +53,8 @@ public:
     // 예시: ActivateAbility(m_player->GetGetAbilityComponent(), Goblin);
     // 스킬 만들 때(파생 클래스 제작 시) 반드시 구현해야 함
     virtual std::wstring ActivateAbility(AbilitySystemComponent* SourceASC, Actor* Target) = 0;
+
+    virtual void InitializeFromData(const SkillData* data);
 
 protected:
     // 어빌리티가 생성될 때 필요한 이펙트들을 설정하는 헬퍼 함수

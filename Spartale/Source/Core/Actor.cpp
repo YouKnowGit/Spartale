@@ -6,21 +6,21 @@ Actor::Actor()
 {
     this->AbilityComponent = std::make_unique<AbilitySystemComponent>(this);
 
-    m_x = 0;
-    m_y = 0;
+    // 위치 정보 초기화 (X, Y)
+    CurrentLocation = { 0, 0 };
 }
 void Actor::SetPosition(int x, int y)
 {
-    m_x = x;
-    m_y = y;
+    CurrentLocation.X = x;
+    CurrentLocation.Y = y;
 }
 
 int Actor::GetX() const
 {
-    return m_x;
+    return CurrentLocation.X;
 }
 
 int Actor::GetY() const
 {
-    return m_y;
+    return CurrentLocation.Y;
 }

@@ -18,7 +18,6 @@ private:
     void Render();
     void DrawTitle();
     void DrawMenuOptions();
-    void DrawString(int x, int y, const std::wstring& str);
     void OnEnterPressed();
 
     ConsoleRenderer& m_renderer;
@@ -26,4 +25,8 @@ private:
     int m_currentSelection;
     bool m_bIsRunning;
     EGameState m_nextState;
+
+    const wchar_t* m_navigateSoundPath;
+    const wchar_t* m_confirmSoundPath;
+    const wchar_t* m_firstBGMPath;
 };
