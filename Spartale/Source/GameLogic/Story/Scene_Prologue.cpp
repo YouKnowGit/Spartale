@@ -1,8 +1,6 @@
-﻿#include <thread>
-#include <chrono>
-#include "Story.h"
+﻿#include "Story.h"
 
-void Scene_Prologe() {
+void Scene_Prologue() {
     typeEffect("검은 연기와 피비린내가 뒤섞인 전장의 심장부.");
     typeEffect("전투의 함성과 절규가 얽히며, 칼날과 화살이 하늘을 가른다.");
     waitForEnter();

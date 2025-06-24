@@ -1,8 +1,6 @@
-#include <thread>
-#include <chrono>
 #include "Story.h"
 
-void openingScene() {
+void Scene_Begin() {
     typeEffect("...");
     typeEffect("...");
     typeEffect("희미한 빛이 눈꺼풀 사이로 스며든다.");
