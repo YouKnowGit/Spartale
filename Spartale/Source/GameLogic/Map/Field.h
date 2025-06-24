@@ -40,4 +40,5 @@ private:
 	std::vector<std::vector<TileType>> m_mapData;
 	std::map<std::pair<int, int>, Portal> m_portals;
 	std::vector<std::string> m_encounterList; // 맵에 출현하는 몬스터 ID 목록
+
 };

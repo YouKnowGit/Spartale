@@ -179,17 +179,17 @@
   </ItemGroup>
   <ItemGroup>
     <Media Include="Sounds\enemy_encounter.wav" />
-    <Media Include="Sounds\Skills\AbyssBlast.wav" />
-    <Media Include="Sounds\Skills\Buff.wav" />
-    <Media Include="Sounds\Skills\ElementalMagic.wav" />
-    <Media Include="Sounds\Skills\Fireball.wav" />
-    <Media Include="Sounds\Skills\Judgement.wav" />
-    <Media Include="Sounds\Skills\normal_attack_sound.wav" />
-    <Media Include="Sounds\Skills\PoisonCloud.wav" />
-    <Media Include="Sounds\Skills\Ruptured_Earth.wav" />
-    <Media Include="Sounds\Skills\slow.wav" />
-    <Media Include="Sounds\Skills\Smash.wav" />
-    <Media Include="Sounds\Skills\Triplehit.wav" />
+    <Media Include="Sounds\Skills\AbyssBlast_sound.wav" />
+    <Media Include="Sounds\Skills\Buff_sound.wav" />
+    <Media Include="Sounds\Skills\ElementalMagic_sound.wav" />
+    <Media Include="Sounds\Skills\Fireball_sound.wav" />
+    <Media Include="Sounds\Skills\Judgement_sound.wav" />
+    <Media Include="Sounds\Skills\normal_attack_sound_sound.wav" />
+    <Media Include="Sounds\Skills\PoisonCloud_sound.wav" />
+    <Media Include="Sounds\Skills\Ruptured_Earth_sound.wav" />
+    <Media Include="Sounds\Skills\slow_sound.wav" />
+    <Media Include="Sounds\Skills\Smash_sound.wav" />
+    <Media Include="Sounds\Skills\Triplehit_sound.wav" />
     <Media Include="Sounds\UI\mainmenu_confirm.wav" />
     <Media Include="Sounds\UI\mainmenu_select.wav" />
     <Media Include="Sounds\UI\menu_reject.wav" />
