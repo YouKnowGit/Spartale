@@ -108,5 +108,15 @@
     <Media Include="Sounds\UI\menu_reject2.wav" />
     <Media Include="Sounds\enemy_encounter.wav" />
     <Media Include="Sounds\Skills\normal_attack_sound.wav" />
+    <Media Include="Sounds\Skills\Buff.wav" />
+    <Media Include="Sounds\Skills\Triplehit.wav" />
+    <Media Include="Sounds\Skills\slow.wav" />
+    <Media Include="Sounds\Skills\Smash.wav" />
+    <Media Include="Sounds\Skills\Fireball.wav" />
+    <Media Include="Sounds\Skills\PoisonCloud.wav" />
+    <Media Include="Sounds\Skills\AbyssBlast.wav" />
+    <Media Include="Sounds\Skills\Ruptured_Earth.wav" />
+    <Media Include="Sounds\Skills\Judgement.wav" />
+    <Media Include="Sounds\Skills\ElementalMagic.wav" />
   </ItemGroup>
 </Project>

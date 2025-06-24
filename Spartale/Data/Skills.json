@@ -24,7 +24,7 @@
         "name": "명상",
         "description": "정신을 집중하여 자신의 MP를 30만큼 회복합니다.",
         "mana_cost": 0,
-        "sound_id": "meditation",
+        "sound_id": "Buff",
         "effects": [
             {
                 "apply_to": "Self",
@@ -43,7 +43,7 @@
         "name": "힘 강화",
         "description": "자신의 힘을 3턴간 10만큼 증가시킵니다.",
         "mana_cost": 10,
-        "sound_id": "empower",
+        "sound_id": "Buff",
         "effects": [
             {
                 "apply_to": "Self",
@@ -83,7 +83,7 @@
         "name": "강력한 일격",
         "description": "강력한 일격을 가하여 강한 물리 피해를 입힙니다.",
         "mana_cost": 10,
-        "sound_id": "normal_attack",
+        "sound_id": "Smash",
         "effects": [
             {
                 "apply_to": "Target",
@@ -104,7 +104,7 @@
         "name": "화염구",
         "description": "작열하는 화염구로 대상에게 마법 피해를 입힙니다.",
         "mana_cost": 15,
-        "sound_id": "fireball",
+        "sound_id": "Fireball",
         "effects": [
             {
                 "apply_to": "Target",
@@ -125,7 +125,7 @@
         "name": "독 안개",
         "description": "대상에게 3턴간 지속되는 독 피해를 입힙니다.",
         "mana_cost": 15,
-        "sound_id": "poison_cloud",
+        "sound_id": "PoisonCloud",
         "effects": [
             {
                 "apply_to": "Target",
@@ -148,7 +148,7 @@
         "name": "비전 폭발",
         "description": "마력을 응축한 구체를 발사해 마법피해를 입힙니다.",
         "mana_cost": 15,
-        "sound_id": "normal_attack",
+        "sound_id": "AbyssBlast",
         "effects": [
             {
                 "apply_to": "Target",
@@ -169,7 +169,7 @@
         "name": "삼연참",
         "description": "대상을 세 번 베어 강력한 물리 피해를 입힙니다.",
         "mana_cost": 20,
-        "sound_id": "triple_attack",
+        "sound_id": "Triplehit",
         "effects": [
             {
                 "apply_to": "Target",
@@ -190,7 +190,7 @@
         "name": "대지 파열",
         "description": "강한힘으로 지면을 강타하여, 충격파를 발생시킵니다.",
         "mana_cost": 20,
-        "sound_id": "normal_attack",
+        "sound_id": "Ruptured_Earth",
         "effects": [
             {
                 "apply_to": "Target",
@@ -211,7 +211,7 @@
         "name": "치유",
         "description": "성스러운 빛으로 아군의 HP를 회복시킵니다.",
         "mana_cost": 25,
-        "sound_id": "heal",
+        "sound_id": "Buff",
         "effects": [
             {
                 "apply_to": "Target",
@@ -232,7 +232,7 @@
         "name": "심연의 붕괴",
         "description": "거대한 마법 구체를 폭발시킵니다. 큰데미지를 입힙니다.",
         "mana_cost": 30,
-        "sound_id": "normal_attack",
+        "sound_id": "ElementalMagic",
         "effects": [
             {
                 "apply_to": "Target",
@@ -253,7 +253,7 @@
         "name": "심 판",
         "description": "하늘에서 마법의 힘이 담긴 대검을 낙하시켜 극대화된 마법피해를 입힙니다.",
         "mana_cost": 45,
-        "sound_id": "normal_attack",
+        "sound_id": "Judgement",
         "effects": [
             {
                 "apply_to": "Target",
