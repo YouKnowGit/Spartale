@@ -70,5 +70,9 @@ private:
     std::vector<std::wstring> m_currentMenuOptions;
 
     // 난수 생성 엔진을 멤버 변수로 추가
-    std::mt19937 m_rng; 
+    std::mt19937 m_rng;
+
+    const wchar_t* m_navigateSoundPath;
+    const wchar_t* m_confirmSoundPath;
+    const wchar_t* m_escSoundPath;
 };

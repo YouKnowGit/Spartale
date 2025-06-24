@@ -28,5 +28,4 @@ private:
 
     const wchar_t* m_navigateSoundPath;
     const wchar_t* m_confirmSoundPath;
-    const wchar_t* m_firstBGMPath;
 };

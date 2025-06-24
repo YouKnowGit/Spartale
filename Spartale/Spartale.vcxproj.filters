@@ -98,7 +98,6 @@
     <ClInclude Include="Source\GameLogic\Skills\GenericAbility.h" />
     <ClInclude Include="Source\GameLogic\Skills\SkillFactory.h" />
     <ClInclude Include="Source\Utils\StringUtils.h" />
-    <ClInclude Include="Source\Utils\SoundUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="Sounds\UI\mainmenu_confirm.wav" />
@@ -108,9 +107,6 @@
     <Media Include="Sounds\UI\pausemenu_select.wav" />
     <Media Include="Sounds\UI\menu_reject2.wav" />
     <Media Include="Sounds\enemy_encounter.wav" />
-    <Media Include="Sounds\BGM\battle_bgm.wav" />
-    <Media Include="Sounds\BGM\Town_bgm.wav" />
-    <Media Include="Sounds\BGM\Field_1_bgm.wav" />
     <Media Include="Sounds\Skills\normal_attack_sound.wav" />
   </ItemGroup>
 </Project>

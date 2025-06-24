@@ -30,12 +30,14 @@ PauseMenu::PauseMenu(ConsoleRenderer& renderer, Player& player)
     m_navigateSoundPath = L"Sounds/UI/pausemenu_select.wav"; // 메뉴 이동 효과음
     m_confirmSoundPath = L"Sounds/UI/pausemenu_confirm.wav";   // 메뉴 선택 효과음
     m_rejectSoundPath = L"Sounds/UI/menu_reject2.wav";   // 메뉴 선택 효과음
+    m_escSoundPath = L"Sounds/UI/mainmenu_select.wav"; // 메뉴 이동 효과음
 }
 
 EPauseMenuResult PauseMenu::Run()
 {
     m_renderer.Clear();
 
+    PlaySound(m_escSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
     while (m_bIsRunning)
     {
         ProcessInput();
@@ -53,6 +55,7 @@ void PauseMenu::ProcessInput()
     // ESC 키는 현재 상태에 따라 다르게 동작
     if (key == 27) // ESC
     {
+        PlaySound(m_escSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
         switch (m_currentPaneState)
         {
         case ERightPaneState::MainMenu: // 메인 메뉴에서 누르면 PauseMenu 종료

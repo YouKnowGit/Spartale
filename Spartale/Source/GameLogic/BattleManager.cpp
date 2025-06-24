@@ -27,6 +27,9 @@ BattleManager::BattleManager(Player* player, Monster* monster, ConsoleRenderer& 
 {
     std::random_device rd;
     m_rng.seed(rd());
+    m_navigateSoundPath = L"Sounds/UI/pausemenu_select.wav"; // 메뉴 이동 효과음
+    m_confirmSoundPath = L"Sounds/UI/pausemenu_confirm.wav";   // 메뉴 선택 효과음
+    m_escSoundPath = L"Sounds/UI/mainmenu_select.wav"; // 메뉴 이동 효과음
     PlayIntroAnimation();
 }
 
@@ -56,6 +59,7 @@ void BattleManager::ProcessInput()
     {
         if (key == 224) // 방향키
         {
+            PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
             key = _getch();
             if (key == 72) // 위
                 m_currentMenuSelection = (m_currentMenuSelection == 0) ? m_currentMenuOptions.size() - 1 : m_currentMenuSelection - 1;
@@ -64,10 +68,12 @@ void BattleManager::ProcessInput()
         }
         else if (key == 13) // 엔터: 선택 확정
         {
+            PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
             m_battleState = EBattleState::ExecutingPlayerAction;
         }
         else if (key == 27) // ESC: 뒤로 가기
         {
+            PlaySound(m_escSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
             if (m_battleState == EBattleState::PlayerSkillSelect)
                 m_battleState = EBattleState::PlayerActionSelect;
         }

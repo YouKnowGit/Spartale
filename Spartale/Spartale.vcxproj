@@ -175,13 +175,9 @@
     <ClInclude Include="Source\Utils\ConsoleRenderer.h" />
     <ClInclude Include="Source\Utils\ConsoleUtils.h" />
     <ClInclude Include="Source\Utils\DamageUtils.h" />
-    <ClInclude Include="Source\Utils\SoundUtils.h" />
     <ClInclude Include="Source\Utils\StringUtils.h" />
   </ItemGroup>
   <ItemGroup>
-    <Media Include="Sounds\BGM\battle_bgm.wav" />
-    <Media Include="Sounds\BGM\Town_bgm.wav" />
-    <Media Include="Sounds\BGM\Field_1_bgm.wav" />
     <Media Include="Sounds\enemy_encounter.wav" />
     <Media Include="Sounds\Skills\normal_attack_sound.wav" />
     <Media Include="Sounds\UI\mainmenu_confirm.wav" />
