@@ -180,7 +180,16 @@
   </ItemGroup>
   <ItemGroup>
     <Media Include="Sounds\enemy_encounter.wav" />
+    <Media Include="Sounds\Move_map.wav" />
+    <Media Include="Sounds\Skills\AbyssBlast_sound.wav" />
+    <Media Include="Sounds\Skills\Buff_sound.wav" />
+    <Media Include="Sounds\Skills\ElementalMagic_sound.wav" />
+    <Media Include="Sounds\Skills\Fireball__sound.wav" />
+    <Media Include="Sounds\Skills\Healing.wav" />
+    <Media Include="Sounds\Skills\Judgement_sound.wav" />
     <Media Include="Sounds\Skills\normal_attack_sound.wav" />
+    <Media Include="Sounds\Skills\PoisonCloud_sound.wav" />
+    <Media Include="Sounds\Skills\Triplehit_sound.wav" />
     <Media Include="Sounds\UI\mainmenu_confirm.wav" />
     <Media Include="Sounds\UI\mainmenu_select.wav" />
     <Media Include="Sounds\UI\menu_reject.wav" />

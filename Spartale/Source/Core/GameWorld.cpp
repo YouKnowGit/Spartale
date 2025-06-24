@@ -117,6 +117,7 @@ void GameWorld::ProcessInput()
         {
             key = _getch();
             FMapLocation nextLocation = m_player->CurrentLocation;
+            PlaySound(Move_map, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP);
 
             // 입력받은 Key 가 224(방향키)인 경우 방향에 맞게 Player 의 Position 과 Direction 을 변경
             switch (key)

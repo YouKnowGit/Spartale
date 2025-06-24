@@ -38,4 +38,6 @@ private:
 
     std::mt19937 m_rng;
     std::uniform_real_distribution<float> m_dist;
+
+    const wchar_t* Move_map = L"Sounds/Move_map.wav";
 };

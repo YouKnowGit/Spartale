@@ -124,7 +124,7 @@
           "destY": 4
         }
       ],
-      "encounterList": [ "goblin_warrior", "slime_weak", "goblin_shaman" ]
+        "encounterList": [ "Young_Goblin", "Fanged_Spider", "Prairie_Wolf" ]
     },
     {
       "mapID": 2,
@@ -174,7 +174,7 @@
           "destY": 13
         }
       ],
-      "encounterList": [ "goblin_warrior", "goblin_shaman" ]
+        "encounterList": [ "Prairie_Wolf", "Frail_Skeleton", "Forest_Rogue" ]
     },
     {
       "mapID": 3,
@@ -231,7 +231,7 @@
           "destY": 6
         }
       ],
-      "encounterList": [ "goblin_warrior", "slime_weak", "goblin_shaman" ]
+        "encounterList": [ "Forest_Rogue", "Stonehide_Dwarf", "Hound_Pack_Leader" ]
     },
     {
       "mapID": 4,
@@ -267,7 +267,7 @@
           "destY": 13
         }
       ],
-      "encounterList": [ "goblin_warrior", "slime_weak", "goblin_shaman" ]
+        "encounterList": [ "Hound_Pack_Leader", "Gloomy_Zombie", "Shadow_Wisplight" ]
     },
     {
       "mapID": 5,
@@ -324,7 +324,7 @@
           "destY": 1
         }
       ],
-      "encounterList": [ "goblin_warrior", "slime_weak", "goblin_shaman" ]
+        "encounterList": [ "Shadow_Wisplight", "Ironclad_Golem" ]
     },
     {
       "mapID": 6,
@@ -375,7 +375,7 @@
           "destY": 3
         }
       ],
-      "encounterList": [ "goblin_warrior", "slime_weak", "goblin_shaman" ]
+        "encounterList": [ "Shadow_Wisplight", "Ironclad_Golem", "Venom_Assassin" ]
     },
     {
       "mapID": 7,
@@ -433,7 +433,7 @@
           "destY": 7
         }
       ],
-      "encounterList": [ "goblin_warrior", "slime_weak", "goblin_shaman" ]
+        "encounterList": [ "Frozen_Specter", "Orc_Warrior" ]
     },
     {
       "mapID": 8,
@@ -470,7 +470,7 @@
           "destY": 11
         }
       ],
-      "encounterList": [ "goblin_warrior", "slime_weak", "goblin_shaman" ]
+        "encounterList": [ "Orc_Warrior", "Thunder_Hawk" ]
     },
     {
       "mapID": 9,
@@ -502,7 +502,7 @@
           "destY": 0
         }
       ],
-      "encounterList": [ "goblin_warrior", "slime_weak", "goblin_shaman" ]
+        "encounterList": [ "Ancient_Dragon" ]
     },
     {
       "mapID": 11,
