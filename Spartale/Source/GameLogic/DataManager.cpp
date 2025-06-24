@@ -123,6 +123,78 @@ void DataManager::LoadSkillData(const std::string& path)
     }
 }
 
+// LoadItemData 함수 구현
+void DataManager::LoadItemData(const std::string& path)
+{
+    std::ifstream file(path);
+    if (!file.is_open()) return;
+
+    json data = json::parse(file);
+    file.close();
+
+    for (auto& element : data.items())
+    {
+        const std::string& itemId = element.key();
+        const json& itemJson = element.value();
+
+        ItemData itemData;
+        itemData.ID = itemId;
+
+        itemData.Name = StringUtils::ConvertToWstring(itemJson.value("name", ""));
+        itemData.Description = StringUtils::ConvertToWstring(itemJson.value("description", ""));
+        itemData.Price = itemJson.value("price", 0);
+        itemData.bIsStackable = itemJson.value("isStackable", false);
+        itemData.MaxStackSize = itemJson.value("maxStackSize", 1);
+
+        std::string typeStr = itemJson.value("type", "");
+        if (typeStr == "Consumable") itemData.Type = EItemType::Consumable;
+        else if (typeStr == "Equipment") itemData.Type = EItemType::Equipment;
+        else itemData.Type = EItemType::Miscellaneous;
+
+        if (itemData.Type == EItemType::Consumable && itemJson.contains("effectData"))
+        {
+            const auto& effectJson = itemJson["effectData"];
+        }
+        else if (itemData.Type == EItemType::Equipment && itemJson.contains("equipmentData"))
+        {
+            const auto& equipJson = itemJson["equipmentData"];
+
+            std::string equipTypeStr = equipJson.value("equipmentType", "");
+            if (equipTypeStr == "WEAPON") itemData.EquipmentData.Type = EEquipmentType::WEAPON;
+            else if (equipTypeStr == "ARMOR") itemData.EquipmentData.Type = EEquipmentType::ARMOR;
+            else if (equipTypeStr == "ACCESSORY") itemData.EquipmentData.Type = EEquipmentType::ACCESSORY;
+            else itemData.EquipmentData.Type = EEquipmentType::NOT_EQUIPMENT;
+
+            if (equipJson.contains("statBonuses"))
+            {
+                auto StringToStatType = [](const std::string& s) -> EStatType {
+                    if (s == "HP") return EStatType::HP;
+                    if (s == "MP") return EStatType::MP;
+                    if (s == "STRENGTH") return EStatType::STRENGTH;
+                    if (s == "DEFENCE") return EStatType::DEFENCE;
+                    if (s == "AGILITY") return EStatType::AGILITY;
+					if (s == "MAGIC_RESISTANCE") return EStatType::MAGIC_RESISTANCE;
+					if (s == "INTELLIGENCE") return EStatType::INTELLIGENCE;
+					if (s == "CRITICAL_HIT_CHANCE") return EStatType::CRITICAL_HIT_CHANCE;
+					if (s == "CRITICAL_HIT_DAMAGE_MULTIPLIER") return EStatType::CRITICAL_HIT_DAMAGE_MULTIPLIER;
+
+					/* 이후 추가될 스탯에 대해서는 여기에 추가 */ 
+					
+                    return EStatType::HP; 
+                    };
+
+                for (const auto& bonus : equipJson["statBonuses"].items())
+                {
+                    EStatType statEnum = StringToStatType(bonus.key());
+                    itemData.EquipmentData.StatBonuses[statEnum] = bonus.value();
+                }
+            }
+        }
+
+        m_itemDatabase[itemId] = itemData;
+    }
+}
+
 const MonsterData* DataManager::GetMonsterData(const std::string& monsterId) const
 {
     auto it = m_monsterDatabase.find(monsterId);
@@ -136,6 +208,16 @@ const SkillData* DataManager::GetSkillData(const std::string& skillId) const
 {
     auto it = m_skillDatabase.find(skillId);
     if (it != m_skillDatabase.end())
+    {
+        return &it->second;
+    }
+    return nullptr;
+}
+
+const ItemData* DataManager::GetItemData(const std::string& itemId) const
+{
+    auto it = m_itemDatabase.find(itemId);
+    if (it != m_itemDatabase.end())
     {
         return &it->second;
     }

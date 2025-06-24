@@ -69,6 +69,7 @@
     <ClCompile Include="Source\GameLogic\PauseMenu.cpp" />
     <ClCompile Include="Source\GameLogic\Skills\GenericAbility.cpp" />
     <ClCompile Include="Source\GameLogic\Skills\SkillFactory.cpp" />
+    <ClCompile Include="Source\Framework\Inventory\IventoryComponent.cpp" />
     <ClCompile Include="Source\GameLogic\NPCMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -109,6 +110,9 @@
     <Media Include="Sounds\UI\menu_reject2.wav" />
     <Media Include="Sounds\enemy_encounter.wav" />
     <Media Include="Sounds\Skills\normal_attack_sound.wav" />
+    <ClInclude Include="Source\Framework\Inventory\InventoryComponent.h" />
+    <ClInclude Include="Source\Framework\Inventory\ItemData.h" />
+    <ClInclude Include="Source\Core\TypeConverter.h" />
     <Media Include="Sounds\Skills\Buff_sound.wav" />
     <Media Include="Sounds\Skills\Fireball__sound.wav" />
     <Media Include="Sounds\Skills\PoisonCloud_sound.wav" />

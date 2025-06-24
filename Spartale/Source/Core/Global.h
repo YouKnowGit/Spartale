@@ -72,3 +72,34 @@ enum class EBattleResult
     PlayerLost,
     PlayerFled
 };
+
+// 아이템 타입을 나타내는 열거형
+enum class EItemType
+{
+    Consumable,
+    Equipment,
+    Miscellaneous
+};
+
+// 장비의 종류(슬롯)를 나타내는 열거형
+enum class EEquipmentType
+{
+	NOT_EQUIPMENT, // 장비가 아닌 아이템
+	WEAPON,        // 무기
+	ARMOR,         // 방어구
+	ACCESSORY,     // 장신구
+};
+
+// 스탯의 종류를 나타내는 열거형
+enum class EStatType
+{
+	HP,                             // 체력
+	MP,                             // 마나
+	STRENGTH,                       // 힘
+	AGILITY,                        // 민첩성
+	INTELLIGENCE,                   // 지능
+	DEFENCE,                        // 방어력
+	MAGIC_RESISTANCE,               // 마법 저항력
+	CRITICAL_HIT_CHANCE,            // 치명타 확률
+	CRITICAL_HIT_DAMAGE_MULTIPLIER, // 치명타 피해 배율
+};

@@ -22,6 +22,7 @@ enum class ERightPaneState
     MainMenu,           // 기본 메뉴 목록
     StatDistribution,   // 스탯 분배 화면
     Inventory,          // 인벤토리 화면
+	InventoryActionSelection, // 인벤토리에서 아이템 선택 화면
     SkillBook,          // 세부 스킬 목록 화면
     SkillSelection      // 전체 스킬 목록 화면
 };
@@ -44,6 +45,8 @@ private:
     void ProcessStatDistributionInput(int key);
     void ProcessSkillBookInput(int key);
     void ProcessSkillSelectionInput(int key);
+    void ProcessInventoryInput(int key);
+    void ProcessInventoryActionInput(int key);
 
     // UI를 그리는 헬퍼 함수
     void DrawPlayerInfo();
@@ -51,11 +54,15 @@ private:
     void DrawStatDistributionScreen(); // 오른쪽 패널: 스탯 분배
     void DrawSkillBookScreen();
     void DrawSkillSelectionScreen();
+    void DrawInventoryScreen();
+	void DrawInventoryActionMenu();
 
     // 오른쪽 화면 Clear 함수
     void ClearRightPane();
 
     bool IsSkillEquipped(const GameplayAbility* skill) const;
+
+    void DrawItemInfoBox();
 
 private:
     ConsoleRenderer& m_renderer;
@@ -76,6 +83,11 @@ private:
     int m_skillBookSlotSelection;    // 스킬북: 현재 선택된 장착 슬롯 (0~3)
     int m_skillSelectionListCursor;  // 스킬 목록: 현재 선택된 스킬 커서
     int m_slotIndexToModify;         // 스킬을 장착할 슬롯 인덱스 임시 저장
+    
+    int m_inventorySlotSelection;   // 인벤토리 목록의 커서 
+    int m_inventoryScrollOffset;
+    int m_itemActionCursor;         // "사용/장착" 메뉴의 커서
+    std::vector<std::wstring> m_currentItemActions; // 현재 선택된 아이템에 가능한 행동 목록
 
     const wchar_t* m_navigateSoundPath;
     const wchar_t* m_confirmSoundPath;

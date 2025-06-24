@@ -4,6 +4,7 @@
 #include <map>
 #include <json.hpp> 
 #include "Core/Global.h" // FMapLocation 
+#include "Framework/Inventory/ItemData.h"
 
 struct EffectData
 {
@@ -50,7 +51,6 @@ struct SkillData
     std::vector<EffectData> effects;
 };
 
-
 class DataManager
 {
 public:
@@ -64,11 +64,12 @@ public:
     // 데이터 로드 함수
     void LoadMonsterData(const std::string& path);
     void LoadSkillData(const std::string& path);
+    void LoadItemData(const std::string& path);
 
     // 몬스터, 스킬 데이터를 가져오는 함수
     const MonsterData* GetMonsterData(const std::string& monsterId) const;
     const SkillData* GetSkillData(const std::string& skillId) const;
-
+	const ItemData* GetItemData(const std::string& itemId) const;
 
 
 private:
@@ -83,4 +84,5 @@ private:
     // 몬스터, 스킬 데이터베이스
     std::map<std::string, MonsterData> m_monsterDatabase;
     std::map<std::string, SkillData> m_skillDatabase;
+	std::map<std::string, ItemData> m_itemDatabase;
 };

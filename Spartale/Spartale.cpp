@@ -21,10 +21,12 @@ int main()
 
     DataManager::GetInstance().LoadMonsterData("Data/Monsters.json");
     DataManager::GetInstance().LoadSkillData("Data/Skills.json");
+	DataManager::GetInstance().LoadItemData("Data/Item.json");
+    
     EGameState currentState = EGameState::MainMenu;
-
     ConsoleRenderer renderer;
     renderer.Initialize();
+
     while (currentState != EGameState::Quit)
     {
         switch (currentState)
