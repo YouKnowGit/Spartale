@@ -17,6 +17,11 @@ struct FActiveGameplayEffect
     // 효과가 몇 턴 남았는지 (-1은 영구 지속)
     int RemainingTurns = 0;
 };
+struct FActivationResult
+{
+    bool bSuccess;
+    std::wstring LogMessage;
+};
 
 class AbilitySystemComponent
 {
@@ -25,6 +30,9 @@ public:
     ~AbilitySystemComponent();
 
     void Initialize();
+
+    // 레벨업을 했다면 True 반환하는 함수
+    bool CheckAndProcessLevelUp();
 
     // 해당 Owner 가 소유할 스킬 목록: GrantAbility
     void GrantAbility(std::unique_ptr<GameplayAbility> Ability);
@@ -37,7 +45,7 @@ public:
     // 스킬 및 아이템 사용
     // TryActivateAbility: 어빌리티를 사용(활성화)하는 함수
     // ApplyGameplayEffectToSelf: 자신에게 게임플레이 효과를 적용하는 함수
-    std::wstring TryActivateAbility(int32_t SlotIndex, Actor* Target);
+    FActivationResult TryActivateAbility(int32_t SlotIndex, Actor* Target);
     void ApplyGameplayEffectToSelf(std::unique_ptr<GameplayEffect> Effect);
 
     // Getter
@@ -45,6 +53,7 @@ public:
     AttributeSet* GetAttributeSet() const { return MyAttributeSet.get(); }
     GameplayAbility* GetGrantedAbility(int32_t Index) const;
     const std::vector<GameplayAbility*>& GetEquippedAbilities() const { return EquippedAbilities; }
+    const std::vector<std::unique_ptr<GameplayAbility>>& GetGrantedAbilities() const;
 
     std::wstring UpdateActiveEffects();
 

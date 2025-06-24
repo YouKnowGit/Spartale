@@ -88,6 +88,17 @@ bool Field::LoadMapFromFile(const std::string& mapFilePath)
             system("pause"); // 디버깅을 위해 일시 정지
         }
     }
+
+    // 몬스터 리스트 추출
+    if (jsonData.contains("encounterList"))
+    {
+        m_encounterList.clear();
+        for (const auto& monsterId : jsonData["encounterList"])
+        {
+            m_encounterList.push_back(monsterId);
+        }
+    }
+
     mapFile.close();
 
     // 디버깅 로그

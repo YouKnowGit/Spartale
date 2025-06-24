@@ -1,6 +1,7 @@
 #pragma once
 #include "Source/Core/Actor.h"
 #include <string>
+#include <memory>
 
 enum class Direction { UP, DOWN, LEFT, RIGHT };
 

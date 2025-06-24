@@ -135,7 +135,10 @@
     <ClCompile Include="Source\Framework\AbilitySystem\GameplayAbility.cpp" />
     <ClCompile Include="Source\Framework\AbilitySystem\GameplayEffect.cpp" />
     <ClCompile Include="Source\GameLogic\BattleManager.cpp" />
+    <ClCompile Include="Source\GameLogic\DataManager.cpp" />
+    <ClCompile Include="Source\GameLogic\MainMenu.cpp" />
     <ClCompile Include="Source\GameLogic\Map\Field.cpp" />
+    <ClCompile Include="Source\GameLogic\PauseMenu.cpp" />
     <ClCompile Include="Source\GameLogic\Skills\AB_NormalAttack.cpp" />
     <ClCompile Include="Source\GameLogic\Skills\AB_PoisonCloud.cpp" />
     <ClCompile Include="Source\GameLogic\Units\Monster.cpp" />
@@ -147,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Field_1.json" />
+    <None Include="Data\Monsters.json" />
     <None Include="Data\Town.json" />
   </ItemGroup>
   <ItemGroup>
@@ -159,7 +163,10 @@
     <ClInclude Include="Source\Framework\AbilitySystem\GameplayAbility.h" />
     <ClInclude Include="Source\Framework\AbilitySystem\GameplayEffect.h" />
     <ClInclude Include="Source\GameLogic\BattleManager.h" />
+    <ClInclude Include="Source\GameLogic\DataManager.h" />
+    <ClInclude Include="Source\GameLogic\MainMenu.h" />
     <ClInclude Include="Source\GameLogic\Map\Field.h" />
+    <ClInclude Include="Source\GameLogic\PauseMenu.h" />
     <ClInclude Include="Source\GameLogic\Skills\AB_NormalAttack.h" />
     <ClInclude Include="Source\GameLogic\Skills\AB_PoisonCloud.h" />
     <ClInclude Include="Source\GameLogic\Units\Monster.h" />

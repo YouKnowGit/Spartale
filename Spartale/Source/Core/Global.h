@@ -54,3 +54,12 @@ enum class EGameState
     Iventory,
     Quit
 };
+
+// 전투 결과를 표시하는 열거형
+enum class EBattleResult
+{
+    InProgress,
+    PlayerWon,
+    PlayerLost,
+    PlayerFled
+};

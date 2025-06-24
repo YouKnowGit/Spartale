@@ -1,7 +1,8 @@
 #pragma once
-
+#include "Core/Global.h"
 #include <string>
 #include <vector>
+#include <random>
 
 // 전방 선언
 class Player;
@@ -26,7 +27,7 @@ public:
     ~BattleManager() = default;
 
     // 이 함수를 호출하면 전투가 시작되고 끝날 때까지 모든 것을 처리
-    void Run();
+    EBattleResult Run();
 
 private:
     // 메인 루프에서 호출되는 핵심 함수들
@@ -46,6 +47,7 @@ private:
     void EndBattle();
     std::wstring DrawStatBar(const std::wstring& label, float current, float max, int barLength) const;
     void CheckBattleStatus();
+    bool AttemptToFlee();
 
     // 문자열 그리기를 위한 유틸리티
     void DrawString(int x, int y, const std::wstring& str) const;
@@ -60,12 +62,17 @@ private:
 
     // 전투 상태 관리 변수
     EBattleState m_battleState;
+    EBattleResult m_battleResult; // 전투 결과를 저장할 변수
+
     bool m_bIsBattleOver;
-    bool m_bPlayerWon;
     int m_CurrentTurn;
 
     // UI 및 메시지 관련 변수
     std::wstring m_statusMessage;
     int m_currentMenuSelection;
     std::vector<std::wstring> m_currentMenuOptions;
+
+    // 난수 생성 엔진을 멤버 변수로 추가
+    std::mt19937 m_rng; 
+
 };

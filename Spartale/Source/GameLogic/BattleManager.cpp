@@ -5,7 +5,9 @@
 #include "Framework/AbilitySystem/AbilitySystemComponent.h"
 #include "Framework/AbilitySystem/GameplayAbility.h"
 #include "Utils/ConsoleUtils.h"
+#include "Utils/ConsoleRenderer.h"
 
+#include <algorithm>
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
@@ -15,16 +17,19 @@ BattleManager::BattleManager(Player* player, Monster* monster, ConsoleRenderer& 
     m_monster(monster),
     m_renderer(renderer),
     m_bIsBattleOver(false),
-    m_bPlayerWon(false),
+    m_battleResult(EBattleResult::InProgress),
     m_CurrentTurn(1),
-    m_battleState(EBattleState::Intro), // 전투는 '인트로' 상태에서 시작
+    m_battleState(EBattleState::Intro),
     m_currentMenuSelection(0)
 {
+    std::random_device rd;
+    m_rng.seed(rd());
+    PlayIntroAnimation();
 }
 
-void BattleManager::Run()
+EBattleResult BattleManager::Run()
 {
-    PlayIntroAnimation();
+
     while (!m_bIsBattleOver)
     {
         ProcessInput();
@@ -34,6 +39,7 @@ void BattleManager::Run()
     }
     // 전투가 종료되면 EndBattle 호출
     EndBattle();
+    return m_battleResult;
 }
 
 void BattleManager::ProcessInput()
@@ -70,7 +76,7 @@ void BattleManager::Update()
     CheckBattleStatus();
     if (m_bIsBattleOver) return;
 
-    // 상태 머신: 현재 상태에 따라 다음 행동을 결정합니다.
+    // 상태 머신: 현재 상태에 따라 다음 행동을 결정
     switch (m_battleState)
     {
     case EBattleState::Intro:
@@ -118,19 +124,36 @@ void BattleManager::Update()
                 m_battleState = EBattleState::TurnEnd;
             }
             else if (choice == 3) { // 도망가기
-                LogAndWait(L"성공적으로 도망쳤다!");
-                m_bIsBattleOver = true; // 전투 종료 플래그 설정
+                if (AttemptToFlee())
+                {
+                    // 성공
+                    LogAndWait(L"성공적으로 도망쳤다!");
+                    m_battleResult = EBattleResult::PlayerFled;
+                    m_bIsBattleOver = true;
+                }
+                else
+                {
+                    // 실패
+                    LogAndWait(L"도망에 실패했다!");
+                    m_battleState = EBattleState::TurnEnd;
+                }
             }
         }
-        else // 현재 메뉴가 '스킬 선택' 메뉴였다면
-        {
-            if (choice == m_currentMenuOptions.size() - 1) { // 뒤로가기
-                m_battleState = EBattleState::PlayerActionSelect;
-            }
-            else { // 스킬 사용
-                std::wstring resultLog = m_player->GetAbilityComponent()->TryActivateAbility(choice, m_monster);
-                LogAndWait(resultLog);
+        else { // 스킬 사용
+            // 반환된 결과 구조체를 받음
+            FActivationResult result = m_player->GetAbilityComponent()->TryActivateAbility(choice, m_monster);
+            LogAndWait(result.LogMessage);
+
+            // 결과의 bSuccess 값에 따라 다음 상태를 결정
+            if (result.bSuccess)
+            {
+                // 성공했다면 턴을 종료
                 m_battleState = EBattleState::TurnEnd;
+            }
+            else
+            {
+                // 실패했다면, 다시 스킬 선택 화면으로 돌아감 (턴 종료 X)
+                m_battleState = EBattleState::PlayerSkillSelect;
             }
         }
     }
@@ -150,9 +173,7 @@ void BattleManager::Update()
     case EBattleState::EnemyTurn:
     {
         LogAndWait(m_monster->Name + L"의 턴!");
-        //Render(); Sleep(1500);
         LogAndWait(m_monster->RunAI(m_player));
-        //Render(); Sleep(1500);
 
         // 몬스터 턴 후 효과 처리
         std::wstring monsterLog = m_monster->GetAbilityComponent()->UpdateActiveEffects();
@@ -212,8 +233,8 @@ void BattleManager::DrawUI()
     DrawString(4, 16, L"MP : " + std::to_wstring((int)playerAttr->MP.CurrentValue) + L" / " + std::to_wstring((int)playerAttr->MP.BaseValue));
 
     // 메시지 박스
-    DrawBox(2, 20, 60, 8);
-    DrawBox(63, 20, 25, 8);
+    DrawBox(2, 20, 79, 8);
+    DrawBox(82, 20, 25, 8);
     DrawString(4, 22, m_statusMessage);
 }
 
@@ -222,7 +243,7 @@ void BattleManager::DrawActionSelectMenu()
     for (size_t i = 0; i < m_currentMenuOptions.size(); ++i) {
         std::wstring menuText = (i == m_currentMenuSelection) ? L"▶ " : L"  ";
         menuText += m_currentMenuOptions[i];
-        DrawString(65, 22 + i, menuText);
+        DrawString(84, 22 + i, menuText);
     }
 }
 
@@ -231,7 +252,7 @@ void BattleManager::DrawSkillSelectMenu()
     for (size_t i = 0; i < m_currentMenuOptions.size(); ++i) {
         std::wstring menuText = (i == m_currentMenuSelection) ? L"▶ " : L"  ";
         menuText += m_currentMenuOptions[i];
-        DrawString(65, 22 + i, menuText);
+        DrawString(84, 22 + i, menuText);
     }
 }
 
@@ -253,27 +274,63 @@ void BattleManager::CheckBattleStatus()
     if (m_monster->GetAbilityComponent()->GetAttributeSet()->HP.CurrentValue <= 0)
     {
         m_bIsBattleOver = true;
-        m_bPlayerWon = true;
+        m_battleResult = EBattleResult::PlayerWon; // 승리 상태로 설정
     }
     else if (m_player->GetAbilityComponent()->GetAttributeSet()->HP.CurrentValue <= 0)
     {
         m_bIsBattleOver = true;
-        m_bPlayerWon = false;
+        m_battleResult = EBattleResult::PlayerLost; // 패배 상태로 설정
     }
 }
 
 void BattleManager::EndBattle()
 {
-    if (m_bPlayerWon)
+    switch (m_battleResult)
     {
-        Log(m_monster->Name + L"을(를) 쓰러뜨렸다! 승리!");
+        case EBattleResult::PlayerWon:
+        {
+            AttributeSet* playerStats = m_player->GetAbilityComponent()->GetAttributeSet();
+            AttributeSet* monsterStats = m_monster->GetAbilityComponent()->GetAttributeSet();
+            if (!playerStats || !monsterStats) break;
+
+            // --- 보상 계산 ---
+            const float BaseExpPerLevel = 25.0f;
+            const float BaseGoldPerLevel = 77.0f;
+            std::uniform_real_distribution<float> rewardMultiplier(0.8f, 1.2f);
+
+            int expGained = static_cast<int>(BaseExpPerLevel * monsterStats->Level * rewardMultiplier(m_rng));
+            int goldGained = static_cast<int>(BaseGoldPerLevel * monsterStats->Level * rewardMultiplier(m_rng));
+
+            // --- 보상 지급 ---
+            playerStats->Experience.CurrentValue += expGained;
+            playerStats->Gold.CurrentValue += goldGained;
+
+            // --- 메시지 출력 (순차적으로) ---
+            // 몬스터 처치 및 보상 획득 메시지를 먼저 출력
+            std::wstring rewardMessage = m_monster->Name + L"을(를) 쓰러뜨렸다! 경험치 "
+                + std::to_wstring(expGained) + L", "
+                + std::to_wstring(goldGained) + L" G를 획득했다!";
+            LogAndWait(rewardMessage);
+
+            // 레벨업 체크
+            bool bLeveledUp = m_player->GetAbilityComponent()->CheckAndProcessLevelUp();
+
+            // 레벨업을 했다면, 별도의 메시지를 다시 출력
+            if (bLeveledUp)
+            {
+                std::wstring levelUpMessage = m_player->Name + L"은(는) 레벨 업 했다!";
+                LogAndWait(levelUpMessage);
+            }
+            break;
+        }
+        case EBattleResult::PlayerLost:
+            LogAndWait(m_player->Name + L"은(는) 쓰러졌다...");
+            break;
+        case EBattleResult::PlayerFled:
+            break;
+        default:
+            break;
     }
-    else // 도망간 경우가 아니면서 전투가 끝났을 때
-    {
-        Log(m_player->Name + L"은(는) 쓰러졌다...");
-    }
-    Render(); // 마지막 메시지 표시
-    Sleep(3000);
 }
 
 std::wstring BattleManager::DrawStatBar(const std::wstring& label, float current, float max, int barLength) const
@@ -353,4 +410,35 @@ void BattleManager::PlayIntroAnimation()
         m_renderer.Render();
         Sleep(5);
     }
+}
+bool BattleManager::AttemptToFlee()
+{
+    // - - - 도망 확률 조절 - - -
+    const float baseFleeChance = 0.60f; // 기본 성공 확률 (70%)
+    const float chanceModifierPerLevel = 0.10f; // 레벨 1당 증감 확률 (10%)
+    const float minFleeChance = 0.10f; // 최소 성공 확률 (10%)
+    const float maxFleeChance = 0.95f; // 최대 성공 확률 (95%)
+    // ---------------------------------------------
+
+    // 플레이어와 몬스터의 레벨을 불러옴
+    AttributeSet* playerStats = m_player->GetAbilityComponent()->GetAttributeSet();
+    AttributeSet* monsterStats = m_monster->GetAbilityComponent()->GetAttributeSet();
+    if (!playerStats || !monsterStats) return false; // 예외 처리
+
+    // 공식을 적용하여 최종 확률을 계산
+    float levelDifference = static_cast<float>(playerStats->Level - monsterStats->Level);
+    float finalFleeChance = baseFleeChance + (levelDifference * chanceModifierPerLevel);
+
+    // 최소/최대 확률 범위에 맞게 값을 보정
+    finalFleeChance = (std::max)(minFleeChance, (std::min)(maxFleeChance, finalFleeChance));
+
+    // 0.0 ~ 1.0 사이의 난수를 생성하여 성공 여부를 결정
+    std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+
+    // 디버깅용: 최종 확률을 로그에 표시
+    Log(L"도망 성공 확률: " + std::to_wstring(static_cast<int>(finalFleeChance * 100)) + L"%");
+    Render();
+    Sleep(1000);
+
+    return dist(m_rng) < finalFleeChance;
 }

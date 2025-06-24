@@ -1,4 +1,5 @@
 #include "GameLogic/Units/Player.h"
+#include "GameLogic/Skills/AB_NormalAttack.h"
 #include "Framework/AbilitySystem/AbilitySystemComponent.h"
 #include "Framework/AbilitySystem/AttributeSet.h"
 
@@ -19,19 +20,24 @@ void Player::Initialize()
     {
 		// Player 초기 Stats 설정
         MyStats->Level = 1;
-        MyStats->HP.BaseValue = 150.f;
-        MyStats->HP.CurrentValue = 150.f;
-        MyStats->MP.BaseValue = 100.f;
-        MyStats->MP.CurrentValue = 100.f;
+        MyStats->HP.BaseValue = 100.f;
+        MyStats->HP.CurrentValue = 100.f;
+        MyStats->MP.BaseValue = 75.f;
+        MyStats->MP.CurrentValue = 75.f;
 
         MyStats->Strength.BaseValue = 15.f;
         MyStats->Strength.CurrentValue = 15.f;
+        MyStats->Agility.BaseValue = 10.f;
+        MyStats->Agility.CurrentValue = 10.f;
         MyStats->Defence.BaseValue = 10.f;
         MyStats->Defence.CurrentValue = 10.f;
         MyStats->Intelligence.CurrentValue = 10.f;
         MyStats->Intelligence.BaseValue = 10.f;
 
+
     }
+    GetAbilityComponent()->GrantAbility(std::make_unique<AB_NormalAttack>());
+    GetAbilityComponent()->EquipAbility(0, this->GetAbilityComponent()->GetGrantedAbility(0));
 
     // Player 위치 및 방향 관련 데이터
     m_x = 5;
