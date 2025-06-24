@@ -69,10 +69,9 @@
     <ClCompile Include="Source\GameLogic\PauseMenu.cpp" />
     <ClCompile Include="Source\GameLogic\Skills\GenericAbility.cpp" />
     <ClCompile Include="Source\GameLogic\Skills\SkillFactory.cpp" />
+    <ClCompile Include="Source\GameLogic\NPCMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Town.json" />
-    <None Include="Data\Field_1.json" />
     <None Include="Data\Monsters.json" />
     <None Include="Data\Skills.json" />
     <None Include="Data\Map.json" />
@@ -99,6 +98,7 @@
     <ClInclude Include="Source\GameLogic\Skills\GenericAbility.h" />
     <ClInclude Include="Source\GameLogic\Skills\SkillFactory.h" />
     <ClInclude Include="Source\Utils\StringUtils.h" />
+    <ClInclude Include="Source\GameLogic\NPCMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="Sounds\UI\mainmenu_confirm.wav" />

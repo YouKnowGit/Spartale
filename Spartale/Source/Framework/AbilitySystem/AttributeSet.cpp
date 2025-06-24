@@ -7,15 +7,11 @@ AttributeSet::AttributeSet(AbilitySystemComponent* OwnerComp)
     // 각 송성의 이름과 메모리 주소를 맵에 등록
     AttributeMap["HP"] = &HP;
     AttributeMap["MP"] = &MP;
-    // Base 능력치 제거
-    //AttributeMap["BaseHP"] = &BaseHP;
-    //AttributeMap["BaseMP"] = &BaseMP;
     AttributeMap["Strength"] = &Strength;
     AttributeMap["Agility"] = &Agility;
     AttributeMap["Intelligence"] = &Intelligence;
     AttributeMap["Defence"] = &Defence;
     AttributeMap["MagicResistance"] = &MagicResistance;
-    AttributeMap["Gold"] = &Gold;
     AttributeMap["Experience"] = &Experience;
     AttributeMap["CriticalHitChance"] = &CriticalHitChance;
     AttributeMap["CriticalHitDamageMultiplier"] = &CriticalHitDamageMultiplier;
@@ -47,20 +43,17 @@ void AttributeSet::PostAttributeChange(const FAttributeData& Attribute, float Ol
 void AttributeSet::AdjustDependentAttributes()
 {
     // --- 재계산에 사용할 계수 정의 --
-    const float BaseHPConstant = 100.0f;       // 캐릭터의 순수 기본 최대 HP
+    const float BaseHPConstant = 200;
     const float HPPerStrength = 4.0f;        // 힘 1포인트당 증가하는 최대 HP
 
+    const float BaseMPConstant = 100.0f;
     const float MPPerIntelligence = 6.0f;     // 지능 1포인트당 증가하는 최대 MP
-    const float BaseMPConstant = 75.0f;       // 캐릭터의 순수 기본 최대 MP
 
-    // --- 최대 HP 재계산 ---
 
     // 재계산 전의 최대 HP 값을 기억
     float oldMaxHP = HP.BaseValue;
-
-    // 새로운 최대 HP를 계산: (기본 HP) + ((힘 - 초기 힘 15) * 힘당HP)
+    // 새로운 최대 HP를 계산: (기본 HP) + ((힘 - 초기 힘 30) * 힘당HP)
     HP.BaseValue = BaseHPConstant + ((this->Strength.CurrentValue - 15) * HPPerStrength);
-
     // 최대치가 증가했다면, 증가한 만큼 현재 HP도 회복
     float hpIncrease = HP.BaseValue - oldMaxHP;
     if (hpIncrease > 0)
@@ -71,14 +64,10 @@ void AttributeSet::AdjustDependentAttributes()
     HP.CurrentValue = std::min(HP.CurrentValue, HP.BaseValue);
 
 
-    // --- 최대 MP 재계산 ---
-
     // 재계산 전의 최대 MP 값을 기억
     float oldMaxMP = MP.BaseValue;
-
-    // 새로운 최대 MP를 계산: (기본 MP) + ((지능 - 초기 지능 10) * 지능당MP) 
+    // 새로운 최대 MP를 계산: (기본 MP) + ((지능 - 초기 지능 15) * 지능당MP) 
     MP.BaseValue = BaseMPConstant + ((this->Intelligence.CurrentValue - 10) * MPPerIntelligence);
-
 
     // 최대치가 증가했다면, 증가한 만큼 현재 MP도 회복
     float mpIncrease = MP.BaseValue - oldMaxMP;

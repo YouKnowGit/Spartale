@@ -47,7 +47,10 @@ enum class TileType
     NPC = 6,
     TOTEM = 7,
     BOSS = 8,
-    BOX = 9
+    BOX = 9,
+    NPC_Heal = 10,
+    NPC_Shop = 11,
+    NPC_Skill = 12
 };
 
 // 게임의 현재 상태를 나타내는 열거형

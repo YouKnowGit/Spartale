@@ -92,7 +92,7 @@
     "sound_id": "heal",
     "effects": [
       {
-        "apply_to": "Target",
+        "apply_to": "Self",
         "effect_name": "회복",
         "application_type": "Instant",
         "target_attribute": "HP",

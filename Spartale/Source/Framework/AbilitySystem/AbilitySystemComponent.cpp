@@ -12,7 +12,7 @@ AbilitySystemComponent::AbilitySystemComponent(Actor* Owner)
     : OwnerActor(Owner) // 멤버 이니셜라이저를 사용하여 OwnerActor를 초기화 (Actor.cpp 에서 사용함)
 {
 	// 이 컴포넌트가 생성될 때, 자신의 AttributeSet을 생성하여 소유 (모든 Actor는 AttributeSet을 소유)
-    MyAttributeSet = std::make_unique<AttributeSet>(this);
+    myStats = std::make_unique<AttributeSet>(this);
 
     // EquippedAbilities(전투 시 사용할 스킬 4개) 벡터를 미리 4칸(0, 1, 2, 3번 슬롯)으로 초기화
     EquippedAbilities.resize(4, nullptr);
@@ -30,42 +30,50 @@ void AbilitySystemComponent::Initialize()
 
 bool AbilitySystemComponent::CheckAndProcessLevelUp()
 {
-    if (!MyAttributeSet) return false;
+    if (!myStats) return false;
 
     // 레벨업에 필요한 경험치 공식 (예: 레벨 * 50)
-    float requiredExp = 50.0f * MyAttributeSet->Level;
+    float requiredExp = 50.0f * myStats->Level;
     bool bLeveledUp = false;
 
     // 현재 경험치가 필요 경험치보다 많으면 레벨업 (여러 번 레벨업 가능하도록 while 사용)
-    while (MyAttributeSet->Experience.CurrentValue >= requiredExp)
+    while (myStats->Experience.CurrentValue >= requiredExp)
     {
+        // 최대 레벨 10으로 제한
+        if (myStats->Level >= 10)    return false;
+
         // 레벨업 비용만큼 경험치 차감
-        MyAttributeSet->Experience.CurrentValue -= requiredExp;
+        myStats->Experience.CurrentValue -= requiredExp;
 
         // 레벨 1 증가
-        MyAttributeSet->Level++;
+        myStats->Level++;
+
         bLeveledUp = true;
 
         // 레벨업 보상 (스탯 포인트 5 지급)
-        MyAttributeSet->AdditionalStatPoints += 5;
+        myStats->AdditionalStatPoints += 5;
 
         // 기본 스탯 자동 상승
-        MyAttributeSet->Strength.BaseValue += 2;
-        MyAttributeSet->Strength.CurrentValue += 2;
-        MyAttributeSet->Agility.BaseValue += 1;
-        MyAttributeSet->Agility.CurrentValue += 1;
-        MyAttributeSet->Intelligence.BaseValue += 1;
-        MyAttributeSet->Intelligence.CurrentValue += 1;
-        MyAttributeSet->Defence.BaseValue += 1.5;
-        MyAttributeSet->Defence.CurrentValue += 1.5;
-        MyAttributeSet->MagicResistance.BaseValue += 1.5;
-        MyAttributeSet->MagicResistance.CurrentValue += 1.5;
+        myStats->HP.BaseValue += (myStats->Level * 20);
+        myStats->HP.CurrentValue = myStats->HP.BaseValue;
+        myStats->MP.BaseValue += (myStats->Level * 10);
+        myStats->MP.CurrentValue = myStats->MP.BaseValue;
+        myStats->Strength.BaseValue += 2;
+        myStats->Strength.CurrentValue += 2;
+        myStats->Agility.BaseValue += 1;
+        myStats->Agility.CurrentValue += 1;
+        myStats->Intelligence.BaseValue += 1;
+        myStats->Intelligence.CurrentValue += 1;
+        myStats->Defence.BaseValue += 1.5;
+        myStats->Defence.CurrentValue += 1.5;
+        myStats->MagicResistance.BaseValue += 1.5;
+        myStats->MagicResistance.CurrentValue += 1.5;
 
         // 스탯 변경에 따른 최대 HP/MP 재계산
-        MyAttributeSet->AdjustDependentAttributes();
+        myStats->AdjustDependentAttributes();
 
         // 다음 레벨업에 필요한 경험치를 다시 계산
-        requiredExp = 100.0f * MyAttributeSet->Level;
+        requiredExp = 100.0f + (50 * myStats->Level);
     }
 
     return bLeveledUp;
@@ -152,7 +160,7 @@ FActivationResult AbilitySystemComponent::TryActivateAbility(int32_t SlotIndex, 
 void AbilitySystemComponent::ApplyGameplayEffectToSelf(std::unique_ptr<GameplayEffect> Effect)
 {
     // Effect 포인터와 자신의 AttributeSet 유효성 검사
-    if (!Effect || !MyAttributeSet)
+    if (!Effect || !myStats)
     {
         return;
     }
@@ -163,7 +171,7 @@ void AbilitySystemComponent::ApplyGameplayEffectToSelf(std::unique_ptr<GameplayE
         case EEffectApplication::Instant:
         {
             // 즉시 효과
-            Effect->Apply(MyAttributeSet.get());
+            Effect->Apply(myStats.get());
             break;
         }
 
@@ -213,7 +221,7 @@ std::wstring AbilitySystemComponent::UpdateActiveEffects()
         if (Effect->bExecuteOnTurn)
         {
             // 저장된 Magnitude를 그대로 사용
-            Effect->Apply(MyAttributeSet.get());
+            Effect->Apply(myStats.get());
 
             // 로그를 생성. Effect에 저장된 SourceActor를 사용
             if (Effect->SourceActor)

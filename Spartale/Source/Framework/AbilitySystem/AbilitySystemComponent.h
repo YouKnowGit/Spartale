@@ -50,7 +50,7 @@ public:
 
     // Getter
     Actor* GetOwnerActor() const { return OwnerActor; }
-    AttributeSet* GetAttributeSet() const { return MyAttributeSet.get(); }
+    AttributeSet* GetAttributeSet() const { return myStats.get(); }
     GameplayAbility* GetGrantedAbility(int32_t Index) const;
     const std::vector<GameplayAbility*>& GetEquippedAbilities() const { return EquippedAbilities; }
     const std::vector<std::unique_ptr<GameplayAbility>>& GetGrantedAbilities() const;
@@ -62,7 +62,7 @@ protected:
     Actor* OwnerActor;
 
     // 이 컴포넌트가 AttributeSet 소유 (이에 접근해 능력치 계산 및 변경, protected 이므로 Getter 사용)
-    std::unique_ptr<AttributeSet> MyAttributeSet;
+    std::unique_ptr<AttributeSet> myStats;
 
     // 습득한 모든 어빌리티 목록 (소유한 전체 스킬)
     std::vector<std::unique_ptr<GameplayAbility>> GrantedAbilities;

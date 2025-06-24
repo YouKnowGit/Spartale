@@ -316,9 +316,8 @@ void BattleManager::EndBattle()
 
             // --- 보상 지급 ---
             playerStats->Experience.CurrentValue += expGained;
-            playerStats->Gold.CurrentValue += goldGained;
+            playerStats->Gold += goldGained;
 
-            // --- 메시지 출력 (순차적으로) ---
             // 몬스터 처치 및 보상 획득 메시지를 먼저 출력
             std::wstring rewardMessage = m_monster->Name + L"을(를) 쓰러뜨렸다! 경험치 "
                 + std::to_wstring(expGained) + L", "
@@ -328,7 +327,7 @@ void BattleManager::EndBattle()
             // 레벨업 체크
             bool bLeveledUp = m_player->GetAbilityComponent()->CheckAndProcessLevelUp();
 
-            // 레벨업을 했다면, 별도의 메시지를 다시 출력
+            // 레벨업
             if (bLeveledUp)
             {
                 std::wstring levelUpMessage = m_player->Name + L"은(는) 레벨 업 했다!";
@@ -363,17 +362,15 @@ void BattleManager::PlayIntroAnimation()
 {
 
 
-    // 화면 깜빡임 효과 (색상 변경)
     for (int i = 0; i < 3; ++i) {
-        // 모든 버퍼 셀의 색상 속성을 변경
         for (int j = 0; j < m_renderer.GetWidth() * m_renderer.GetHeight(); ++j) {
-            m_renderer.Draw(j % m_renderer.GetWidth(), j / m_renderer.GetWidth(), L' ', 0xFF); // 빨간 배경, 흰 
+            m_renderer.Draw(j % m_renderer.GetWidth(), j / m_renderer.GetWidth(), L' ', 0xFF); 
         }
         m_renderer.Render();
         Sleep(80);
 
         for (int j = 0; j < m_renderer.GetWidth() * m_renderer.GetHeight(); ++j) {
-            m_renderer.Draw(j % m_renderer.GetWidth(), j / m_renderer.GetWidth(), L' ', 0x0F); // 검은 배경, 흰 글씨
+            m_renderer.Draw(j % m_renderer.GetWidth(), j / m_renderer.GetWidth(), L' ', 0x0F);
         }
         m_renderer.Render();
         Sleep(80);

@@ -77,6 +77,9 @@ bool Field::LoadMapFromFile(int mapId)
             case '&': m_mapData[y][x] = TileType::TOTEM;    break;
             case 'B': m_mapData[y][x] = TileType::BOSS;     break;
             case '■': m_mapData[y][x] = TileType::BOX;      break;
+            case '$': m_mapData[y][x] = TileType::NPC_Shop; break;
+            case '!': m_mapData[y][x] = TileType::NPC_Heal; break;
+            case '@': m_mapData[y][x] = TileType::NPC_Skill; break;
             case '.':
             default:  m_mapData[y][x] = TileType::EMPTY; break;
             }
@@ -130,6 +133,9 @@ void Field::Draw(Actor* player, ConsoleRenderer& renderer) const
             case TileType::TOTEM:   charToDraw = L'&'; break;
             case TileType::BOSS:    charToDraw = L'B'; break;
             case TileType::BOX:     charToDraw = L'■'; break;
+            case TileType::NPC_Shop:    charToDraw = L'$'; break;
+            case TileType::NPC_Skill:   charToDraw = L'@'; break;
+            case TileType::NPC_Heal:    charToDraw = L'!'; break;
             }
             renderer.Draw(x * 2, y, charToDraw);
             if (m_mapData[y][x] == TileType::BUSH) { // 수풀은 2칸
@@ -158,7 +164,10 @@ bool Field::IsWalkable(int x, int y) const
     if (m_mapData[y][x] == TileType::WOOD) return false;
     if (m_mapData[y][x] == TileType::TOTEM) return false;
     if (m_mapData[y][x] == TileType::CROSS) return false;
-    // if (GetNPCAt(x, y) != nullptr) return false;
+    if (m_mapData[y][x] == TileType::BOSS) return false;
+    if (m_mapData[y][x] == TileType::NPC_Heal) return false;
+    if (m_mapData[y][x] == TileType::NPC_Shop) return false;
+    if (m_mapData[y][x] == TileType::NPC_Skill) return false;
     return true;
 }
 
