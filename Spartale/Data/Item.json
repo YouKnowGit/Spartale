@@ -1,0 +1,72 @@
+{
+  "consume_hp_potion_01": {
+    "name": "체력 포션",
+    "description": "사용 시 체력을 50 회복합니다.",
+    "type": "Consumable",
+    "price": 10,
+    "isStackable": true,
+    "maxStackSize": 99,
+    "effectData": {
+      "effectType": "HEAL_HP",
+      "value": 50
+    }
+  },
+  "consume_atk_boost_01": {
+    "name": "공격력 강화 물약",
+    "description": "일정 시간 동안 공격력을 10 증가시킵니다.",
+    "type": "Consumable",
+    "price": 15,
+    "isStackable": true,
+    "maxStackSize": 20,
+    "effectData": {
+      "effectType": "BUFF_STAT",
+      "targetStat": "STRENGTH",
+      "value": 10,
+      "duration": 5 
+    }
+  },
+  "equip_weapon_sword_01": {
+    "name": "청동 검",
+    "description": "초보자에게 적합한 기본적인 검.",
+    "type": "Equipment",
+    "price": 50,
+    "isStackable": false,
+    "maxStackSize": 1,
+    "equipmentData": {
+      "equipmentType": "WEAPON",
+      "statBonuses": {
+        "ATTACK_POWER": 8,
+        "AGILITY": -1
+      }
+    }
+  },
+  "equip_armor_chest_01": {
+    "name": "가죽 갑옷",
+    "description": "가볍고 질겨 기본적인 보호를 제공한다.",
+    "type": "Equipment",
+    "price": 40,
+    "isStackable": false,
+    "maxStackSize": 1,
+    "equipmentData": {
+      "equipmentType": "ARMOR",
+      "statBonuses": {
+        "DEFENSE": 12
+      }
+    }
+  },
+  "equip_accessory_ring_01": {
+    "name": "민첩의 반지",
+    "description": "착용자의 몸놀림을 한결 가볍게 만들어준다.",
+    "type": "Equipment",
+    "price": 75,
+    "isStackable": false,
+    "maxStackSize": 1,
+    "equipmentData": {
+      "equipmentType": "ACCESSORY",
+      "statBonuses": {
+        "AGILITY": 5,
+        "CRIT_CHANCE": 3
+      }
+    }
+  }
+}

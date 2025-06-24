@@ -64,11 +64,15 @@
     <ClCompile Include="Source\Framework\AbilitySystem\AbilitySystemComponent.cpp" />
     <ClCompile Include="Source\Core\GameWorld.cpp" />
     <ClCompile Include="Source\Core\Actor.cpp" />
+<<<<<<< Updated upstream
     <ClCompile Include="Source\GameLogic\DataManager.cpp" />
     <ClCompile Include="Source\GameLogic\MainMenu.cpp" />
     <ClCompile Include="Source\GameLogic\PauseMenu.cpp" />
     <ClCompile Include="Source\GameLogic\Skills\GenericAbility.cpp" />
     <ClCompile Include="Source\GameLogic\Skills\SkillFactory.cpp" />
+=======
+    <ClCompile Include="Source\Framework\Inventory\IventoryComponent.cpp" />
+>>>>>>> Stashed changes
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Town.json" />
@@ -92,6 +96,7 @@
     <ClInclude Include="Source\Core\GameWorld.h" />
     <ClInclude Include="Source\Core\Actor.h" />
     <ClInclude Include="include\json.hpp" />
+<<<<<<< Updated upstream
     <ClInclude Include="Source\GameLogic\DataManager.h" />
     <ClInclude Include="Source\GameLogic\MainMenu.h" />
     <ClInclude Include="Source\GameLogic\PauseMenu.h" />
@@ -108,5 +113,10 @@
     <Media Include="Sounds\UI\menu_reject2.wav" />
     <Media Include="Sounds\enemy_encounter.wav" />
     <Media Include="Sounds\Skills\normal_attack_sound.wav" />
+=======
+    <ClInclude Include="Source\Framework\Inventory\InventoryComponent.h" />
+    <ClInclude Include="Source\Framework\Inventory\ItemData.h" />
+    <ClInclude Include="Source\Core\TypeConverter.h" />
+>>>>>>> Stashed changes
   </ItemGroup>
 </Project>

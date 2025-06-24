@@ -5,6 +5,7 @@
 #include "Framework/AbilitySystem/GameplayAbility.h"
 
 Player::Player(std::wstring name)
+	: m_inventory(20) // 플레이어의 인벤토리 크기를 20으로 설정
 {
     // Player 이름 초기화
     Name = name;
@@ -50,6 +51,9 @@ void Player::Initialize()
     CurrentLocation.X = 5;
     CurrentLocation.Y = 5;
     m_direction = Direction::DOWN;
+
+	// 시작 아이템으로 HP 포션을 3개 추가합니다.
+    GetInventory()->AddItem("consume_hp_potion_01", 3);
 }
 
 void Player::Update()

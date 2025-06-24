@@ -25,14 +25,15 @@ int main()
     setlocale(LC_ALL, "");
     // 커서 숨기기
     ConsoleUtils::ShowConsoleCursor(false);
-    auto player = make_unique<Player>(L"주인공");
 
     DataManager::GetInstance().LoadMonsterData("Data/Monsters.json");
     DataManager::GetInstance().LoadSkillData("Data/Skills.json");
+	DataManager::GetInstance().LoadItemData("Data/Item.json");
+    
     EGameState currentState = EGameState::MainMenu;
-
     ConsoleRenderer renderer;
     renderer.Initialize();
+
     while (currentState != EGameState::Quit)
     {
         switch (currentState)

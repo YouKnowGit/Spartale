@@ -134,6 +134,7 @@
     <ClCompile Include="Source\Framework\AbilitySystem\AttributeSet.cpp" />
     <ClCompile Include="Source\Framework\AbilitySystem\GameplayAbility.cpp" />
     <ClCompile Include="Source\Framework\AbilitySystem\GameplayEffect.cpp" />
+    <ClCompile Include="Source\Framework\Inventory\InventoryComponent.cpp" />
     <ClCompile Include="Source\GameLogic\BattleManager.cpp" />
     <ClCompile Include="Source\GameLogic\DataManager.cpp" />
     <ClCompile Include="Source\GameLogic\MainMenu.cpp" />
@@ -150,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Field_1.json" />
+    <None Include="Data\Item.json" />
     <None Include="Data\Monsters.json" />
     <None Include="Data\Town.json" />
     <None Include="Data\Skills.json" />
@@ -159,10 +161,13 @@
     <ClInclude Include="Source\Core\Actor.h" />
     <ClInclude Include="Source\Core\GameWorld.h" />
     <ClInclude Include="Source\Core\Global.h" />
+    <ClInclude Include="Source\Core\TypeConverter.h" />
     <ClInclude Include="Source\Framework\AbilitySystem\AbilitySystemComponent.h" />
     <ClInclude Include="Source\Framework\AbilitySystem\AttributeSet.h" />
     <ClInclude Include="Source\Framework\AbilitySystem\GameplayAbility.h" />
     <ClInclude Include="Source\Framework\AbilitySystem\GameplayEffect.h" />
+    <ClInclude Include="Source\Framework\Inventory\InventoryComponent.h" />
+    <ClInclude Include="Source\Framework\Inventory\ItemData.h" />
     <ClInclude Include="Source\GameLogic\BattleManager.h" />
     <ClInclude Include="Source\GameLogic\DataManager.h" />
     <ClInclude Include="Source\GameLogic\MainMenu.h" />
