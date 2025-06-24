@@ -41,7 +41,13 @@ enum class TileType
     EMPTY = 0,
     WALL = 1,
     BUSH = 2,
-    PORTAL = 3
+    PORTAL = 3,
+    WOOD = 4,
+    CROSS = 5,
+    NPC = 6,
+    TOTEM = 7,
+    BOSS = 8,
+    BOX = 9
 };
 
 // 게임의 현재 상태를 나타내는 열거형

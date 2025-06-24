@@ -21,7 +21,7 @@ public:
 	Field();
 	~Field();
 
-	bool LoadMapFromFile(const std::string& filename);
+	bool LoadMapFromFile(int mapId);
 
 	void Draw(Actor* player, ConsoleRenderer& renderer) const;
 	bool IsWalkable(int x, int y) const;

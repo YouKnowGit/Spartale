@@ -7,6 +7,7 @@
 #include "GameLogic/DataManager.h"
 
 #include <string>
+#include <iostream>
 
 #pragma comment(lib, "winmm.lib")
 

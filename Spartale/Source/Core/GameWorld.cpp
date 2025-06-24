@@ -32,8 +32,12 @@ void GameWorld::Initialize()
     m_renderer.Initialize();
 
     // 첫 맵 로드 및 플레이어 위치 설정
-    m_field.LoadMapFromFile("Data/Town.json");
-    m_player->CurrentLocation = { 5, 5 };
+    m_player->CurrentLocation = { 9, 5 };
+
+
+    if (!m_field.LoadMapFromFile(0)) {
+        std::wcout << L"맵 불러오기 실패" << std::endl;
+    }
 }
 
 void GameWorld::Run()
@@ -134,14 +138,8 @@ void GameWorld::ProcessInput()
                 const int nextMapID = portal->destMapID;
 
                 std::string nextMap;
-                if (nextMapID == 0) {
-                    nextMap += "Data/Town.json";
-                }
-                else {
-                    nextMap += "Data/Field_" + std::to_string(nextMapID) + ".json";
-                }
 
-                if (m_field.LoadMapFromFile(nextMap))
+                if (m_field.LoadMapFromFile(nextMapID))
                 {
                     m_currentMapID = nextMapID;
                     m_player->CurrentLocation = { destinationX, destinationY };

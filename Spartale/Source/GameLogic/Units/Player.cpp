@@ -37,6 +37,11 @@ void Player::Initialize()
     }
     const std::vector<std::string> allSkillIDs = {
         "SK_NormalAttack",
+        "SK_PoisonCloud",
+        "SK_Fireball",
+        "SK_TripleSlash",
+        "SK_StrengthBuff",
+        "SK_AgilityDown"
     };
     for (const auto& id : allSkillIDs)
     {

@@ -75,6 +75,7 @@
     <None Include="Data\Field_1.json" />
     <None Include="Data\Monsters.json" />
     <None Include="Data\Skills.json" />
+    <None Include="Data\Map.json" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utils\DamageUtils.h" />

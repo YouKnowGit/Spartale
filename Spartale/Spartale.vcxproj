@@ -153,6 +153,7 @@
     <None Include="Data\Monsters.json" />
     <None Include="Data\Town.json" />
     <None Include="Data\Skills.json" />
+    <None Include="Data\Map.json" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\json.hpp" />

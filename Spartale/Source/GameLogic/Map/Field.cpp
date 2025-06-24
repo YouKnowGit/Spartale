@@ -15,7 +15,7 @@ Field::Field() : m_width(0), m_height(0) {}
 Field::~Field() {}
 
 // 파일에서 맵을 로드하는 함수
-bool Field::LoadMapFromFile(const std::string& mapFilePath)
+bool Field::LoadMapFromFile(int mapId)
 {
     // 데이터 초기화
     //m_npcs.clear();
@@ -23,13 +23,14 @@ bool Field::LoadMapFromFile(const std::string& mapFilePath)
     m_mapData.clear();
 
     // mapFilePath 를 통해 mapData 를 읽어오기
-    std::ifstream mapFile(mapFilePath);
+    std::string filename = "Data/Map.json";
+    std::ifstream mapFile(filename);
     if (!mapFile.is_open()) {
-        std::cerr << "Error: Could not open map file: " << mapFilePath << std::endl;
+        std::cerr << "Error: Could not open map file: " << filename << std::endl;
         return false;
     }
 
-	// JSON 파싱
+    // JSON 파싱
     json jsonData;
     try {
         // 파일 스트림을 json 객체에 직접 전달하여 파싱
@@ -41,73 +42,74 @@ bool Field::LoadMapFromFile(const std::string& mapFilePath)
         return false;
     }
 
-    // 파싱된 JSON 데이터에서 맵 정보를 추출
-    // Header 정보 추출
-    m_width = jsonData["header"]["width"];
-    m_height = jsonData["header"]["height"];
+    mapFile.close();
 
-    // Tiles 정보 추출
+    const auto& maps = jsonData["maps"];
+    auto it = std::find_if(maps.begin(), maps.end(), [mapId](const json& map) {
+        return map.contains("mapID") && map["mapID"] == mapId;
+        });
+
+    if (it == maps.end()) {
+        std::cerr << "Error: Map ID " << mapId << " not found in map file!" << std::endl;
+        return false;
+    }
+
+    const json& selectedMap = *it;
+
+    // Header 정보
+    m_width = selectedMap["header"]["width"];
+    m_height = selectedMap["header"]["height"];
+
+    // Tiles 초기화
+    const auto& tiles_json = selectedMap["tiles"];
     m_mapData.assign(m_height, std::vector<TileType>(m_width));
-    const auto& tiles_json = jsonData["tiles"];
     for (int y = 0; y < m_height; ++y) {
         const std::string& row_str = tiles_json[y];
         for (int x = 0; x < m_width; ++x) {
             char tileChar = (x < row_str.length()) ? row_str[x] : ' ';
             switch (tileChar) {
-            case '#': m_mapData[y][x] = TileType::WALL; break;
-            case '*': m_mapData[y][x] = TileType::BUSH; break;
-            case 'P': m_mapData[y][x] = TileType::PORTAL; break;
+            case '#': m_mapData[y][x] = TileType::WALL;     break;
+            case '*': m_mapData[y][x] = TileType::BUSH;     break;
+            case 'P': m_mapData[y][x] = TileType::PORTAL;   break;
+            case '♠': m_mapData[y][x] = TileType::WOOD;     break;
+            case 't': m_mapData[y][x] = TileType::CROSS;    break;
+            case 'N': m_mapData[y][x] = TileType::NPC;      break;
+            case '&': m_mapData[y][x] = TileType::TOTEM;    break;
+            case 'B': m_mapData[y][x] = TileType::BOSS;     break;
+            case '■': m_mapData[y][x] = TileType::BOX;      break;
             case '.':
             default:  m_mapData[y][x] = TileType::EMPTY; break;
             }
         }
     }
 
-    // Portals 정보 추출
-    const auto& portals_json = jsonData["portals"];
-    for (const auto& portal_info : portals_json) {
-        int x = portal_info["x"];
-        int y = portal_info["y"];
 
-        // portal_info 객체에 필요한 키들이 모두 있는지 확인
-        if (portal_info.contains("destMapID") &&
-            portal_info.contains("destX") &&
-            portal_info.contains("destY"))
+    // 포탈 정보
+    const auto& portals_json = selectedMap["portals"];
+    for (const auto& portal_info : portals_json) {
+        if (portal_info.contains("x") && portal_info.contains("y") &&
+            portal_info.contains("destMapID") &&
+            portal_info.contains("destX") && portal_info.contains("destY"))
         {
-            // 키가 모두 존재할 때만 Portal 객체를 만들어 값을 할당
             Portal newPortal;
             newPortal.destMapID = portal_info["destMapID"];
             newPortal.destX = portal_info["destX"];
             newPortal.destY = portal_info["destY"];
-            m_portals[{x, y}] = newPortal;
-        }
-        else
-        {
-            // 키가 하나라도 없으면 에러 메시지 출력
-            std::cerr << "Error: Portal data at (" << x << "," << y << ") is missing required keys in JSON!" << std::endl;
-            system("pause"); // 디버깅을 위해 일시 정지
+            m_portals[{portal_info["x"], portal_info["y"]}] = newPortal;
         }
     }
 
-    // 몬스터 리스트 추출
-    if (jsonData.contains("encounterList"))
-    {
-        m_encounterList.clear();
-        for (const auto& monsterId : jsonData["encounterList"])
-        {
+    // 몬스터 목록
+    if (selectedMap.contains("encounterList")) {
+        for (const auto& monsterId : selectedMap["encounterList"]) {
             m_encounterList.push_back(monsterId);
         }
     }
 
-    mapFile.close();
-
-    // 디버깅 로그
-    /*
-    std::cout << "Map loaded: " << mapFilePath << std::endl;
-    std::cout << "Dimensions: " << m_width << " x " << m_height << std::endl;
-    std::cout << "Portal count: " << m_portals.size() << std::endl;
-    */
-    //system("pause");
+    // 디버깅 로그 (주석 처리)
+    //std::cout << "Map loaded: " << std::endl;
+    //std::cout << "Dimensions: " << m_width << " x " << m_height << std::endl;
+    //std::cout << "Portal count: " << m_portals.size() << std::endl;
 
     return true;
 }
@@ -118,10 +120,16 @@ void Field::Draw(Actor* player, ConsoleRenderer& renderer) const
         for (int x = 0; x < m_width; ++x) {
             wchar_t charToDraw = L' ';
             switch (m_mapData[y][x]) {
-            case TileType::EMPTY:  charToDraw = L'·'; break;
-            case TileType::WALL:   charToDraw = L'▒'; break;
-            case TileType::BUSH:   charToDraw = L'∗'; break; // 수풀은 2칸 차지하므로 별도 처리 필요
-            case TileType::PORTAL: charToDraw = L'回'; break;
+            case TileType::EMPTY:   charToDraw = L'·'; break;
+            case TileType::WALL:    charToDraw = L'▒'; break;
+            case TileType::BUSH:    charToDraw = L'∗'; break; // 수풀은 2칸 차지하므로 별도 처리 필요
+            case TileType::PORTAL:  charToDraw = L'回'; break;
+            case TileType::WOOD:    charToDraw = L'♠'; break;
+            case TileType::CROSS:   charToDraw = L't'; break;
+            case TileType::NPC:     charToDraw = L'N'; break;
+            case TileType::TOTEM:   charToDraw = L'&'; break;
+            case TileType::BOSS:    charToDraw = L'B'; break;
+            case TileType::BOX:     charToDraw = L'■'; break;
             }
             renderer.Draw(x * 2, y, charToDraw);
             if (m_mapData[y][x] == TileType::BUSH) { // 수풀은 2칸
@@ -140,39 +148,6 @@ void Field::Draw(Actor* player, ConsoleRenderer& renderer) const
     case Direction::LEFT:   renderer.Draw(player->CurrentLocation.X * 2, player->CurrentLocation.Y, L'◀'); break;
     case Direction::RIGHT:  renderer.Draw(player->CurrentLocation.X * 2, player->CurrentLocation.Y, L'▶'); break;
     }
-    /*
-    for (NPC* npc : m_npcs)
-    {
-        gotoxy(npc->GetX() * 2, npc->GetY());
-        switch (npc->GetType())
-        {
-        case NPCType::HEALER:   wcout << L"†"; break;
-        case NPCType::SHOP_ITEM: wcout << L"●"; break;
-        case NPCType::SHOP_SKILL: wcout << L"◈"; break;
-        case NPCType::BOSS:
-            // 글자를 출력하기 전에 색상 변경
-            SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_INTENSITY);
-            wcout << L"▼";
-            // 글자 출력 후 즉시 원래 색상으로 복원
-            SetConsoleTextAttribute(hConsole, saved_attributes);
-            break;
-        }
-    }
-    
-    Player* p = static_cast<Player*>(player);
-    gotoxy(p->GetX() * 2, p->GetY());
-    switch (p->GetDirection())
-    {
-    case Direction::UP:     wcout << L"▲"; break;
-    case Direction::DOWN:   wcout << L"▼"; break;
-    case Direction::LEFT:   wcout << L"◀"; break;
-    case Direction::RIGHT:  wcout << L"▶"; break;
-    }
-
-    // 디버그용 플레이어 위치 출력
-    gotoxy(0, m_height + 1);
-    wcout << L"Player Position: (" << p->GetX() << L", " << p->GetY() << L")   ";
-    */
 }
 
 // 해당 타일로 이동 가능한지 확인하는 함수
@@ -180,6 +155,9 @@ bool Field::IsWalkable(int x, int y) const
 {
     if (x < 0 || x >= m_width || y < 0 || y >= m_height) return false;
     if (m_mapData[y][x] == TileType::WALL) return false;
+    if (m_mapData[y][x] == TileType::WOOD) return false;
+    if (m_mapData[y][x] == TileType::TOTEM) return false;
+    if (m_mapData[y][x] == TileType::CROSS) return false;
     // if (GetNPCAt(x, y) != nullptr) return false;
     return true;
 }
