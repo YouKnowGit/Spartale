@@ -1,168 +1,211 @@
 {
-  "SK_NormalAttack": {
-    "name": "일반 공격",
-    "description": "대상에게 물리 피해를 입힙니다.",
-    "mana_cost": 0,
-    "sound_id": "normal_attack",
-    "effects": [
-      {
-        "apply_to": "Target",
-        "effect_name": "데미지",
-        "application_type": "Instant",
-        "target_attribute": "HP",
-        "magnitude": {
-          "calculation": "Ratio",
-          "ad_ratio": 1.0,
-          "ap_ratio": 0.0,
-          "damage_type": "Physical",
-          "is_heal": false
-        }
-      }
-    ]
-  },
-  "SK_TripleSlash": {
-    "name": "삼연참",
-    "description": "대상을 세 번 베어 강력한 물리 피해를 입힙니다.",
-    "mana_cost": 20,
-    "sound_id": "triple_attack",
-    "effects": [
-      {
-        "apply_to": "Target",
-        "effect_name": "삼연참 데미지",
-        "application_type": "Instant",
-        "target_attribute": "HP",
-        "magnitude": {
-          "calculation": "Ratio",
-          "ad_ratio": 2.5,
-          "ap_ratio": 0.0,
-          "damage_type": "Physical",
-          "is_heal": false
-        }
-      }
-    ]
-  },
-  "SK_Fireball": {
-    "name": "화염구",
-    "description": "작열하는 화염구로 대상에게 마법 피해를 입힙니다.",
-    "mana_cost": 15,
-    "sound_id": "fireball",
-    "effects": [
-      {
-        "apply_to": "Target",
-        "effect_name": "화염구 데미지",
-        "application_type": "Instant",
-        "target_attribute": "HP",
-        "magnitude": {
-          "calculation": "Ratio",
-          "ad_ratio": 0.0,
-          "ap_ratio": 1.2,
-          "damage_type": "Magical",
-          "is_heal": false
-        }
-      }
-    ]
-  },
-  "SK_PoisonCloud": {
-    "name": "독 안개",
-    "description": "대상에게 3턴간 지속되는 독 피해를 입힙니다.",
-    "mana_cost": 15,
-    "sound_id": "poison_cloud",
-    "effects": [
-      {
-        "apply_to": "Target",
-        "effect_name": "독 피해",
-        "application_type": "Duration",
-        "target_attribute": "HP",
-        "duration": 3,
-        "execute_on_turn": true,
-        "magnitude": {
-          "calculation": "Ratio",
-          "ad_ratio": 0.0,
-          "ap_ratio": 0.25,
-          "damage_type": "Magical",
-          "is_heal": false
-        }
-      }
-    ]
-  },
-  "SK_Heal": {
-    "name": "치유",
-    "description": "성스러운 빛으로 아군의 HP를 회복시킵니다.",
-    "mana_cost": 25,
-    "sound_id": "heal",
-    "effects": [
-      {
-        "apply_to": "Self",
-        "effect_name": "회복",
-        "application_type": "Instant",
-        "target_attribute": "HP",
-        "magnitude": {
-          "calculation": "Ratio",
-          "ad_ratio": 0.0,
-          "ap_ratio": 1.5,
-          "damage_type": "None",
-          "is_heal": true
-        }
-      }
-    ]
-  },
-  "SK_StrengthBuff" :{
-    "name": "힘 강화",
-    "description": "자신의 힘을 3턴간 10만큼 증가시킵니다.",
-    "mana_cost": 10,
-    "sound_id": "empower",
-    "effects": [
-      {
-        "apply_to": "Self",
-        "effect_name": "힘 증가",
-        "application_type": "Duration",
-        "target_attribute": "Strength",
-        "duration": 3,
-        "magnitude": {
-          "calculation": "Flat",
-          "base_value": 10.0,
-          "is_heal": true
-        }
-      }
-    ]
-  },
-  "SK_AgilityDown": {
-    "name": "둔화",
-    "description": "대상의 민첩을 2턴간 5만큼 감소시킵니다.",
-    "mana_cost": 10,
-    "sound_id": "slow",
-    "effects": [
-      {
-        "apply_to": "Target",
-        "effect_name": "민첩 감소",
-        "application_type": "Duration",
-        "target_attribute": "Agility",
-        "duration": 2,
-        "magnitude": {
-          "calculation": "Flat",
-          "base_value": 5.0,
-          "is_heal": false
-        }
-      }
-    ]
-  },
-  "SK_Meditate": {
-    "name": "명상",
-    "description": "정신을 집중하여 자신의 MP를 30만큼 회복합니다.",
-    "mana_cost": 0,
-    "sound_id": "meditation",
-    "effects": [
-      {
-        "apply_to": "Self",
-        "effect_name": "MP 회복",
-        "application_type": "Instant",
-        "target_attribute": "MP",
-        "magnitude": {
-          "calculation": "Flat",
-          "base_value": 30.0,
-          "is_heal": true
-        }
-      }
-    ]
-  }
+    "SK_NormalAttack": {
+        "name": "일반 공격",
+        "description": "대상에게 물리 피해를 입힙니다.",
+        "mana_cost": 0,
+        "sound_id": "normal_attack",
+        "effects": [
+            {
+                "apply_to": "Target",
+                "effect_name": "데미지",
+                "application_type": "Instant",
+                "target_attribute": "HP",
+                "magnitude": {
+                    "calculation": "Ratio",
+                    "ad_ratio": 1.0,
+                    "ap_ratio": 0.0,
+                    "damage_type": "Physical",
+                    "is_heal": false
+                }
+            }
+        ]
+    },
+    "SK_Meditate": {
+        "name": "명상",
+        "description": "정신을 집중하여 자신의 MP를 30만큼 회복합니다.",
+        "mana_cost": 0,
+        "sound_id": "Buff",
+        "effects": [
+            {
+                "apply_to": "Self",
+                "effect_name": "MP 회복",
+                "application_type": "Instant",
+                "target_attribute": "MP",
+                "magnitude": {
+                    "calculation": "Flat",
+                    "base_value": 30.0,
+                    "is_heal": true
+                }
+            }
+        ]
+    },
+    "SK_StrengthBuff": {
+        "name": "힘 강화",
+        "description": "자신의 힘을 3턴간 10만큼 증가시킵니다.",
+        "mana_cost": 10,
+        "sound_id": "Buff",
+        "effects": [
+            {
+                "apply_to": "Self",
+                "effect_name": "힘 증가",
+                "application_type": "Duration",
+                "target_attribute": "Strength",
+                "duration": 3,
+                "magnitude": {
+                    "calculation": "Flat",
+                    "base_value": 10.0,
+                    "is_heal": true
+                }
+            }
+        ]
+    },
+    "SK_Fireball": {
+        "name": "화염구",
+        "description": "작열하는 화염구로 대상에게 마법 피해를 입힙니다.",
+        "mana_cost": 15,
+        "sound_id": "Fireball",
+        "effects": [
+            {
+                "apply_to": "Target",
+                "effect_name": "화염구 데미지",
+                "application_type": "Instant",
+                "target_attribute": "HP",
+                "magnitude": {
+                    "calculation": "Ratio",
+                    "ad_ratio": 0.0,
+                    "ap_ratio": 1.2,
+                    "damage_type": "Magical",
+                    "is_heal": false
+                }
+            }
+        ]
+    },
+    "SK_PoisonCloud": {
+        "name": "독 안개",
+        "description": "대상에게 3턴간 지속되는 독 피해를 입힙니다.",
+        "mana_cost": 15,
+        "sound_id": "PoisonCloud",
+        "effects": [
+            {
+                "apply_to": "Target",
+                "effect_name": "독 피해",
+                "application_type": "Duration",
+                "target_attribute": "HP",
+                "duration": 3,
+                "execute_on_turn": true,
+                "magnitude": {
+                    "calculation": "Ratio",
+                    "ad_ratio": 0.0,
+                    "ap_ratio": 0.25,
+                    "damage_type": "Magical",
+                    "is_heal": false
+                }
+            }
+        ]
+    },
+    "SK_ArcaneBlast": {
+        "name": "비전 폭발",
+        "description": "마력을 응축한 구체를 발사해 마법피해를 입힙니다.",
+        "mana_cost": 15,
+        "sound_id": "AbyssBlast",
+        "effects": [
+            {
+                "apply_to": "Target",
+                "effect_name": "데미지",
+                "application_type": "Instant",
+                "target_attribute": "HP",
+                "magnitude": {
+                    "calculation": "Ratio",
+                    "ad_ratio": 0.0,
+                    "ap_ratio": 2.0,
+                    "damage_type": "Magical",
+                    "is_heal": false
+                }
+            }
+        ]
+    },
+    "SK_TripleSlash": {
+        "name": "삼연참",
+        "description": "대상을 세 번 베어 강력한 물리 피해를 입힙니다.",
+        "mana_cost": 20,
+        "sound_id": "Triplehit",
+        "effects": [
+            {
+                "apply_to": "Target",
+                "effect_name": "삼연참 데미지",
+                "application_type": "Instant",
+                "target_attribute": "HP",
+                "magnitude": {
+                    "calculation": "Ratio",
+                    "ad_ratio": 2.5,
+                    "ap_ratio": 0.0,
+                    "damage_type": "Physical",
+                    "is_heal": false
+                }
+            }
+        ]
+    },
+    "SK_Heal": {
+        "name": "치유",
+        "description": "성스러운 빛으로 아군의 HP를 회복시킵니다.",
+        "mana_cost": 25,
+        "sound_id": "Healing",
+        "effects": [
+            {
+                "apply_to": "Self",
+                "effect_name": "회복",
+                "application_type": "Instant",
+                "target_attribute": "HP",
+                "magnitude": {
+                    "calculation": "Ratio",
+                    "ad_ratio": 0.0,
+                    "ap_ratio": 1.5,
+                    "damage_type": "None",
+                    "is_heal": true
+                }
+            }
+        ]
+    },
+    "SK_AbyssalCollapse": {
+        "name": "심연의 붕괴",
+        "description": "거대한 마법 구체를 폭발시킵니다. 큰데미지를 입힙니다.",
+        "mana_cost": 30,
+        "sound_id": "ElementalMagic",
+        "effects": [
+            {
+                "apply_to": "Target",
+                "effect_name": "데미지",
+                "application_type": "Instant",
+                "target_attribute": "HP",
+                "magnitude": {
+                    "calculation": "Ratio",
+                    "ad_ratio": 0.0,
+                    "ap_ratio": 3.0,
+                    "damage_type": "Magical",
+                    "is_heal": false
+                }
+            }
+        ]
+    },
+    "SK_Judgment": {
+        "name": "심 판",
+        "description": "하늘에서 마법의 힘이 담긴 대검을 낙하시켜 극대화된 마법피해를 입힙니다.",
+        "mana_cost": 45,
+        "sound_id": "Judgement",
+        "effects": [
+            {
+                "apply_to": "Target",
+                "effect_name": "데미지",
+                "application_type": "Instant",
+                "target_attribute": "HP",
+                "magnitude": {
+                    "calculation": "Ratio",
+                    "ad_ratio": 1.0,
+                    "ap_ratio": 3.5,
+                    "damage_type": "Magical",
+                    "is_heal": false
+                }
+            }
+        ]
+    }
 }
