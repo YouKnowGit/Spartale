@@ -104,36 +104,6 @@ void PauseMenu::Render()
 
 // --- 입력 처리 함수들 ---
 
-void PauseMenu::ProcessMainMenuInput(int key)
-{
-    const std::vector<std::wstring> options = { L"스탯 분배", L"인벤토리", L"스킬북", L"저장", L"메인메뉴로 나가기" };
-    if (key == 224)
-    {
-        key = _getch();
-        if (key == 72) // 위쪽 화살표
-        {
-            // 선택 인덱스를 1 감소. 0보다 작아지면 마지막 인덱스로 순환
-            PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
-            m_mainMenuSelection = (m_mainMenuSelection == 0) ? static_cast<int>(options.size()) - 1 : m_mainMenuSelection - 1;
-        }
-        else if (key == 80) // 아래쪽 화살표
-        {
-            // 선택 인덱스를 1 증가. 마지막 인덱스를 넘어가면 0으로 순환
-            PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
-            m_mainMenuSelection = (m_mainMenuSelection + 1) % static_cast<int>(options.size());
-        }
-    }
-    else if (key == 13) // 엔터
-    {
-        PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
-        switch (m_mainMenuSelection)
-        {
-        case 0: m_currentPaneState = ERightPaneState::StatDistribution; m_statSelection = 0; break;
-        case 2: m_currentPaneState = ERightPaneState::SkillBook; m_skillBookSlotSelection = 0; break;
-        case 4: m_bIsRunning = false; m_result = EPauseMenuResult::GoToMainMenu; break;
-        }
-    }
-}
 
 void PauseMenu::ProcessStatDistributionInput(int key)
 {
@@ -184,8 +154,6 @@ void PauseMenu::ProcessStatDistributionInput(int key)
     }
 }
 
-
-// --- 그리기 함수들 ---
 
 void PauseMenu::DrawMainMenuOptions()
 {
@@ -464,7 +432,7 @@ void PauseMenu::ProcessSkillSelectionInput(int key)
     {
         // 현재 커서가 가리키는 스킬이 장착 가능한지 다시 한번 확인
         bool bCanEquip = std::find(availableSkillIndices.begin(), availableSkillIndices.end(), m_skillSelectionListCursor) != availableSkillIndices.end();
-
+        PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
 
         if (bCanEquip)
         {
@@ -479,6 +447,8 @@ void PauseMenu::ProcessSkillSelectionInput(int key)
     if (key == 224) // 방향키
     {
         key = _getch();
+        PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+
         if (key == 72) // 위
         {
             m_skillSelectionListCursor = (m_skillSelectionListCursor == 0) ? abilityCount - 1 : m_skillSelectionListCursor - 1;
@@ -511,6 +481,8 @@ void PauseMenu::ProcessSkillSelectionInput(int key)
         }
     }
 }
+
+// 스킬북) 스킬이 장착이 된 상태인지 판별하는 함수
 bool PauseMenu::IsSkillEquipped(const GameplayAbility* skill) const
 {
     if (!skill) return false; // 스킬 포인터가 유효하지 않으면 false
@@ -529,6 +501,37 @@ bool PauseMenu::IsSkillEquipped(const GameplayAbility* skill) const
     return false; // 못 찾았으면 false
 }
 
+// PauseMenu 전체 입력 처리 함수
+void PauseMenu::ProcessMainMenuInput(int key)
+{
+    const std::vector<std::wstring> options = { L"스탯 분배", L"인벤토리", L"스킬북", L"저장", L"메인메뉴로 나가기" };
+    if (key == 224)
+    {
+        key = _getch();
+        if (key == 72) // 위쪽 화살표
+        {
+            // 선택 인덱스를 1 감소. 0보다 작아지면 마지막 인덱스로 순환
+            PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+            m_mainMenuSelection = (m_mainMenuSelection == 0) ? static_cast<int>(options.size()) - 1 : m_mainMenuSelection - 1;
+        }
+        else if (key == 80) // 아래쪽 화살표
+        {
+            // 선택 인덱스를 1 증가. 마지막 인덱스를 넘어가면 0으로 순환
+            PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+            m_mainMenuSelection = (m_mainMenuSelection + 1) % static_cast<int>(options.size());
+        }
+    }
+    else if (key == 13) // 엔터
+    {
+        PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+        switch (m_mainMenuSelection)
+        {
+        case 0: m_currentPaneState = ERightPaneState::StatDistribution; m_statSelection = 0; break;
+        case 2: m_currentPaneState = ERightPaneState::SkillBook; m_skillBookSlotSelection = 0; break;
+        case 4: m_bIsRunning = false; m_result = EPauseMenuResult::GoToMainMenu; break;
+        }
+    }
+}
 
 // Pause 메뉴 좌측 캐릭터 정보 화면
 void PauseMenu::DrawPlayerInfo()
@@ -587,6 +590,7 @@ void PauseMenu::DrawPlayerInfo()
     m_renderer.DrawString(infoX, infoY++, L"골드      : " + std::to_wstring(static_cast<int>(stats->Gold.CurrentValue)) + L" G");
 }
 
+// 좌측 상태창: 체력, 마나, 경험치 바 그리는 함수
 void DrawBar(ConsoleRenderer& renderer, int x, int y, int width, float current, float max, WORD attribute)
 {
     float ratio = (max > 0) ? (current / max) : 0;
@@ -598,6 +602,8 @@ void DrawBar(ConsoleRenderer& renderer, int x, int y, int width, float current, 
     }
 }
 
+
+// 우측 화면 지우는 함수
 void PauseMenu::ClearRightPane()
 {
     // 레이아웃 좌표 계산
