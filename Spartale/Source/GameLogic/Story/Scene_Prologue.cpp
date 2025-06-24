@@ -1,6 +1,4 @@
-﻿//#include <iostream>
-//#include <string>
-#include <thread>
+﻿#include <thread>
 #include <chrono>
 #include "Story.h"
 
