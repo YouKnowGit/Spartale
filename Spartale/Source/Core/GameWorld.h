@@ -23,8 +23,6 @@ private:
     void Render();
     void StartBattle();
 
-    void ChangeBGM();
-
     std::unique_ptr<Monster> CreateRandomizedMonster(const std::string& monsterId);
 
 private:

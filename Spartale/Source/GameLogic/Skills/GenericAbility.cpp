@@ -7,6 +7,7 @@
 #include "GameLogic/DataManager.h"
 
 #include <string>
+#include <iostream>
 
 #pragma comment(lib, "winmm.lib")
 
@@ -19,6 +20,37 @@ void GenericAbility::InitializeFromData(const SkillData* data)
     m_SkillData = data;
 }
 
+
+/***********************************
+
+SkillData 구조체
+
+std::string id;
+std::string soundId;
+std::wstring name;
+std::wstring description;
+float manaCost = 0.0f;
+std::vector<EffectData> effects;
+
+- - - - - - - - - - - - - - - - - - 
+
+EffectData 구조체
+
+std::string applyTo = "Target";
+std::string effectName;
+EEffectApplication applicationType = EEffectApplication::Instant;
+std::string targetAttribute;
+int duration = 0;
+bool executeOnTurn = false;
+
+std::string magnitudeCalculation = "Flat"; // "Flat" or "Ratio"
+float baseValue = 0.0f;
+float adRatio = 0.0f;
+float apRatio = 0.0f;
+EDamageType damageType = EDamageType::None;
+bool isHeal = false;
+
+************************************/
 std::wstring GenericAbility::ActivateAbility(AbilitySystemComponent* SourceASC, Actor* Target)
 {
     if (!m_SkillData || !SourceASC)
@@ -27,6 +59,8 @@ std::wstring GenericAbility::ActivateAbility(AbilitySystemComponent* SourceASC, 
     }
 
     Actor* sourceActor = SourceASC->GetOwnerActor();
+    sourceActor->GetAbilityComponent()->GetAttributeSet()->MP.CurrentValue -= m_SkillData->manaCost;
+
     std::wstring finalLogMessage = L""; // 로그 누적을 위해 빈 문자열로 초기화
 
     // JSON에 정의된 'effects' 배열을 순회
@@ -96,6 +130,11 @@ std::wstring GenericAbility::ActivateAbility(AbilitySystemComponent* SourceASC, 
         // 최종 대상에게 효과를 적용
         actualTarget->GetAbilityComponent()->ApplyGameplayEffectToSelf(std::move(gameplayEffect)); 
         std::wstring castSoundPath = L"Sounds/Skills/" + StringUtils::ConvertToWstring(this->soundId) + L"_sound.wav";
+
+        // 이렇게 안하면 선택 효과음이랑 겹쳐서 안들림
+        Sleep(165);
+        PlaySound(NULL, NULL, 0);
+        // 기다렸다가 소리 끊고 아래 사운드 출력
         PlaySound(castSoundPath.c_str(), NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP);
 
     }

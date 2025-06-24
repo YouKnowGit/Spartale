@@ -37,13 +37,9 @@ public:
     FAttributeData HP;
     FAttributeData MP;
 
-    // Base 능력치 제거
-    //FAttributeData BaseHP;
-    //FAttributeData BaseMP;
-
     // 골드와 경험치, 레벨
-    FAttributeData Gold;
     FAttributeData Experience;
+    int Gold;
     int Level = 1;
 
     FAttributeData CriticalHitChance;          // 치명타 확률 (예: 0.05 = 5%)

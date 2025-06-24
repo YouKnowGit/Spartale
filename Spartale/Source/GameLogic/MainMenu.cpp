@@ -86,11 +86,11 @@ void MainMenu::OnEnterPressed()
         m_nextState = EGameState::World;
         m_bIsRunning = false;
         break;
-    case 1: // 불러오기 (미구현)
+    case 1: // 불러오기
         break;
-    case 2: // 설정 (미구현)
+    case 2: // 설정
         break;
-    case 3: // 크레딧 (미구현)
+    case 3: // 크레딧
         break;
     case 4: // 게임 종료
         m_nextState = EGameState::Quit;

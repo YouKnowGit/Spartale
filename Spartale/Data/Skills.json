@@ -92,7 +92,7 @@
     "sound_id": "heal",
     "effects": [
       {
-        "apply_to": "Target",
+        "apply_to": "Self",
         "effect_name": "회복",
         "application_type": "Instant",
         "target_attribute": "HP",
@@ -106,7 +106,7 @@
       }
     ]
   },
-  "SK_StrengthBuff": {
+  "SK_StrengthBuff" :{
     "name": "힘 강화",
     "description": "자신의 힘을 3턴간 10만큼 증가시킵니다.",
     "mana_cost": 10,
