@@ -3,6 +3,7 @@
 #include "Framework/AbilitySystem/AbilitySystemComponent.h"
 #include "GameLogic/MainMenu.h"
 #include "GameLogic/PauseMenu.h"
+#include "GameLogic/NPCMenu.h"
 #include "GameLogic/BattleManager.h"
 #include "GameLogic/DataManager.h"
 #include "GameLogic/Units/Monster.h"
@@ -32,8 +33,12 @@ void GameWorld::Initialize()
     m_renderer.Initialize();
 
     // 첫 맵 로드 및 플레이어 위치 설정
-    m_field.LoadMapFromFile("Data/Town.json");
-    m_player->CurrentLocation = { 5, 5 };
+    m_player->CurrentLocation = { 9, 5 };
+
+
+    if (!m_field.LoadMapFromFile(0)) {
+        std::wcout << L"맵 불러오기 실패" << std::endl;
+    }
 }
 
 void GameWorld::Run()
@@ -72,10 +77,39 @@ void GameWorld::ProcessInput()
             return; // PauseMenu가 끝난 후 다른 키 입력이 처리되지 않도록 return
         }
 
-        if (key == 'q' || key == 'Q')
+        if (key == 'g' || key == 'G' || key == 'z' || key == 'Z' || key == 13) // 상호작용 'G' 'Z' 'Enter'
         {
-            m_bIsRunning = false;
-            return;
+            FMapLocation playerPos = m_player->CurrentLocation;
+            Direction dir = m_player->GetDirection();
+
+            int targetX = playerPos.X;
+            int targetY = playerPos.Y;
+
+            switch (dir)
+            {
+            case Direction::UP:    targetY -= 1; break;
+            case Direction::DOWN:  targetY += 1; break;
+            case Direction::LEFT:  targetX -= 1; break;
+            case Direction::RIGHT: targetX += 1; break;
+            }
+
+            TileType tile = m_field.GetTileType(targetX, targetY);
+            if (tile == TileType::NPC_Heal)
+            {
+                // 여기 힐 사운드
+                AttributeSet* stats = m_player->GetAbilityComponent()->GetAttributeSet();
+                stats->HP.CurrentValue = stats->HP.BaseValue;
+                stats->MP.CurrentValue = stats->MP.BaseValue;
+            }
+            else if (tile == TileType::NPC_Shop) 
+            {
+
+            }
+            else if (tile == TileType::NPC_Skill)
+            {
+
+            }
+
         }
         // . . . ( 필드 내에서 구현할 기능들에 대한 키 입력 처리는 여기서 ex. 'g' 로 상호작용 등 ) . . .
 
@@ -83,6 +117,7 @@ void GameWorld::ProcessInput()
         {
             key = _getch();
             FMapLocation nextLocation = m_player->CurrentLocation;
+            PlaySound(Move_map, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP);
 
             // 입력받은 Key 가 224(방향키)인 경우 방향에 맞게 Player 의 Position 과 Direction 을 변경
             switch (key)
@@ -118,8 +153,6 @@ void GameWorld::ProcessInput()
                     if (m_dist(m_rng) < m_encounterChance)
                     {
                         StartBattle();
-                        // 전투 후에는 화면을 다시 그려야 하므로 루프를 한번 빠져나감
-                        // (Render() 함수가 GameLoop에서 호출되기 때문)
                         return;
                     }
                 }
@@ -134,14 +167,8 @@ void GameWorld::ProcessInput()
                 const int nextMapID = portal->destMapID;
 
                 std::string nextMap;
-                if (nextMapID == 0) {
-                    nextMap += "Data/Town.json";
-                }
-                else {
-                    nextMap += "Data/Field_" + std::to_string(nextMapID) + ".json";
-                }
 
-                if (m_field.LoadMapFromFile(nextMap))
+                if (m_field.LoadMapFromFile(nextMapID))
                 {
                     m_currentMapID = nextMapID;
                     m_player->CurrentLocation = { destinationX, destinationY };
@@ -156,15 +183,14 @@ void GameWorld::StartBattle()
     const auto& encounterList = m_field.GetEncounterList();
     if (encounterList.empty()) return;
 
-    // 맵의 조우 목록에서 몬스터 ID를 랜덤으로 하나 뽑습니다.
+    // 맵의 조우 목록에서 몬스터 ID를 랜덤으로 결정
     std::uniform_int_distribution<int> monsterDist(0, static_cast<int>(encounterList.size()) - 1);
     std::string monsterId = encounterList[monsterDist(m_rng)];
 
-    // 모듈화된 함수를 호출하여 몬스터를 생성합니다.
+    // 모듈화된 함수를 호출하여 몬스터를 생성
     auto monster = CreateRandomizedMonster(monsterId);
     if (!monster)
     {
-        // 몬스터 생성에 실패하면 (예: 데이터베이스에 없는 ID) 전투를 시작하지 않습니다.
         return;
     }
 
@@ -175,8 +201,7 @@ void GameWorld::StartBattle()
     // 전투 결과에 따라 플레이어가 패배했는지 여부만 체크
     if (result == EBattleResult::PlayerLost)
     {
-        // TODO: 게임오버 처리 로직
-        m_bIsRunning = false; // 임시로 월드 루프 종료
+        m_bIsRunning = false;
     }
 }
 std::unique_ptr<Monster> GameWorld::CreateRandomizedMonster(const std::string& monsterId)
@@ -187,11 +212,11 @@ std::unique_ptr<Monster> GameWorld::CreateRandomizedMonster(const std::string& m
         return nullptr;
     }
 
-    // --- 랜덤화 로직 ---
+    // 레벨은 기본 레벨 ( +- 1 )
     std::uniform_real_distribution<float> statMultiplier(0.9f, 1.1f);
     std::uniform_int_distribution<int> levelDist(data->baseLevel - 1, data->baseLevel + 1);
 
-    // 모든 스탯을 랜덤화합니다.
+    // 모든 스탯을 랜덤화
     int finalLevel = (std::max)(1, levelDist(m_rng));
     float finalHp = data->baseHp * statMultiplier(m_rng);
     float finalStrength = data->baseStrength * statMultiplier(m_rng);
@@ -200,31 +225,23 @@ std::unique_ptr<Monster> GameWorld::CreateRandomizedMonster(const std::string& m
     float finalIntelligence = data->baseIntelligence * statMultiplier(m_rng);
     float finalMagicResistance = data->baseMagicResistance * statMultiplier(m_rng);
 
-    // 몬스터 객체 생성 (기존 생성자 그대로 사용)
     auto monster = std::make_unique<Monster>(data->name, finalHp, finalStrength, finalDefence, finalLevel);
-
-    // --- 생성된 몬스터의 AttributeSet에 새로운 스탯들을 직접 설정합니다 ---
+    
     AttributeSet* monsterStats = monster->GetAbilityComponent()->GetAttributeSet();
     if (monsterStats)
     {
-        monsterStats->Agility.BaseValue = finalAgility;
-        monsterStats->Agility.CurrentValue = finalAgility;
-        monsterStats->Intelligence.BaseValue = finalIntelligence;
-        monsterStats->Intelligence.CurrentValue = finalIntelligence;
-        monsterStats->MagicResistance.BaseValue = finalMagicResistance;
-        monsterStats->MagicResistance.CurrentValue = finalMagicResistance;
+        monsterStats->Agility = FAttributeData(finalAgility);
+        monsterStats->Intelligence = FAttributeData(finalIntelligence);
+        monsterStats->MagicResistance = FAttributeData(finalMagicResistance);
     }
 
-    // --- 데이터 기반 스킬 부여 로직 (이전과 동일) ---
     if (!data->skillIds.empty())
     {
-        // 몬스터가 가진 모든 스킬을 부여 (JSON 에서 설정)
         for (const std::string& skillId : data->skillIds)
         {
             monster->GetAbilityComponent()->GrantAbility(SkillFactory::CreateSkill(skillId));
         }
 
-        // 부여된 모든 스킬을 전투 슬롯 0, 1, 2, 3번에 순서대로 장착
         const auto& grantedAbilities = monster->GetAbilityComponent()->GetGrantedAbilities();
         for (size_t i = 0; i < grantedAbilities.size(); ++i)
         {

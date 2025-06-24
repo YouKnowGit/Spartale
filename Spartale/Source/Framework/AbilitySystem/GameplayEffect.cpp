@@ -47,7 +47,7 @@ std::unique_ptr<GameplayEffect> GameplayEffect::CreateInverseEffect() const
     auto InverseEffect = std::make_unique<GameplayEffect>();
 
     // InverseEffect의 속성들을 설정
-    InverseEffect->EffectName = this->EffectName + L" (����)";
+    InverseEffect->EffectName = this->EffectName + L" (제거)";
     InverseEffect->TargetAttributeName = this->TargetAttributeName;
 
     // 적용 방식은 즉시 (Instant) 로 처리

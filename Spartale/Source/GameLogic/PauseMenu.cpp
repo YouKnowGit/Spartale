@@ -584,7 +584,7 @@ void PauseMenu::DrawSkillBookScreen()
         int currentY = boxY + i * (boxHeight + 1); // 박스 사이 간격 1 추가
         if (i == m_skillBookSlotSelection)
         {
-            // 2. 선택되었다면, 박스 왼쪽에 커서(▶)를 그립니다.
+            // 2. 선택되었다면, 박스 왼쪽에 커서(▶)
             m_renderer.DrawString(boxX - 2, currentY + (boxHeight / 2), L"▶");
         }
 
@@ -663,7 +663,7 @@ void PauseMenu::DrawSkillSelectionScreen()
         }
     }
 
-    // --- 선택된 스킬 정보창 출력 (기존과 동일하지만 위치 조정) ---
+    // 선택된 스킬 정보창 출력
     GameplayAbility* highlightedSkill = nullptr;
     if (!grantedAbilities.empty())
     {
@@ -740,12 +740,12 @@ void PauseMenu::ProcessSkillSelectionInput(int key)
         {
             m_skillSelectionListCursor = (m_skillSelectionListCursor == 0) ? abilityCount - 1 : m_skillSelectionListCursor - 1;
 
-            // 커서가 스크롤 영역 위로 벗어나면 스크롤을 올립니다.
+            // 커서가 스크롤 영역 위로 벗어나면 스크롤을 올림
             if (m_skillSelectionListCursor < m_skillListScrollOffset)
             {
                 m_skillListScrollOffset = m_skillSelectionListCursor;
             }
-            // 맨 마지막 항목으로 순환했을 때, 스크롤도 맨 아래로 이동합니다.
+            // 맨 마지막 항목으로 순환했을 때, 스크롤도 맨 아래로 이동
             if (m_skillSelectionListCursor == abilityCount - 1)
             {
                 m_skillListScrollOffset = (std::max)(0, abilityCount - m_skillListVisibleCount);
@@ -755,12 +755,12 @@ void PauseMenu::ProcessSkillSelectionInput(int key)
         {
             m_skillSelectionListCursor = (m_skillSelectionListCursor == abilityCount - 1) ? 0 : m_skillSelectionListCursor + 1;
 
-            // 커서가 스크롤 영역 아래로 벗어나면 스크롤을 내립니다.
+            // 커서가 스크롤 영역 아래로 벗어나면 스크롤을 내림
             if (m_skillSelectionListCursor >= m_skillListScrollOffset + m_skillListVisibleCount)
             {
                 m_skillListScrollOffset = m_skillSelectionListCursor - m_skillListVisibleCount + 1;
             }
-            // 맨 첫 항목으로 순환했을 때, 스크롤도 맨 위로 이동합니다.
+            // 맨 첫 항목으로 순환했을 때, 스크롤도 맨 위로 이동
             if (m_skillSelectionListCursor == 0)
             {
                 m_skillListScrollOffset = 0;
@@ -774,10 +774,10 @@ bool PauseMenu::IsSkillEquipped(const GameplayAbility* skill) const
 {
     if (!skill) return false; // 스킬 포인터가 유효하지 않으면 false
 
-    // 현재 장착된 스킬 목록을 가져옵니다.
+    // 현재 장착된 스킬 목록을 가져옴
     const auto& equippedAbilities = m_player.GetAbilityComponent()->GetEquippedAbilities();
 
-    // 장착된 스킬 목록에 찾는 스킬이 있는지 확인합니다.
+    // 장착된 스킬 목록에 찾는 스킬이 있는지 확인
     for (const auto& equippedSkill : equippedAbilities)
     {
         if (equippedSkill == skill)
@@ -875,7 +875,7 @@ void PauseMenu::DrawPlayerInfo()
     m_renderer.DrawString(infoX, infoY++, L"지능      : " + std::to_wstring(static_cast<int>(stats->Intelligence.CurrentValue)));
     m_renderer.DrawString(infoX, infoY++, L"방어력    : " + std::to_wstring(static_cast<int>(stats->Defence.CurrentValue)));
     infoY++;
-    m_renderer.DrawString(infoX, infoY++, L"골드      : " + std::to_wstring(static_cast<int>(stats->Gold.CurrentValue)) + L" G");
+    m_renderer.DrawString(infoX, infoY++, L"골드      : " + std::to_wstring(static_cast<int>(stats->Gold)) + L" G");
 }
 
 // 좌측 상태창: 체력, 마나, 경험치 바 그리는 함수

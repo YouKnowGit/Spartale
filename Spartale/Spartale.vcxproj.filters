@@ -64,21 +64,18 @@
     <ClCompile Include="Source\Framework\AbilitySystem\AbilitySystemComponent.cpp" />
     <ClCompile Include="Source\Core\GameWorld.cpp" />
     <ClCompile Include="Source\Core\Actor.cpp" />
-<<<<<<< Updated upstream
     <ClCompile Include="Source\GameLogic\DataManager.cpp" />
     <ClCompile Include="Source\GameLogic\MainMenu.cpp" />
     <ClCompile Include="Source\GameLogic\PauseMenu.cpp" />
     <ClCompile Include="Source\GameLogic\Skills\GenericAbility.cpp" />
     <ClCompile Include="Source\GameLogic\Skills\SkillFactory.cpp" />
-=======
     <ClCompile Include="Source\Framework\Inventory\IventoryComponent.cpp" />
->>>>>>> Stashed changes
+    <ClCompile Include="Source\GameLogic\NPCMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\Town.json" />
-    <None Include="Data\Field_1.json" />
     <None Include="Data\Monsters.json" />
     <None Include="Data\Skills.json" />
+    <None Include="Data\Map.json" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utils\DamageUtils.h" />
@@ -96,13 +93,13 @@
     <ClInclude Include="Source\Core\GameWorld.h" />
     <ClInclude Include="Source\Core\Actor.h" />
     <ClInclude Include="include\json.hpp" />
-<<<<<<< Updated upstream
     <ClInclude Include="Source\GameLogic\DataManager.h" />
     <ClInclude Include="Source\GameLogic\MainMenu.h" />
     <ClInclude Include="Source\GameLogic\PauseMenu.h" />
     <ClInclude Include="Source\GameLogic\Skills\GenericAbility.h" />
     <ClInclude Include="Source\GameLogic\Skills\SkillFactory.h" />
     <ClInclude Include="Source\Utils\StringUtils.h" />
+    <ClInclude Include="Source\GameLogic\NPCMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="Sounds\UI\mainmenu_confirm.wav" />
@@ -113,10 +110,17 @@
     <Media Include="Sounds\UI\menu_reject2.wav" />
     <Media Include="Sounds\enemy_encounter.wav" />
     <Media Include="Sounds\Skills\normal_attack_sound.wav" />
-=======
     <ClInclude Include="Source\Framework\Inventory\InventoryComponent.h" />
     <ClInclude Include="Source\Framework\Inventory\ItemData.h" />
     <ClInclude Include="Source\Core\TypeConverter.h" />
->>>>>>> Stashed changes
+    <Media Include="Sounds\Skills\Buff_sound.wav" />
+    <Media Include="Sounds\Skills\Fireball__sound.wav" />
+    <Media Include="Sounds\Skills\PoisonCloud_sound.wav" />
+    <Media Include="Sounds\Skills\AbyssBlast_sound.wav" />
+    <Media Include="Sounds\Skills\ElementalMagic_sound.wav" />
+    <Media Include="Sounds\Skills\Judgement_sound.wav" />
+    <Media Include="Sounds\Skills\Triplehit_sound.wav" />
+    <Media Include="Sounds\Skills\Healing.wav" />
+    <Media Include="Sounds\Move_map.wav" />
   </ItemGroup>
 </Project>

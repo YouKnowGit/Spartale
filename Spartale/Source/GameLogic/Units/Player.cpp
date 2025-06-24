@@ -22,22 +22,29 @@ void Player::Initialize()
     {
 		// Player 초기 Stats 설정
         MyStats->Level = 1;
-        MyStats->HP.BaseValue = 100.f;
-        MyStats->HP.CurrentValue = 100.f;
+        MyStats->HP.BaseValue = 200.f;
+        MyStats->HP.CurrentValue = 200.f;
         MyStats->MP.BaseValue = 75.f;
         MyStats->MP.CurrentValue = 75.f;
 
-        MyStats->Strength.BaseValue = 15.f;
-        MyStats->Strength.CurrentValue = 15.f;
-        MyStats->Agility.BaseValue = 10.f;
-        MyStats->Agility.CurrentValue = 10.f;
-        MyStats->Defence.BaseValue = 10.f;
-        MyStats->Defence.CurrentValue = 10.f;
-        MyStats->Intelligence.CurrentValue = 10.f;
-        MyStats->Intelligence.BaseValue = 10.f;
+        MyStats->Strength.BaseValue = 30.f;
+        MyStats->Strength.CurrentValue = 30.f;
+        MyStats->Agility.BaseValue = 15.f;
+        MyStats->Agility.CurrentValue = 15.f;
+        MyStats->Defence.BaseValue = 15.f;
+        MyStats->Defence.CurrentValue = 15.f;
+        MyStats->Intelligence.CurrentValue = 15.f;
+        MyStats->Intelligence.BaseValue = 15.f;
     }
     const std::vector<std::string> allSkillIDs = {
         "SK_NormalAttack",
+        "SK_PoisonCloud",
+        "SK_Fireball",
+        "SK_TripleSlash",
+        "SK_StrengthBuff",
+        "SK_AgilityDown",
+        "SK_Meditate",
+        "SK_Heal"
     };
     for (const auto& id : allSkillIDs)
     {
