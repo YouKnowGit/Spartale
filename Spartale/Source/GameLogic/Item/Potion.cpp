@@ -7,7 +7,7 @@ Potion::Potion(const std::string& name, int healAmount)
 }
 
 void Potion::use(Player& player) const {
-	std::cout << "Æ÷¼Ç »ç¿ë " << name << std::endl;
+	std::cout << "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ " << name << std::endl;
 	//player.heal(healAmount);
 }
 
