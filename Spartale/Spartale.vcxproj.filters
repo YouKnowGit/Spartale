@@ -127,8 +127,6 @@
     <Media Include="Sounds\Move_map.wav" />
     <Media Include="Sounds\Win.wav" />
     <Media Include="Sounds\Potion.wav" />
-    <Media Include="Sounds\Potion.wav" />
-    <Media Include="Sounds\Win.wav" />
     <Media Include="Sounds\Meet.wav" />
     <Media Include="Sounds\Levelup.wav" />
     <Media Include="Sounds\EnemyDown.wav" />
