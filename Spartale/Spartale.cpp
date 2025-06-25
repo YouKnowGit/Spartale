@@ -18,7 +18,9 @@ using namespace std;
 
 int main()
 {
+
     _setmode(_fileno(stdin), _O_U16TEXT);
+
     ConsoleUtils::ShowConsoleCursor(false);
 
     DataManager::GetInstance().LoadMonsterData("Data/Monsters.json");
@@ -49,6 +51,7 @@ int main()
                 PrintString(L"주인공의 이름을 입력해주세요: ", 30, 15);
 
                 ConsoleUtils::ShowConsoleCursor(true);
+
                 getline(std::wcin, name);
 
                 ConsoleUtils::ShowConsoleCursor(false);
