@@ -6,6 +6,7 @@
 #include "Utils/StringUtils.h"
 
 #include <sstream>
+#include <Windows.h>
 
 
 Player::Player(std::wstring name)
@@ -28,6 +29,9 @@ void Player::Initialize()
         MyStats->Level = 1;
         MyStats->HP.BaseValue = 200.f;
         MyStats->HP.CurrentValue = 200.f;
+
+
+        
         MyStats->MP.BaseValue = 75.f;
         MyStats->MP.CurrentValue = 75.f;
 
@@ -40,6 +44,22 @@ void Player::Initialize()
         MyStats->Intelligence.CurrentValue = 15.f;
         MyStats->Intelligence.BaseValue = 15.f;
     }
+    const std::vector<std::string> allSkillIDs = {
+        "SK_NormalAttack",
+        "SK_PoisonCloud",
+        "SK_Fireball",
+        "SK_TripleSlash",
+        "SK_StrengthBuff",
+        "SK_Meditate",
+        "SK_Heal",
+        "SK_ArcaneBlast",
+        "SK_AbyssalCollapse",
+        "SK_Judgment"
+    };
+    for (const auto& id : allSkillIDs)
+    {
+        GetAbilityComponent()->GrantAbility(SkillFactory::CreateSkill(id));
+    }
 
     // 기본 공격만 0번 슬롯에 장착
     GetAbilityComponent()->GrantAbility(SkillFactory::CreateSkill("SK_NormalAttack"));
@@ -50,7 +70,7 @@ void Player::Initialize()
     m_direction = Direction::DOWN;
 
 	// 시작 아이템으로 HP 포션을 3개 추가합니다.
-    GetInventory()->AddItem("consume_hp_potion_01", 3);
+    //GetInventory()->AddItem("consume_hp_potion_01", 3);
 }
 
 void Player::Update()
@@ -83,6 +103,21 @@ void Player::Save(std::ofstream& file) const
         this->AbilityComponent->GetAttributeSet()->Save(file);
         this->AbilityComponent->Save(file);
     }
+    file << "[Items]\n";
+    for (int i = 0; i < m_inventory.GetCapacity(); ++i)
+    {
+        const InventorySlot* slot = m_inventory.GetSlotAtIndex(i);
+        if (slot && slot->Quantity > 0)
+        {
+            file << "Slot" << i << ','
+                << slot->ItemID << ','
+                << slot->Quantity << '\n';
+        }
+        else
+        {
+            file << "Slot" << i << ",EMPTY\n";
+        }
+    }
 }
 void Player::Load(std::ifstream& file)
 {
@@ -101,6 +136,7 @@ void Player::Load(std::ifstream& file)
 
     std::string line;
     bool in_player_section = false;
+    bool in_items_section = false;
     while (std::getline(file, line))
     {
         if (line.empty()) continue;
@@ -109,10 +145,15 @@ void Player::Load(std::ifstream& file)
             in_player_section = true;
             continue;
         }
+        if (line == "[Items]") {
+            in_items_section = true;
+            continue;
+        }
 
         if (in_player_section && line[0] == '[') {
-            break;
+            in_player_section = false;
         }
+
 
         if (in_player_section)
         {
@@ -132,6 +173,21 @@ void Player::Load(std::ifstream& file)
                 int dirValue;
                 ss >> dirValue;
                 m_direction = static_cast<Direction>(dirValue);
+            }
+        }
+
+        if (in_items_section)
+        {
+            std::istringstream iss(line);
+            std::string slotLabel, itemID, quantityStr;
+
+            if (std::getline(iss, slotLabel, ',') && std::getline(iss, itemID, ',') && std::getline(iss, quantityStr))
+            {
+                if (itemID == "EMPTY")  continue;
+                int quantity = std::stoi(quantityStr);
+                int slotIndex = -1;
+                if (slotLabel.rfind("Slot", 0) == 0)    slotIndex = std::stoi(slotLabel.substr(4));
+                if (slotIndex != -1)    m_inventory.AddItem(itemID, quantity);
             }
         }
     }

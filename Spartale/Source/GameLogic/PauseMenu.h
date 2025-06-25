@@ -34,6 +34,7 @@ enum class EShopState
     MainMenu,           // 기본 메뉴 목록
     Shop_Buy,           // 상점 구매 화면
     Shop_Sell,           // 상점 판매 화면
+    Shop_Sell_Action,
     Shop_Exit           // 상점 나가기
 };
 class PauseMenu
@@ -61,6 +62,7 @@ private:
     void ProcessInventoryInput(int key);
     void ProcessInventoryActionInput(int key);
     void ProcessMainShopInput(int key);
+    void ProcessShopActionInput(int key);
 
     // UI를 그리는 헬퍼 함수
     void DrawPlayerInfo();
@@ -71,6 +73,8 @@ private:
     void DrawInventoryScreen();
 	void DrawInventoryActionMenu();
     void DrawShopOptions();
+    void DrawShopSellActionMenu();
+    //void DrawShopActionMenu();
 
     // 오른쪽 화면 Clear 함수
     void ClearRightPane();
@@ -97,6 +101,8 @@ private:
     int m_mainMenuSelection;
     int m_shopSelection;
     int m_statSelection;
+    int m_shopBuySelection = 0;
+    int m_shopSellSelection = 0;
     int m_skillBookSlotSelection;    // 스킬북: 현재 선택된 장착 슬롯 (0~3)
     int m_skillSelectionListCursor;  // 스킬 목록: 현재 선택된 스킬 커서
     int m_slotIndexToModify;         // 스킬을 장착할 슬롯 인덱스 임시 저장

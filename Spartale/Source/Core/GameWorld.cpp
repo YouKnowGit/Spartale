@@ -92,7 +92,8 @@ void GameWorld::ProcessInput()
             TileType tile = m_field.GetTileType(targetX, targetY);
             if (tile == TileType::NPC_Heal)
             {
-                // 여기 힐 사운드
+                PlaySound(NULL, NULL, SND_PURGE);
+                PlaySound(Healing, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP);// 힐 사운드
                 AttributeSet* stats = m_player->GetAbilityComponent()->GetAttributeSet();
                 stats->HP.CurrentValue = stats->HP.BaseValue;
                 stats->MP.CurrentValue = stats->MP.BaseValue;
@@ -170,6 +171,8 @@ void GameWorld::ProcessInput()
 
                 if (m_field.LoadMapFromFile(nextMapID))
                 {
+                    PlaySound(NULL, NULL, SND_PURGE);
+                    PlaySound(Warp, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP);
                     m_currentMapID = nextMapID;
                     m_player->SetMapID(m_currentMapID);
                     m_player->CurrentLocation = { destinationX, destinationY };
