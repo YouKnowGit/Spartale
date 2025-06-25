@@ -7,6 +7,7 @@
 #include "GameLogic/Items/EquipmentItem.h"
 #include "Core/TypeConverter.h"
 #include <sstream>
+#include <Windows.h>
 
 
 Player::Player(std::wstring name)
@@ -68,10 +69,6 @@ void Player::Initialize()
     CurrentLocation.X = 9;
     CurrentLocation.Y = 5;
     m_direction = Direction::DOWN;
-
-	// 시작 아이템으로 HP 포션을 3개와 청동 검을 추가합니다.
-    GetInventory()->AddItem("consume_hp_potion_01", 3);
-    GetInventory()->AddItem("equip_weapon_sword_01", 1);
 }
 
 void Player::Update()
@@ -104,6 +101,21 @@ void Player::Save(std::ofstream& file) const
         this->AbilityComponent->GetAttributeSet()->Save(file);
         this->AbilityComponent->Save(file);
     }
+    file << "[Items]\n";
+    for (int i = 0; i < m_inventory.GetCapacity(); ++i)
+    {
+        const InventorySlot* slot = m_inventory.GetSlotAtIndex(i);
+        if (slot && slot->Quantity > 0)
+        {
+            file << "Slot" << i << ','
+                << slot->ItemID << ','
+                << slot->Quantity << '\n';
+        }
+        else
+        {
+            file << "Slot" << i << ",EMPTY\n";
+        }
+    }
 }
 void Player::Load(std::ifstream& file)
 {
@@ -122,6 +134,7 @@ void Player::Load(std::ifstream& file)
 
     std::string line;
     bool in_player_section = false;
+    bool in_items_section = false;
     while (std::getline(file, line))
     {
         if (line.empty()) continue;
@@ -130,10 +143,15 @@ void Player::Load(std::ifstream& file)
             in_player_section = true;
             continue;
         }
+        if (line == "[Items]") {
+            in_items_section = true;
+            continue;
+        }
 
         if (in_player_section && line[0] == '[') {
-            break;
+            in_player_section = false;
         }
+
 
         if (in_player_section)
         {
@@ -153,6 +171,21 @@ void Player::Load(std::ifstream& file)
                 int dirValue;
                 ss >> dirValue;
                 m_direction = static_cast<Direction>(dirValue);
+            }
+        }
+
+        if (in_items_section)
+        {
+            std::istringstream iss(line);
+            std::string slotLabel, itemID, quantityStr;
+
+            if (std::getline(iss, slotLabel, ',') && std::getline(iss, itemID, ',') && std::getline(iss, quantityStr))
+            {
+                if (itemID == "EMPTY")  continue;
+                int quantity = std::stoi(quantityStr);
+                int slotIndex = -1;
+                if (slotLabel.rfind("Slot", 0) == 0)    slotIndex = std::stoi(slotLabel.substr(4));
+                if (slotIndex != -1)    m_inventory.AddItem(itemID, quantity);
             }
         }
     }

@@ -11,6 +11,7 @@
 #include <sstream> 
 #include <algorithm> // std::find
 #include <mmsystem.h>
+#include <Windows.h>
 
 #pragma comment(lib, "winmm.lib")
 
@@ -79,6 +80,7 @@ void PauseMenu::Render()
     case ERightPaneState::StatDistribution: DrawStatDistributionScreen(); break;
     case ERightPaneState::Inventory:        DrawInventoryScreen(); break;
     case ERightPaneState::InventoryActionSelection: DrawInventoryScreen(); DrawInventoryActionMenu(); break;
+    case ERightPaneState::InventoryDropQuantity: DrawInventoryScreen(); DrawInventoryActionMenu(); DrawInventoryDropPrompt(); break;
     case ERightPaneState::SkillBook:        DrawSkillBookScreen(); break;
     case ERightPaneState::SkillSelection:   DrawSkillSelectionScreen(); break;
     }
@@ -94,9 +96,11 @@ void PauseMenu::RenderShop()
     // --- 오른쪽 패널: 상태에 따라 다르게 그림 ---
     switch (m_currentShopState)
     {
-    case EShopState::MainMenu:         DrawShopOptions(); break;
-    case EShopState::Shop_Buy:         DrawStatDistributionScreen(); break;
-    case EShopState::Shop_Sell:        DrawInventoryScreen(); break;
+    case EShopState::MainMenu:          DrawShopOptions(); break;
+    case EShopState::Shop_Buy:          DrawStatDistributionScreen(); break;
+    case EShopState::Shop_Sell:         DrawInventoryScreen(); break;
+    case EShopState::Shop_Sell_Action:  DrawInventoryScreen(); DrawInventoryActionMenu(); break;
+    case EShopState::Shop_Sell_Action_Drop:  DrawInventoryScreen(); DrawInventoryActionMenu(); DrawInventoryDropPrompt(); break;
     }
 
     m_renderer.Render();
@@ -173,6 +177,12 @@ void PauseMenu::ProcessInputShop()
         case EShopState::Shop_Sell:
             m_currentShopState = EShopState::MainMenu;
             break;
+        case EShopState::Shop_Sell_Action:
+            m_currentShopState = EShopState::Shop_Sell;
+            break;
+        case EShopState::Shop_Sell_Action_Drop:
+            m_currentShopState = EShopState::Shop_Sell_Action;
+            break;
         case EShopState::Shop_Exit:
             m_bIsRunning = false;
             m_result = EPauseMenuResult::Resume;
@@ -185,6 +195,11 @@ void PauseMenu::ProcessInputShop()
     switch (m_currentShopState)
     {
         case EShopState::MainMenu:  ProcessMainShopInput(key); break;
+        case EShopState::Shop_Buy: break;
+        case EShopState::Shop_Sell: ProcessInventoryInput(key); break;
+        case EShopState::Shop_Sell_Action: ProcessShopActionInput(key); break;
+        case EShopState::Shop_Sell_Action_Drop: ProcessShopDropInput(key); break;
+
     }
 }
 
@@ -370,12 +385,13 @@ void PauseMenu::ProcessInventoryInput(int key)
     if (!inventory) return;
 
     const int capacity = inventory->GetCapacity();
-    const int visibleSlots = 8; // DrawInventoryScreen과 동일한 값
+    const int visibleSlots = 5; // DrawInventoryScreen과 동일한 값
 
     if (key == 224) // 방향키
     {
         key = _getch();
         PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+
         if (key == 72) // 위
         {
             m_inventorySlotSelection = (m_inventorySlotSelection == 0) ? capacity - 1 : m_inventorySlotSelection - 1;
@@ -401,10 +417,33 @@ void PauseMenu::ProcessInventoryInput(int key)
     }
     else if (key == 13) // 엔터
     {
-        const InventorySlot* slot = m_player.GetInventory()->GetSlotAtIndex(m_inventorySlotSelection);
-        if (slot && slot->Quantity > 0)
-        {
-            PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+        // 커서 변수 통일
+        if (m_currentPaneState == ERightPaneState::MainMenu)
+        {   // 상점 (판매)
+            const InventorySlot* slot = m_player.GetInventory()->GetSlotAtIndex(m_inventorySlotSelection);
+            if (slot && slot->Quantity > 0)
+            {
+                PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+
+                m_currentItemActions.clear();
+                const ItemData* data = DataManager::GetInstance().GetItemData(slot->ItemID);
+                m_currentItemActions.push_back(L"판매");
+                m_currentItemActions.push_back(L"취소");
+
+                m_currentShopState = EShopState::Shop_Sell_Action;
+                m_itemActionCursor = 0;
+            }
+            else
+            {
+                PlaySound(m_rejectSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+            }
+        }
+        else 
+        {   // 인벤토리
+            const InventorySlot* slot = m_player.GetInventory()->GetSlotAtIndex(m_inventorySlotSelection);
+            if (slot && slot->Quantity > 0)
+            {
+                PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
 
             m_currentItemActions.clear();
             const ItemData* data = slot->pItemData;
@@ -430,13 +469,15 @@ void PauseMenu::ProcessInventoryInput(int key)
             m_currentItemActions.push_back(L"버리기");
             m_currentItemActions.push_back(L"취소");
 
-            m_currentPaneState = ERightPaneState::InventoryActionSelection;
-            m_itemActionCursor = 0;
+                m_currentPaneState = ERightPaneState::InventoryActionSelection;
+                m_itemActionCursor = 0;
+            }
+            else
+            {
+                PlaySound(m_rejectSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+            }
         }
-        else
-        {
-            PlaySound(m_rejectSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
-        }
+        
     }
 }
 
@@ -469,11 +510,23 @@ void PauseMenu::DrawItemInfoBox()
     int contentY = boxY + 1;
 
     // 아이템 이름과 가격 표시
-    std::wstring title = L"[" + data->Name + L"]";
-    std::wstring price = std::to_wstring(data->Price) + L" G";
-    m_renderer.DrawString(contentX, contentY, title);
-    m_renderer.DrawString(contentX + boxWidth - price.length() - 1, contentY, price);
-    contentY++;
+    if (m_currentPaneState == ERightPaneState::MainMenu)
+    {
+        std::wstring title = L"[" + data->Name + L"]";
+        std::wstring price = std::to_wstring(static_cast<int>(data->Price * 0.6)) + L" G";
+        m_renderer.DrawString(contentX, contentY, title);
+        m_renderer.DrawString(contentX + boxWidth - price.length() - 1, contentY, price);
+        contentY++;
+    }
+    else
+    {
+        std::wstring title = L"[" + data->Name + L"]";
+        std::wstring price = std::to_wstring(data->Price) + L" G";
+        m_renderer.DrawString(contentX, contentY, title);
+        m_renderer.DrawString(contentX + boxWidth - price.length() - 1, contentY, price);
+        contentY++;
+
+    }
 
     // 아이템 설명 표시
     m_renderer.DrawString(contentX, contentY, data->Description);
@@ -678,13 +731,62 @@ void PauseMenu::DrawInventoryDropPrompt()
     int contentX = boxX + 2;
     int contentY = boxY + 1;
 
-    std::wstring prompt = L"[" + slot->pItemData->Name + L"] 버릴 수량 입력 (1-" + std::to_wstring(slot->Quantity) + L"):";
+    std::wstring prompt = L"[" + slot->pItemData->Name + L"] 수량 입력 (1-" + std::to_wstring(slot->Quantity) + L"):";
     m_renderer.DrawString(contentX, contentY, prompt);
 
     m_renderer.DrawString(contentX, contentY + 2, L"> " + m_dropQuantityInput);
 
     if (GetTickCount64() / 500 % 2 == 0) {
         m_renderer.Draw(contentX + 2 + m_dropQuantityInput.length(), contentY + 2, L'█');
+    }
+}
+
+void PauseMenu::ProcessShopDropInput(int key)
+{
+    if (key >= '0' && key <= '9') // 숫자 입력
+    {
+        // 5자리 이상은 입력 방지
+        if (m_dropQuantityInput.length() < 5)
+        {
+            m_dropQuantityInput += static_cast<wchar_t>(key);
+        }
+    }
+    else if (key == 8) // 백스페이스
+    {
+        if (!m_dropQuantityInput.empty())
+        {
+            m_dropQuantityInput.pop_back();
+        }
+    }
+    else if (key == 13) // 엔터: 버리기 확정
+    {
+        if (m_dropQuantityInput.empty()) return;
+
+        try {
+            int quantityToDrop = std::stoi(m_dropQuantityInput);
+            int currentQuantity = m_player.GetInventory()->GetSlotAtIndex(m_inventorySlotSelection)->Quantity;
+
+            const InventorySlot* slot = m_player.GetInventory()->GetSlotAtIndex(m_inventorySlotSelection);
+            const ItemData* data = DataManager::GetInstance().GetItemData(slot->ItemID);
+
+            // 유효한 수량인지 확인 (1 이상, 현재 가진 수량 이하)
+            if (quantityToDrop > 0 && quantityToDrop <= currentQuantity)
+            {
+                PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+                m_player.GetInventory()->RemoveItem(m_inventorySlotSelection, quantityToDrop);
+                m_player.GetAbilityComponent()->GetAttributeSet()->Gold += (static_cast<int>(data->Price * 0.6)) * quantityToDrop;
+                m_currentShopState = EShopState::Shop_Sell; // 인벤토리 목록으로 복귀
+            }
+            else { // 잘못된 수량 입력
+                PlaySound(m_rejectSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+                m_dropQuantityInput.clear(); // 입력 초기화
+            }
+        }
+        catch (const std::invalid_argument&) { // 숫자로 변환 불가
+            PlaySound(m_rejectSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+            m_dropQuantityInput.clear();
+        }
+        m_currentShopState = EShopState::Shop_Sell;
     }
 }
 
@@ -1046,8 +1148,8 @@ void PauseMenu::ProcessMainShopInput(int key)
         PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
         switch (m_shopSelection)
         {
-        case 0: m_currentShopState = EShopState::Shop_Buy; m_statSelection = 0; break;
-        case 1: m_currentShopState = EShopState::Shop_Sell; m_inventorySlotSelection = 0; break;
+        case 0: m_currentShopState = EShopState::Shop_Buy;  m_shopBuySelection = 0; break;
+        case 1: m_currentShopState = EShopState::Shop_Sell; m_shopSellSelection = 0; break;
         case 2: m_currentShopState = EShopState::Shop_Exit; m_bIsRunning = false; m_result = EPauseMenuResult::Resume; break;
         }
     }
@@ -1165,6 +1267,60 @@ void DrawBar(ConsoleRenderer& renderer, int x, int y, int width, float current, 
     }
 }
 
+void PauseMenu::ProcessShopActionInput(int key)
+{
+    if (m_currentItemActions.empty()) return;
+
+    if (key == 224) // 방향키
+    {
+        key = _getch();
+        //PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+        if (key == 72) // 위
+        {
+            m_itemActionCursor = (m_itemActionCursor == 0) ? m_currentItemActions.size() - 1 : m_itemActionCursor - 1;
+        }
+        else if (key == 80) // 아래
+        {
+            m_itemActionCursor = (m_itemActionCursor + 1) % m_currentItemActions.size();
+        }
+    }
+    else if (key == 13) // 엔터: 행동 선택
+    {
+        //PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+
+        std::wstring selectedAction = m_currentItemActions[m_itemActionCursor];
+
+        if (selectedAction == L"판매" )
+        {
+            const InventorySlot* slot = m_player.GetInventory()->GetSlotAtIndex(m_inventorySlotSelection);
+            const ItemData* data = DataManager::GetInstance().GetItemData(slot->ItemID);
+            if (slot && slot->Quantity > 0)
+            {
+                // 아이템 수량을 확인
+                if (slot->Quantity > 1)
+                {
+                    // 수량이 1개보다 많으면, '수량 입력' 상태로 전환
+                    PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+                    m_currentShopState = EShopState::Shop_Sell_Action_Drop;
+                    m_dropQuantityInput.clear();
+                }
+                else
+                {
+                    // 수량이 1개뿐이면, 바로 버리고 인벤토리 목록으로
+                    PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+                    m_player.GetInventory()->RemoveItem(m_inventorySlotSelection, 1);
+                    m_player.GetAbilityComponent()->GetAttributeSet()->Gold += static_cast<int>(data->Price * 0.6);
+                    m_currentShopState = EShopState::Shop_Sell;
+                }
+            }
+        }
+        else if (selectedAction == L"취소")
+        {
+            PlaySound(m_escSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+            m_currentShopState = EShopState::Shop_Sell;
+        }
+    }
+}
 
 // 우측 화면 지우는 함수
 void PauseMenu::ClearRightPane()
