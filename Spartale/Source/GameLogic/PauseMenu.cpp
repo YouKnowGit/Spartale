@@ -247,7 +247,8 @@ void PauseMenu::DrawStatDistributionScreen()
     for (size_t i = 0; i < statNames.size(); ++i)
     {
         int currentStatY = contentY + i * 2;
-        std::wstring cursor = L"  ";
+        std::wstring cursor = L"  "; 
+        if (i == m_statSelection)   cursor = L"▶ ";
 
         // 스탯 이름 (왼쪽 정렬)
         m_renderer.DrawString(contentX, currentStatY, cursor + statNames[i]);
@@ -433,7 +434,7 @@ void PauseMenu::DrawInventoryScreen()
     if (!inventory) return;
 
     int boxX = m_renderer.GetWidth() / 2 + 5;
-    int boxY = 9; // 6
+    int boxY = 7; // 6
     int boxInnerWidth = 26;
     int boxHeight = 3;
     const int visibleSlots = 5; // 한 화면에 보여줄 아이템 개수
@@ -445,10 +446,10 @@ void PauseMenu::DrawInventoryScreen()
 
     // 스크롤바 그리기
     if (m_inventoryScrollOffset > 0) {
-        m_renderer.DrawString(boxX + boxInnerWidth + 2, boxY, L"▲");
+        m_renderer.DrawString(boxX + 15, boxY - 1, L"▲");
     }
     if (m_inventoryScrollOffset + visibleSlots < totalSlots) {
-        m_renderer.DrawString(boxX + boxInnerWidth + 2, boxY + (visibleSlots * (boxHeight + 1)) - 1, L"▼");
+        m_renderer.DrawString(boxX + 15, boxY + (visibleSlots * (boxHeight + 1)), L"▼");
     }
 
     // 아이템 목록 그리기
@@ -638,7 +639,7 @@ void PauseMenu::DrawSkillSelectionScreen()
             GameplayAbility* currentSkill = grantedAbilities[skillIndex].get();
 
             // 커서와 스킬 기본 텍스트를 준비
-            std::wstring cursor = (skillIndex == m_skillSelectionListCursor) ? L"▶ " : L"  ";
+            std::wstring cursor = (skillIndex == m_skillSelectionListCursor) ? L"▶  " : L"   ";
             std::wstring skillText = cursor + currentSkill->AbilityName;
 
             bool bIsEquipped = IsSkillEquipped(currentSkill);
