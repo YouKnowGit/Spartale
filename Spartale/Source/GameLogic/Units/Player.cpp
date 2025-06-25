@@ -4,7 +4,8 @@
 #include "Framework/AbilitySystem/AttributeSet.h"
 #include "Framework/AbilitySystem/GameplayAbility.h"
 #include "Utils/StringUtils.h"
-
+#include "GameLogic/Items/EquipmentItem.h"
+#include "Core/TypeConverter.h"
 #include <sstream>
 #include <Windows.h>
 
@@ -68,9 +69,6 @@ void Player::Initialize()
     CurrentLocation.X = 9;
     CurrentLocation.Y = 5;
     m_direction = Direction::DOWN;
-
-	// 시작 아이템으로 HP 포션을 3개 추가합니다.
-    //GetInventory()->AddItem("consume_hp_potion_01", 3);
 }
 
 void Player::Update()
@@ -132,7 +130,7 @@ void Player::Load(std::ifstream& file)
     }
 
     file.clear();
-    file.seekg(0, std::ios::beg); 
+    file.seekg(0, std::ios::beg);
 
     std::string line;
     bool in_player_section = false;
@@ -191,4 +189,150 @@ void Player::Load(std::ifstream& file)
             }
         }
     }
+}
+
+void Player::AddStatModifiers(const std::map<EStatType, float>& bonuses)
+{
+    AttributeSet* myStats = GetAbilityComponent()->GetAttributeSet();
+    if (!myStats) return;
+
+    for (const auto& pair : bonuses)
+    {
+        EStatType statTypeEnum = pair.first;
+        float bonusValue = pair.second;
+        std::string statKeyString = StatTypeToString(statTypeEnum);
+        if (statKeyString.empty()) continue;
+
+        auto it = myStats->AttributeMap.find(statKeyString);
+        if (it != myStats->AttributeMap.end())
+        {
+            // 장비로 인한 스탯 변동은 BaseValue와 CurrentValue 모두에 영향을 줄 수 있음
+            // (예: 최대 HP 증가) 여기서는 CurrentValue만 수정하는 것으로 단순화
+            it->second->CurrentValue += bonusValue;
+        }
+    }
+}
+
+void Player::RemoveStatModifiers(const std::map<EStatType, float>& bonuses)
+{
+    AttributeSet* myStats = GetAbilityComponent()->GetAttributeSet();
+    if (!myStats) return;
+
+    for (const auto& pair : bonuses)
+    {
+        EStatType statTypeEnum = pair.first;
+        float bonusValue = pair.second;
+        std::string statKeyString = StatTypeToString(statTypeEnum);
+        if (statKeyString.empty()) continue;
+
+        auto it = myStats->AttributeMap.find(statKeyString);
+        if (it != myStats->AttributeMap.end())
+        {
+            // 보너스 값을 다시 빼줌
+            it->second->CurrentValue -= bonusValue;
+        }
+    }
+}
+
+void Player::Heal(float amount)
+{
+	AttributeSet* stats = GetAbilityComponent()->GetAttributeSet();
+    if (stats)
+    {
+        stats->HP.CurrentValue += amount;
+		// HP가 최대치를 넘지 않도록 제한
+        if (stats->HP.CurrentValue > stats->HP.BaseValue)
+        {
+            stats->HP.CurrentValue = stats->HP.BaseValue;
+		}
+    }
+}
+
+// 아이템 장착 해제 함수
+bool Player::Unequip(int slotIndex)
+{
+    InventoryComponent* inventory = GetInventory();
+    if (!inventory || slotIndex < 0) return false;
+
+    // 슬롯 정보를 직접 수정해야 하므로, const가 아닌 일반 포인터를 가져옵니다.
+    // (이를 위해 GetSlotAtIndex_Mutable() 같은 함수가 필요할 수 있습니다. 
+    //  지금은 vector에 직접 접근하는 것으로 가정)
+    InventorySlot* slot = inventory->GetSlotAtIndex_Mutable(slotIndex);
+
+    if (!slot || !slot->bIsEquipped) return false; // 장착된 아이템이 아니면 해제할 수 없음
+
+    const ItemData* data = slot->pItemData;
+    if (!data || data->Type != EItemType::Equipment) return false;
+
+    // 1. 스탯 보너스를 제거합니다.
+    RemoveStatModifiers(data->EquipmentData.StatBonuses);
+
+    // 2. Player의 장착 슬롯 인덱스를 초기화합니다.
+    switch (data->EquipmentData.Type)
+    {
+    case EEquipmentType::WEAPON: m_equippedWeaponSlot = -1; break;
+    case EEquipmentType::ARMOR:  m_equippedArmorSlot = -1; break;
+    case EEquipmentType::ACCESSORY: m_equippedAccessorySlot = -1; break;
+    }
+
+    // 3. 인벤토리 슬롯의 상태를 '장착 해제'로 변경합니다.
+    slot->bIsEquipped = false;
+
+    return true;
+}
+
+// 아이템 장착 함수
+bool Player::Equip(int slotIndex)
+{
+    InventoryComponent* inventory = GetInventory();
+    if (!inventory || slotIndex < 0) return false;
+    InventorySlot* slotToEquip = inventory->GetSlotAtIndex_Mutable(slotIndex);
+
+    // 슬롯이 비어있거나, 장비 아이템이 아니면 장착 불가
+    if (!slotToEquip || slotToEquip->Quantity <= 0 || !slotToEquip->pItemData || slotToEquip->pItemData->Type != EItemType::Equipment)
+    {
+        return false;
+    }
+
+    const ItemData* data = slotToEquip->pItemData;
+    EEquipmentType type = data->EquipmentData.Type;
+
+    // 1. 같은 부위에 이미 다른 아이템이 장착되어 있다면, 먼저 해제
+    int oldEquippedSlot = -1;
+    switch (type)
+    {
+    case EEquipmentType::WEAPON: oldEquippedSlot = m_equippedWeaponSlot; break;
+    case EEquipmentType::ARMOR:  oldEquippedSlot = m_equippedArmorSlot; break;
+    case EEquipmentType::ACCESSORY: oldEquippedSlot = m_equippedAccessorySlot; break;
+    }
+    if (oldEquippedSlot != -1)
+    {
+        Unequip(oldEquippedSlot);
+    }
+
+    // 2. 새로운 아이템의 스탯 보너스를 적용
+    AddStatModifiers(data->EquipmentData.StatBonuses);
+
+    // 3. Player의 장착 슬롯에 새 아이템의 인덱스를 기억
+    switch (type)
+    {
+    case EEquipmentType::WEAPON: m_equippedWeaponSlot = slotIndex; break;
+    case EEquipmentType::ARMOR:  m_equippedArmorSlot = slotIndex; break;
+    case EEquipmentType::ACCESSORY: m_equippedAccessorySlot = slotIndex; break;
+    }
+
+    // 4. 인벤토리 슬롯의 상태를 '장착 중'으로 변경
+    slotToEquip->bIsEquipped = true;
+
+    return true;
+}
+
+bool Player::IsSlotEquipped(int slotIndex) const
+{
+    if (slotIndex < 0) return false;
+
+    return (slotIndex == m_equippedWeaponSlot ||
+            slotIndex == m_equippedArmorSlot || 
+		    slotIndex == m_equippedAccessorySlot);
+    
 }

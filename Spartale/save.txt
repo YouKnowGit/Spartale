@@ -1,16 +1,16 @@
 [Player]
-Name asd
+Name dd
 MapID 0
-PosX 9
-PosY 7
-Direction 1
+PosX 28
+PosY 1
+Direction 3
 [Attributes]
 Level 1
 Gold 0
 AdditionalStatPoints 0
 Experience 0 0
-HP 200 200
-MP 75 75
+HP 260 260
+MP 130 130
 Strength 30 30
 Agility 15 15
 Intelligence 15 15
@@ -36,9 +36,9 @@ NULL
 NULL
 NULL
 [Items]
-Slot0,consume_hp_potion_01,3
-Slot1,EMPTY
-Slot2,EMPTY
+Slot0,consume_hp_potion_01,6
+Slot1,equip_weapon_sword_01,1
+Slot2,equip_weapon_sword_01,1
 Slot3,EMPTY
 Slot4,EMPTY
 Slot5,EMPTY
