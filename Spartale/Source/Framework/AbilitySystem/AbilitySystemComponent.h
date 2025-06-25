@@ -72,4 +72,6 @@ protected:
 
     // 이 캐릭터에게 현재 적용 중인 모든 지속/영구 효과 목록 (게시판 역할)
     std::vector<FActiveGameplayEffect> ActiveEffects;
+
+    const wchar_t* Levelup = L"Sounds/Levelup.wav";
 };
