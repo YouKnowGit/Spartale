@@ -345,8 +345,12 @@ void PauseMenu::DrawStatDistributionScreen()
     for (size_t i = 0; i < statNames.size(); ++i)
     {
         int currentStatY = contentY + i * 2;
+<<<<<<< HEAD
         std::wstring cursor = L"  "; 
         if (i == m_statSelection)   cursor = L"▶ ";
+=======
+        std::wstring cursor = L"  ";
+>>>>>>> c91c5f2 (fix: 레벨별 스킬 습득 로직, 스킬 사용 로그)
 
         // 스탯 이름 (왼쪽 정렬)
         m_renderer.DrawString(contentX, currentStatY, cursor + statNames[i]);
@@ -530,7 +534,11 @@ void PauseMenu::DrawInventoryScreen()
     if (!inventory) return;
 
     int boxX = m_renderer.GetWidth() / 2 + 5;
+<<<<<<< HEAD
     int boxY = 7; // 6
+=======
+    int boxY = 9; // 6
+>>>>>>> c91c5f2 (fix: 레벨별 스킬 습득 로직, 스킬 사용 로그)
     int boxInnerWidth = 26;
     int boxHeight = 3;
     const int visibleSlots = 5; // 한 화면에 보여줄 아이템 개수

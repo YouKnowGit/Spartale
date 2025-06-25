@@ -43,6 +43,7 @@ void Player::Initialize()
         MyStats->Intelligence.CurrentValue = 15.f;
         MyStats->Intelligence.BaseValue = 15.f;
     }
+<<<<<<< HEAD
     const std::vector<std::string> allSkillIDs = {
         "SK_NormalAttack",
         "SK_PoisonCloud",
@@ -62,6 +63,12 @@ void Player::Initialize()
 
     // 기본 공격만 0번 슬롯에 장착
     GetAbilityComponent()->GrantAbility(SkillFactory::CreateSkill("SK_NormalAttack"));
+=======
+
+    // 기본 공격만 0번 슬롯에 장착
+    GetAbilityComponent()->GrantAbility(SkillFactory::CreateSkill("SK_NormalAttack"));
+    GetAbilityComponent()->EquipAbility(0, this->GetAbilityComponent()->GetGrantedAbility(0));
+>>>>>>> c91c5f2 (fix: 레벨별 스킬 습득 로직, 스킬 사용 로그)
 
     // Player 위치 및 방향 관련 데이터
     CurrentLocation.X = 9;
