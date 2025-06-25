@@ -32,11 +32,7 @@ void GameWorld::Initialize()
     // 렌더러 초기화
     m_renderer.Initialize();
 
-    // 첫 맵 로드 및 플레이어 위치 설정
-    m_player->CurrentLocation = { 9, 5 };
-
-
-    if (!m_field.LoadMapFromFile(0)) {
+    if (!m_field.LoadMapFromFile(m_player->GetMapID())) {
         std::wcout << L"맵 불러오기 실패" << std::endl;
     }
 }
@@ -96,18 +92,23 @@ void GameWorld::ProcessInput()
             TileType tile = m_field.GetTileType(targetX, targetY);
             if (tile == TileType::NPC_Heal)
             {
-                // 여기 힐 사운드
+                PlaySound(NULL, NULL, SND_PURGE);
+                PlaySound(Healing, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP);// 힐 사운드
                 AttributeSet* stats = m_player->GetAbilityComponent()->GetAttributeSet();
                 stats->HP.CurrentValue = stats->HP.BaseValue;
                 stats->MP.CurrentValue = stats->MP.BaseValue;
             }
             else if (tile == TileType::NPC_Shop) 
             {
-
-            }
-            else if (tile == TileType::NPC_Skill)
-            {
-
+                PauseMenu pauseMenu(m_renderer, *m_player);
+                EPauseMenuResult result = pauseMenu.Shop();
+                if (result == EPauseMenuResult::GoToMainMenu)
+                {
+                    m_bIsRunning = false; // GameWorld 루프를 종료하여 메인 메뉴로 돌아가게 함
+                }
+                // EPauseMenuResult::Resume의 경우, 아무것도 하지 않으면
+                // 이 함수가 끝나고 GameLoop가 계속되므로 자연스럽게 게임으로 복귀됩니다.
+                return; // PauseMenu가 끝난 후 다른 키 입력이 처리되지 않도록 return
             }
 
         }
@@ -170,7 +171,10 @@ void GameWorld::ProcessInput()
 
                 if (m_field.LoadMapFromFile(nextMapID))
                 {
+                    PlaySound(NULL, NULL, SND_PURGE);
+                    PlaySound(Warp, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP);
                     m_currentMapID = nextMapID;
+                    m_player->SetMapID(m_currentMapID);
                     m_player->CurrentLocation = { destinationX, destinationY };
                 }
             }

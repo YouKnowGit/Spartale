@@ -40,4 +40,6 @@ private:
     std::uniform_real_distribution<float> m_dist;
 
     const wchar_t* Move_map = L"Sounds/Move_map.wav";
+    const wchar_t* Healing = L"Sounds/Healing.wav";
+    const wchar_t* Warp = L"Sounds/warp.wav";
 };

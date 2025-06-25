@@ -4,7 +4,7 @@
 #include <map>
 #include <json.hpp> 
 #include "Core/Global.h" // FMapLocation 
-#include "Framework/Inventory/ItemData.h"
+#include "GameLogic/Items/ItemData.h"
 
 struct EffectData
 {

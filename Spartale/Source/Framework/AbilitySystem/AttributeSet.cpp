@@ -1,5 +1,8 @@
 #include "Framework/AbilitySystem/AttributeSet.h"
 #include "Framework/AbilitySystem/AbilitySystemComponent.h"
+#include <fstream>
+#include <string>
+#include <sstream> 
 
 AttributeSet::AttributeSet(AbilitySystemComponent* OwnerComp)
 	: OwningAbilitySystemComponent(OwnerComp) // 멤버 이니셜라이저를 사용해 OwningAbilitySystemComponent 초기화
@@ -76,4 +79,66 @@ void AttributeSet::AdjustDependentAttributes()
         MP.CurrentValue += mpIncrease;
     }
     MP.CurrentValue = std::min(MP.CurrentValue, MP.BaseValue);
+}
+void AttributeSet::Save(std::ofstream& file) const
+{
+    file << "[Attributes]\n";
+
+    // int
+    file << "Level " << Level << '\n';
+    file << "Gold " << Gold << '\n';
+    file << "AdditionalStatPoints " << AdditionalStatPoints << '\n';
+
+    // FAttributeData
+    file << "Experience " << Experience.BaseValue << " " << Experience.CurrentValue << '\n';
+    file << "HP " << HP.BaseValue << " " << HP.CurrentValue << '\n';
+    file << "MP " << MP.BaseValue << " " << MP.CurrentValue << '\n';
+    file << "Strength " << Strength.BaseValue << " " << Strength.CurrentValue << '\n';
+    file << "Agility " << Agility.BaseValue << " " << Agility.CurrentValue << '\n';
+    file << "Intelligence " << Intelligence.BaseValue << " " << Intelligence.CurrentValue << '\n';
+    file << "Defence " << Defence.BaseValue << " " << Defence.CurrentValue << '\n';
+    file << "MagicResistance " << MagicResistance.BaseValue << " " << MagicResistance.CurrentValue << '\n';
+    file << "CriticalHitChance " << CriticalHitChance.BaseValue << " " << CriticalHitChance.CurrentValue << '\n';
+    file << "CriticalHitDamageMultiplier " << CriticalHitDamageMultiplier.BaseValue << " " << CriticalHitDamageMultiplier.CurrentValue << '\n';
+
+
+}
+void AttributeSet::Load(std::ifstream& file)
+{
+    std::string line;
+    while (std::getline(file, line))
+    {
+        if (line.empty())   continue;
+
+        if (line[0] == '[') {
+            file.seekg(static_cast<long>(file.tellg()) - static_cast<long>(line.length()) - 1);
+            break;
+        }
+
+        std::stringstream ss(line);
+        std::string key;
+        ss >> key;
+
+        if (key == "Level") ss >> Level;
+        else if (key == "Gold") ss >> Gold;
+        else if (key == "AdditionalStatPoints") ss >> AdditionalStatPoints;
+        else if (key == "Experience") ss >> Experience.BaseValue >> Experience.CurrentValue;
+        else if (key == "HP") ss >> HP.BaseValue >> HP.CurrentValue;
+        else if (key == "MP") ss >> MP.BaseValue >> MP.CurrentValue;
+        else if (key == "Strength") ss >> Strength.BaseValue >> Strength.CurrentValue;
+        else if (key == "Agility") ss >> Agility.BaseValue >> Agility.CurrentValue;
+        else if (key == "Intelligence") ss >> Intelligence.BaseValue >> Intelligence.CurrentValue;
+        else if (key == "Defence") ss >> Defence.BaseValue >> Defence.CurrentValue;
+        else if (key == "MagicResistance") ss >> MagicResistance.BaseValue >> MagicResistance.CurrentValue;
+        else if (key == "CriticalHitChance") ss >> CriticalHitChance.BaseValue >> CriticalHitChance.CurrentValue;
+        else if (key == "CriticalHitDamageMultiplier") ss >> CriticalHitDamageMultiplier.BaseValue >> CriticalHitDamageMultiplier.CurrentValue;
+        else if (key == "bIsDefending")
+        {
+            int defendingFlag;
+            ss >> defendingFlag;
+            bIsDefending = (defendingFlag == 1);
+        }
+    }
+
+    AdjustDependentAttributes();
 }

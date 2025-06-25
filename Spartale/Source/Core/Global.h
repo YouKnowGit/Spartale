@@ -61,7 +61,8 @@ enum class EGameState
     MainMenu,
     PauseMenu,
     Iventory,
-    Quit
+    Quit,
+    LoadGame
 };
 
 // 전투 결과를 표시하는 열거형

@@ -9,6 +9,8 @@
 #include "GameLogic/Units/Player.h"
 #include "GameLogic/DataManager.h"
 #include "GameLogic/MainMenu.h"
+#include "GameLogic/SaveManager.h"
+#include "Framework/AbilitySystem/AbilitySystemComponent.h"
 
 void PrintString(const std::wstring& text, SHORT x, SHORT y);
 
@@ -16,8 +18,9 @@ using namespace std;
 
 int main()
 {
-    _setmode(_fileno(stdin),_O_U16TEXT);
-    //_setmode(_fileno(stdout),_O_U16TEXT);
+
+    _setmode(_fileno(stdin), _O_U16TEXT);
+
     ConsoleUtils::ShowConsoleCursor(false);
 
     DataManager::GetInstance().LoadMonsterData("Data/Monsters.json");
@@ -33,6 +36,7 @@ int main()
         switch (currentState)
         {
             case EGameState::MainMenu:
+            
             {
                 MainMenu menu(renderer);
                 currentState = menu.Run();
@@ -47,13 +51,31 @@ int main()
                 PrintString(L"주인공의 이름을 입력해주세요: ", 30, 15);
 
                 ConsoleUtils::ShowConsoleCursor(true);
-                getline(wcin, name);
+
+                getline(std::wcin, name);
 
                 ConsoleUtils::ShowConsoleCursor(false);
                 auto player = make_unique<Player>(name);
+                player->GetAbilityComponent()->EquipAbility(0, player->GetAbilityComponent()->GetGrantedAbility(0));
+
+                // 시작 아이템으로 HP 포션을 3개와 청동 검을 추가합니다.
+                player->GetInventory()->AddItem("consume_hp_potion_01", 3);
+                player->GetInventory()->AddItem("equip_weapon_sword_01", 1);
                 GameWorld world(std::move(player));
                 world.Run();
 
+                currentState = EGameState::MainMenu;
+                break;
+            }
+            case EGameState::LoadGame:
+            {
+
+                auto loadPlayer = make_unique<Player>(L" ");
+                SaveManager sm(*loadPlayer);
+                sm.LoadGame("save.txt");
+
+                GameWorld world(std::move(loadPlayer));
+                world.Run();
                 currentState = EGameState::MainMenu;
                 break;
             }

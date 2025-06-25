@@ -21,6 +21,7 @@ public:
     // 스킬 이름 및 설명
     std::wstring AbilityName;
     std::wstring AbilityDescription;
+    std::string ABID;
 
     // 사용 비용 및 쿨타임
     float ManaCost = 0.0f;
@@ -55,6 +56,8 @@ public:
     virtual std::wstring ActivateAbility(AbilitySystemComponent* SourceASC, Actor* Target) = 0;
 
     virtual void InitializeFromData(const SkillData* data);
+
+    const std::string& GetID() const { return ABID; }
 
 protected:
     // 어빌리티가 생성될 때 필요한 이펙트들을 설정하는 헬퍼 함수

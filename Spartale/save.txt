@@ -1,0 +1,58 @@
+[Player]
+Name dd
+MapID 0
+PosX 28
+PosY 1
+Direction 3
+[Attributes]
+Level 1
+Gold 0
+AdditionalStatPoints 0
+Experience 0 0
+HP 260 260
+MP 130 130
+Strength 30 30
+Agility 15 15
+Intelligence 15 15
+Defence 15 15
+MagicResistance 0 0
+CriticalHitChance 0 0
+CriticalHitDamageMultiplier 0 0
+[GrantedAbilities]
+SK_NormalAttack
+SK_PoisonCloud
+SK_Fireball
+SK_TripleSlash
+SK_StrengthBuff
+SK_Meditate
+SK_Heal
+SK_ArcaneBlast
+SK_AbyssalCollapse
+SK_Judgment
+SK_NormalAttack
+[EquippedAbilities]
+SK_NormalAttack
+NULL
+NULL
+NULL
+[Items]
+Slot0,consume_hp_potion_01,6
+Slot1,equip_weapon_sword_01,1
+Slot2,equip_weapon_sword_01,1
+Slot3,EMPTY
+Slot4,EMPTY
+Slot5,EMPTY
+Slot6,EMPTY
+Slot7,EMPTY
+Slot8,EMPTY
+Slot9,EMPTY
+Slot10,EMPTY
+Slot11,EMPTY
+Slot12,EMPTY
+Slot13,EMPTY
+Slot14,EMPTY
+Slot15,EMPTY
+Slot16,EMPTY
+Slot17,EMPTY
+Slot18,EMPTY
+Slot19,EMPTY
