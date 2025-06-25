@@ -208,10 +208,7 @@
     <Media Include="Sounds\UI\menu_reject2.wav" />
     <Media Include="Sounds\UI\pausemenu_confirm.wav" />
     <Media Include="Sounds\UI\pausemenu_select.wav" />
-<<<<<<< HEAD
     <Media Include="Sounds\warp.wav" />
-=======
->>>>>>> 12c2fbf (fix: 레벨별 스킬 습득 로직, 스킬 사용 로그)
     <Media Include="Sounds\Win.wav" />
   </ItemGroup>
   <ItemGroup>

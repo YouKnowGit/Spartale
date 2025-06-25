@@ -125,25 +125,12 @@
     <Media Include="Sounds\Skills\Triplehit_sound.wav" />
     <Media Include="Sounds\Skills\Healing.wav" />
     <Media Include="Sounds\Move_map.wav" />
-<<<<<<< HEAD
     <Media Include="Sounds\Win.wav" />
     <Media Include="Sounds\Potion.wav" />
-<<<<<<< HEAD
-    <Media Include="Sounds\Potion.wav" />
-    <Media Include="Sounds\Win.wav" />
-=======
-=======
-    <Media Include="Sounds\Potion.wav" />
-    <Media Include="Sounds\Win.wav" />
->>>>>>> 12c2fbf (fix: 레벨별 스킬 습득 로직, 스킬 사용 로그)
->>>>>>> c91c5f2 (fix: 레벨별 스킬 습득 로직, 스킬 사용 로그)
     <Media Include="Sounds\Meet.wav" />
     <Media Include="Sounds\Levelup.wav" />
     <Media Include="Sounds\EnemyDown.wav" />
     <Media Include="Sounds\Buy_sell.wav" />
-<<<<<<< HEAD
     <Media Include="Sounds\warp.wav" />
-=======
->>>>>>> 12c2fbf (fix: 레벨별 스킬 습득 로직, 스킬 사용 로그)
   </ItemGroup>
 </Project>
