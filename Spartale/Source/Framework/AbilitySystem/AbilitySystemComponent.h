@@ -72,4 +72,17 @@ protected:
 
     // 이 캐릭터에게 현재 적용 중인 모든 지속/영구 효과 목록 (게시판 역할)
     std::vector<FActiveGameplayEffect> ActiveEffects;
+
+    // 각 레벨별 추가할 스킬 목록
+    const std::vector<std::string> allSkillIDs = {
+        "SK_Meditate",
+        "SK_StrengthBuff",
+        "SK_Fireball",
+        "SK_PoisonCloud",
+        "SK_ArcaneBlast",
+        "SK_TripleSlash",
+        "SK_Heal",
+        "SK_AbyssalCollapse",
+        "SK_Judgment"
+    };
 };
