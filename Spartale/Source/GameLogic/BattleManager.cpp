@@ -89,6 +89,8 @@ void BattleManager::Update()
     switch (m_battleState)
     {
     case EBattleState::Intro:
+        PlaySound(NULL, NULL, SND_PURGE);  // 이전사운드 중지
+        PlaySound(meet, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP); // 사운드 재생
         LogAndWait(L"야생의 " + m_monster->Name + L"이(가) 나타났다!");
         m_battleState = EBattleState::PlayerActionSelect; // 바로 플레이어 선택으로 전환
         break;
@@ -288,6 +290,8 @@ void BattleManager::CheckBattleStatus()
     {
         m_bIsBattleOver = true;
         m_battleResult = EBattleResult::PlayerWon; // 승리 상태로 설정
+        PlaySound(NULL, NULL, SND_PURGE);
+        PlaySound(win, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP); // 승리시 출력 사운드
     }
     else if (m_player->GetAbilityComponent()->GetAttributeSet()->HP.CurrentValue <= 0)
     {
@@ -323,6 +327,7 @@ void BattleManager::EndBattle()
                 + std::to_wstring(expGained) + L", "
                 + std::to_wstring(goldGained) + L" G를 획득했다!";
             LogAndWait(rewardMessage);
+
 
             // 레벨업 체크
             bool bLeveledUp = m_player->GetAbilityComponent()->CheckAndProcessLevelUp();
@@ -360,7 +365,8 @@ std::wstring BattleManager::DrawStatBar(const std::wstring& label, float current
 }
 void BattleManager::PlayIntroAnimation()
 {
-
+    PlaySound(NULL, NULL, SND_PURGE);
+    PlaySound(encounter, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP); // 인카운터 사운드
 
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < m_renderer.GetWidth() * m_renderer.GetHeight(); ++j) {

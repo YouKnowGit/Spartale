@@ -69,13 +69,14 @@
     <ClCompile Include="Source\GameLogic\PauseMenu.cpp" />
     <ClCompile Include="Source\GameLogic\Skills\GenericAbility.cpp" />
     <ClCompile Include="Source\GameLogic\Skills\SkillFactory.cpp" />
-    <ClCompile Include="Source\Framework\Inventory\IventoryComponent.cpp" />
     <ClCompile Include="Source\GameLogic\NPCMenu.cpp" />
+    <ClCompile Include="Source\Framework\Inventory\InventoryComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Monsters.json" />
     <None Include="Data\Skills.json" />
     <None Include="Data\Map.json" />
+    <None Include="Data\Item.json" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Utils\DamageUtils.h" />
@@ -122,5 +123,12 @@
     <Media Include="Sounds\Skills\Triplehit_sound.wav" />
     <Media Include="Sounds\Skills\Healing.wav" />
     <Media Include="Sounds\Move_map.wav" />
+    <Media Include="Sounds\Win.wav" />
+    <Media Include="Sounds\Potion.wav" />
+    <Media Include="Sounds\Meet.wav" />
+    <Media Include="Sounds\Levelup.wav" />
+    <Media Include="Sounds\EnemyDown.wav" />
+    <Media Include="Sounds\Buy_sell.wav" />
+    <Media Include="Sounds\warp.wav" />
   </ItemGroup>
 </Project>

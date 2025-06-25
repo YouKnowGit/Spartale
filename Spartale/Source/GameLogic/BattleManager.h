@@ -75,4 +75,7 @@ private:
     const wchar_t* m_navigateSoundPath;
     const wchar_t* m_confirmSoundPath;
     const wchar_t* m_escSoundPath;
+    const wchar_t* meet = L"Sounds/Meet.wav";
+    const wchar_t* win = L"Sounds/Win.wav";
+    const wchar_t* encounter = L"Sounds/enemy_encounter.wav";
 };
