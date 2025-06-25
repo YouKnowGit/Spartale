@@ -247,20 +247,14 @@ void PauseMenu::DrawStatDistributionScreen()
     for (size_t i = 0; i < statNames.size(); ++i)
     {
         int currentStatY = contentY + i * 2;
-        WORD attributes = 0x000F; // 기본 흰색
-        std::wstring cursor = L"  ";
-
-        if (i == m_statSelection)
-        {
-            attributes = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY; // 밝은 노란색
-            cursor = L"▶ ";
-        }
+        std::wstring cursor = L"  "; 
+        if (i == m_statSelection)   cursor = L"▶ ";
 
         // 스탯 이름 (왼쪽 정렬)
         m_renderer.DrawString(contentX, currentStatY, cursor + statNames[i]);
         // 스탯 값 (오른쪽 정렬)
         std::wstring valueStr = std::to_wstring(static_cast<int>(statValues[i]));
-        m_renderer.DrawString(boxX + boxInnerWidth - 1 - valueStr.length(), currentStatY, valueStr, attributes);
+        m_renderer.DrawString(boxX + boxInnerWidth - 1 - valueStr.length(), currentStatY, valueStr);
     }
 
     // 하단 안내 메시지 표시
@@ -440,10 +434,10 @@ void PauseMenu::DrawInventoryScreen()
     if (!inventory) return;
 
     int boxX = m_renderer.GetWidth() / 2 + 5;
-    int boxY = 6;
+    int boxY = 7; // 6
     int boxInnerWidth = 26;
     int boxHeight = 3;
-    const int visibleSlots = 8; // 한 화면에 보여줄 아이템 개수
+    const int visibleSlots = 5; // 한 화면에 보여줄 아이템 개수
 
     m_renderer.DrawString(boxX, boxY, L"      [ 인벤토리 ]");
     boxY += 2;
@@ -452,10 +446,10 @@ void PauseMenu::DrawInventoryScreen()
 
     // 스크롤바 그리기
     if (m_inventoryScrollOffset > 0) {
-        m_renderer.DrawString(boxX + boxInnerWidth + 2, boxY, L"▲");
+        m_renderer.DrawString(boxX + 15, boxY - 1, L"▲");
     }
     if (m_inventoryScrollOffset + visibleSlots < totalSlots) {
-        m_renderer.DrawString(boxX + boxInnerWidth + 2, boxY + (visibleSlots * (boxHeight + 1)) - 1, L"▼");
+        m_renderer.DrawString(boxX + 15, boxY + (visibleSlots * (boxHeight + 1)), L"▼");
     }
 
     // 아이템 목록 그리기
@@ -498,7 +492,8 @@ void PauseMenu::DrawInventoryScreen()
         }
     }
 
-    m_renderer.DrawString(m_renderer.GetWidth() / 2 + 3, m_renderer.GetHeight() - 4, L"[Enter: 선택 | ESC: 뒤로 가기]");
+    m_renderer.DrawString(m_renderer.GetWidth() / 2 + 3, m_renderer.GetHeight() - 2, L"[Enter: 선택 | ESC: 뒤로 가기]");
+    // 하단 안내 문구
 
     // 아이템 정보창은 항상 그림
     DrawItemInfoBox();
@@ -529,12 +524,14 @@ void PauseMenu::DrawInventoryActionMenu()
         std::wstring line = m_currentItemActions[i];
         if (i == m_itemActionCursor)
         {
-            line = L"▶ " + line;
-            m_renderer.DrawString(boxX + 2, boxY + 1 + i, line, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+            line = L"▶  " + line;
+            //m_renderer.DrawString(boxX + 2, boxY + 1 + i, line, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+            m_renderer.DrawString(boxX + 2, boxY + 1 + i, line);
+            // 제 기준 한글 깨져서 주석 처리
         }
         else
         {
-            line = L"  " + line;
+            line = L"   " + line;
             m_renderer.DrawString(boxX + 2, boxY + 1 + i, line);
         }
     }
@@ -604,7 +601,8 @@ void PauseMenu::DrawSkillBookScreen()
     }
 
     // 하단 안내 메시지
-    m_renderer.DrawString(m_renderer.GetWidth() / 2 + 3, m_renderer.GetHeight() - 4, L"[Enter: 스킬 변경 | ESC: 뒤로 가기]");
+    m_renderer.DrawString(m_renderer.GetWidth() / 2 + 3, m_renderer.GetHeight() - 2, L"[Enter: 스킬 변경 | ESC: 뒤로 가기]");
+    // 하단 안내 문구
 }
 
 void PauseMenu::DrawSkillSelectionScreen()
@@ -641,7 +639,7 @@ void PauseMenu::DrawSkillSelectionScreen()
             GameplayAbility* currentSkill = grantedAbilities[skillIndex].get();
 
             // 커서와 스킬 기본 텍스트를 준비
-            std::wstring cursor = (skillIndex == m_skillSelectionListCursor) ? L"▶ " : L"  ";
+            std::wstring cursor = (skillIndex == m_skillSelectionListCursor) ? L"▶  " : L"   ";
             std::wstring skillText = cursor + currentSkill->AbilityName;
 
             bool bIsEquipped = IsSkillEquipped(currentSkill);
