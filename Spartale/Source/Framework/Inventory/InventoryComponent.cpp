@@ -1,3 +1,5 @@
+#define NOMINMAX // std:: 매크로 충돌 방지 [ 사운드 파트의 매크로랑 겹침]
+
 #include "InventoryComponent.h"
 #include "GameLogic/Items/ItemData.h"
 #include "GameLogic/Items/ItemFactory.h"
@@ -6,6 +8,10 @@
 #include "GameLogic/Units/Player.h"
 #include <iostream> 
 #include <stdexcept>
+#include <windows.h>
+#include <mmsystem.h>
+
+#pragma comment(lib, "winmm.lib")
 
 // 생성자: 인벤토리의 칸(capacity) 수를 받아 초기화합니다.
 InventoryComponent::InventoryComponent(int capacity)
@@ -162,7 +168,8 @@ void InventoryComponent::UseItem(int slotIndex, Player* owner)
     }
     else
     {
-        // TODO: 사용 불가 시 에러 사운드 제생
+        PlaySound(NULL, NULL, 0); // 사용 불가 효과음 추가
+        PlaySound(rejectsound, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP);
     }
 }
 

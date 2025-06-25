@@ -131,6 +131,8 @@
     <Media Include="Sounds\Levelup.wav" />
     <Media Include="Sounds\EnemyDown.wav" />
     <Media Include="Sounds\Buy_sell.wav" />
+    <Media Include="Sounds\Skills\RapidStrike_sound.wav" />
     <Media Include="Sounds\warp.wav" />
+
   </ItemGroup>
 </Project>

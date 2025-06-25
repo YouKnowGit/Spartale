@@ -191,6 +191,7 @@ void BattleManager::Update()
 
     case EBattleState::EnemyTurn:
     {
+        m_monster->GetAbilityComponent()->GetAttributeSet()->MP = FAttributeData(5000);
         LogAndWait(m_monster->Name + L"의 턴!");
         LogAndWait(m_monster->RunAI(m_player));
 
@@ -306,8 +307,13 @@ void BattleManager::CheckBattleStatus()
 
 void BattleManager::EndBattle()
 {
+    //전투 종료 시 지속효과 클리어
+    m_player->GetAbilityComponent()->ClearAllActiveEffects();
+    m_monster->GetAbilityComponent()->ClearAllActiveEffects();
+
     switch (m_battleResult)
     {
+
         case EBattleResult::PlayerWon:
         {
             AttributeSet* playerStats = m_player->GetAbilityComponent()->GetAttributeSet();
@@ -315,8 +321,8 @@ void BattleManager::EndBattle()
             if (!playerStats || !monsterStats) break;
 
             // --- 보상 계산 ---
-            const float BaseExpPerLevel = 25.0f;
-            const float BaseGoldPerLevel = 77.0f;
+            const float BaseExpPerLevel = 50.0f;
+            const float BaseGoldPerLevel = 33.0f;
             std::uniform_real_distribution<float> rewardMultiplier(0.8f, 1.2f);
 
             int expGained = static_cast<int>(BaseExpPerLevel * monsterStats->Level * rewardMultiplier(m_rng));

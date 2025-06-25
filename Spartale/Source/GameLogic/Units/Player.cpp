@@ -119,6 +119,9 @@ void Player::Save(std::ofstream& file) const
 }
 void Player::Load(std::ifstream& file)
 {
+    file.clear();
+    file.seekg(0, std::ios::beg);
+
     if (AbilityComponent && AbilityComponent->GetAttributeSet())
     {
         AbilityComponent->GetAttributeSet()->Load(file);
@@ -128,9 +131,6 @@ void Player::Load(std::ifstream& file)
     {
         AbilityComponent->Load(file);
     }
-
-    file.clear();
-    file.seekg(0, std::ios::beg);
 
     std::string line;
     bool in_player_section = false;

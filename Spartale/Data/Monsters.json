@@ -3,233 +3,219 @@
     "name": "어린 고블린",
     "level": 1,
     "hp": 80,
-    "strength": 8,
+    "strength": 30,
     "agility": 3,
     "intelligence": 1,
-    "defence": 2,
+    "defence": 5,
     "magicResistance": 0,
     "skills": [
       "SK_NormalAttack"
     ],
     "loottable": [ "equip_armor_chest_01", "consume_hp_potion_01" ]
   },
-    "Fanged_Spider": {
-        "name": "독니 거미",
-        "level": 2,
-        "hp": 90,
-        "strength": 9,
-        "agility": 5,
-        "intelligence": 1,
-        "defence": 2,
-        "magicResistance": 0,
-        "skills": [
-            "SK_NormalAttack",
-            "SK_PoisonCloud"
-        ]
-    },
-    "Prairie_Wolf": {
-        "name": "초원 늑대",
-        "level": 3,
-        "hp": 100,
-        "strength": 11,
-        "agility": 7,
-        "intelligence": 1,
-        "defence": 3,
-        "magicResistance": 0,
-        "skills": [
-            "SK_TripleSlash"
-        ]
-    },
-    "Frail_Skeleton": {
-        "name": "약골 스켈레톤",
-        "level": 4,
-        "hp": 120,
-        "strength": 12,
-        "agility": 4,
-        "intelligence": 1,
-        "defence": 4,
-        "magicResistance": 1,
-        "skills": [
-            "SK_NormalAttack",
-            "SK_PoisonCloud",
-            "SK_Fireball",
-            "SK_TripleSlash"
-        ]
-    },
-    "Forest_Rogue": {
-        "name": "숲의 부랑자",
-        "level": 5,
-        "hp": 130,
-        "strength": 14,
-        "agility": 9,
-        "intelligence": 2,
-        "defence": 4,
-        "magicResistance": 1,
-        "skills": [
-            "SK_NormalAttack",
-            "SK_Heal",
-            "SK_StrengthBuff",
-            "SK_AgilityDown"
-        ]
-    },
-    "Stonehide_Dwarf": {
-        "name": "돌껍질 드워프",
-        "level": 6,
-        "hp": 160,
-        "strength": 16,
-        "agility": 5,
-        "intelligence": 2,
-        "defence": 6,
-        "magicResistance": 1,
-        "skills": [
-            "SK_NormalAttack",
-            "SK_PoisonCloud",
-            "SK_StrengthBuff",
-            "SK_AgilityDown"
-        ]
-    },
-    "Hound_Pack_Leader": {
-        "name": "사냥개 무리 우두머리",
-        "level": 7,
-        "hp": 170,
-        "strength": 18,
-        "agility": 12,
-        "intelligence": 2,
-        "defence": 5,
-        "magicResistance": 2,
-        "skills": [
-            "SK_NormalAttack",
-            "SK_AgilityDown",
-            "SK_StrengthBuff",
-            "SK_TripleSlash"
-        ]
-    },
-    "Gloomy_Zombie": {
-        "name": "음침한 좀비",
-        "level": 8,
-        "hp": 200,
-        "strength": 20,
-        "agility": 6,
-        "intelligence": 3,
-        "defence": 8,
-        "magicResistance": 2,
-        "skills": [
-            "SK_NormalAttack",
-            "SK_Heal",
-            "SK_StrengthBuff",
-            "SK_AgilityDown"
-        ]
-    },
-    "Shadow_Wisplight": {
-        "name": "어둠의 위스프",
-        "level": 9,
-        "hp": 180,
-        "strength": 12,
-        "agility": 7,
-        "intelligence": 12,
-        "defence": 5,
-        "magicResistance": 8,
-        "skills": [
-            "SK_NormalAttack",
-            "SK_AgilityDown",
-            "SK_StrengthBuff",
-            "SK_Heal"
-        ]
-    },
-    "Ironclad_Golem": {
-        "name": "무쇠 갑옷 골렘",
-        "level": 10,
-        "hp": 240,
-        "strength": 25,
-        "agility": 7,
-        "intelligence": 3,
-        "defence": 10,
-        "magicResistance": 3,
-        "skills": [
-            "SK_NormalAttack",
-            "SK_TripleSlash",
-            "SK_StrengthBuff",
-            "SK_AgilityDown"
-        ]
-    },
-    "Venom_Assassin": {
-        "name": "맹독 암살자",
-        "level": 11,
-        "hp": 220,
-        "strength": 28,
-        "agility": 18,
-        "intelligence": 3,
-        "defence": 7,
-        "magicResistance": 4,
-        "skills": [
-            "SK_NormalAttack",
-            "SK_PoisonCloud",
-            "SK_AgilityDown",
-            "SK_TripleSlash"
-        ]
-    },
-    "Frozen_Specter": {
-        "name": "얼어붙은 스펙터",
-        "level": 12,
-        "hp": 200,
-        "strength": 15,
-        "agility": 8,
-        "intelligence": 20,
-        "defence": 6,
-        "magicResistance": 15,
-        "skills": [
-            "SK_NormalAttack",
-            "SK_AgilityDown",
-            "SK_Meditate",
-            "SK_Fireball"
-        ]
-    },
-    "Orc_Warrior": {
-        "name": "오크 전사",
-        "level": 13,
-        "hp": 280,
-        "strength": 32,
-        "agility": 8,
-        "intelligence": 4,
-        "defence": 12,
-        "magicResistance": 5,
-        "skills": [
-            "SK_NormalAttack",
-            "SK_AgilityDown",
-            "SK_StrengthBuff",
-            "SK_TripleSlash"
-        ]
-    },
-    "Thunder_Hawk": {
-        "name": "번개 매",
-        "level": 14,
-        "hp": 250,
-        "strength": 35,
-        "agility": 25,
-        "intelligence": 4,
-        "defence": 8,
-        "magicResistance": 6,
-        "skills": [
-            "SK_NormalAttack",
-            "SK_AgilityDown",
-            "SK_TripleSlash",
-            "SK_StrengthBuff"
-        ]
-    },
-    "Ancient_Dragon": {
-        "name": "고대 드래곤",
-        "level": 15,
-        "hp": 460,
-        "strength": 18,
-        "agility": 9,
-        "intelligence": 30,
-        "defence": 7,
-        "magicResistance": 25,
-        "skills": [
-            "SK_NormalAttack",
-            "SK_Fireball",
-            "SK_PoisonCloud",
-            "SK_AgilityDown"
-        ]
-    }
+  "Fanged_Spider": {
+    "name": "독니 거미",
+    "level": 2,
+    "hp": 120,
+    "strength": 40,
+    "agility": 5,
+    "intelligence": 40,
+    "defence": 0,
+    "magicResistance": 0,
+    "skills": [
+      "SK_NormalAttack",
+      "SK_PoisonCloud"
+    ]
+  },
+  "Prairie_Wolf": {
+    "name": "초원 늑대",
+    "level": 3,
+    "hp": 160,
+    "strength": 30,
+    "agility": 7,
+    "intelligence": 1,
+    "defence": 0,
+    "magicResistance": 0,
+    "skills": [
+      "SK_NormalAttack",
+      "SK_TripleSlash"
+    ]
+  },
+  "Orc_Warrior": {
+    "name": "오크 전사",
+    "level": 5,
+    "hp": 300,
+    "strength": 50,
+    "agility": 8,
+    "intelligence": 4,
+    "defence": 10,
+    "magicResistance": 0,
+    "skills": [
+      "SK_NormalAttack",
+      "SK_StrengthBuff",
+      "SK_TripleSlash"
+    ]
+  },
+  "Forest_Rogue": {
+    "name": "숲의 부랑자",
+    "level": 6,
+    "hp": 360,
+    "strength": 60,
+    "agility": 9,
+    "intelligence": 60,
+    "defence": 0,
+    "magicResistance": 1,
+    "skills": [
+      "SK_NormalAttack",
+      "SK_Heal",
+      "SK_StrengthBuff"
+    ]
+  },
+  "Hound_Pack_Leader": {
+    "name": "사냥개 무리 우두머리",
+    "level": 5,
+    "hp": 320,
+    "strength": 60,
+    "agility": 12,
+    "intelligence": 2,
+    "defence": 0,
+    "magicResistance": 0,
+    "skills": [
+      "SK_NormalAttack",
+      "SK_TripleSlash"
+    ]
+  },
+  "Venom_Assassin": {
+    "name": "맹독 암살자",
+    "level": 7,
+    "hp": 420,
+    "strength": 80,
+    "agility": 18,
+    "intelligence": 100,
+    "defence": 10,
+    "magicResistance": 4,
+    "skills": [
+      "SK_StrengthBuff",
+      "SK_PoisonCloud"
+    ]
+  },
+  "Stonehide_Dwarf": {
+    "name": "돌껍질 드워프",
+    "level": 8,
+    "hp": 400,
+    "strength": 100,
+    "agility": 5,
+    "intelligence": 50,
+    "defence": 30,
+    "magicResistance": 0,
+    "skills": [
+      "SK_NormalAttack"
+    ]
+  },
+  "Thunder_Hawk": {
+    "name": "번개 매",
+    "level": 9,
+    "hp": 300,
+    "strength": 35,
+    "agility": 25,
+    "intelligence": 100,
+    "defence": 0,
+    "magicResistance": 20,
+    "skills": [
+      "SK_Heal",
+      "SK_ArcaneBlast",
+      "SK_Meditate"
+    ]
+  },
+  "Ironclad_Golem": {
+    "name": "무쇠 갑옷 골렘",
+    "level": 10,
+    "hp": 500,
+    "strength": 100,
+    "agility": 7,
+    "intelligence": 3,
+    "defence": 50,
+    "magicResistance": 0,
+    "skills": [
+      "SK_NormalAttack",
+      "SK_Judgment"
+    ]
+  },
+  "Frail_Skeleton": {
+    "name": "약골 스켈레톤",
+    "level": 10,
+    "hp": 440,
+    "strength": 60,
+    "agility": 4,
+    "intelligence": 90,
+    "defence": 20,
+    "magicResistance": 1,
+    "skills": [
+      "SK_NormalAttack",
+      "SK_PoisonCloud",
+      "SK_Fireball"
+    ]
+  },
+  "Gloomy_Zombie": {
+    "name": "음침한 좀비",
+    "level": 10,
+    "hp": 600,
+    "strength": 90,
+    "agility": 6,
+    "intelligence": 90,
+    "defence": 0,
+    "magicResistance": 2,
+    "skills": [
+      "SK_TripleSlash",
+      "SK_NormalAttack",
+      "SK_PoisonCloud"
+    ]
+  },
+  "Shadow_Wisplight": {
+    "name": "어둠의 위스프",
+    "level": 11,
+    "hp": 200,
+    "strength": 0,
+    "agility": 7,
+    "intelligence": 12,
+    "defence": 999,
+    "magicResistance": 120,
+    "skills": [
+      "SK_Meditate",
+      "SK_ArcaneBlast",
+      "SK_AbyssalCollapse"
+    ]
+  },
+  "Frozen_Specter": {
+    "name": "얼어붙은 스펙터",
+    "level": 12,
+    "hp": 600,
+    "strength": 120,
+    "agility": 8,
+    "intelligence": 150,
+    "defence": 20,
+    "magicResistance": 40,
+    "skills": [
+      "SK_PoisonCloud",
+      "SK_Meditate",
+      "SK_AbyssalCollapse",
+      "SK_Fireball"
+    ]
+  },
+  "Ancient_Dragon": {
+    "name": "고대 드래곤",
+    "level": 20,
+    "hp": 999,
+    "strength": 200,
+    "agility": 40,
+    "intelligence": 200,
+    "defence": 100,
+    "magicResistance": 100,
+    "skills": [
+      "SK_ArcaneBlast",
+      "SK_AbyssalCollapse",
+      "SK_TripleSlash",
+      "SK_Fireball"
+    ]
+  }
 }

@@ -15,12 +15,14 @@ Field::Field() : m_width(0), m_height(0) {}
 Field::~Field() {}
 
 // 파일에서 맵을 로드하는 함수
-bool Field::LoadMapFromFile(int mapId)
+bool Field::LoadMapFromFile(int mapId, int level)
 {
     // 데이터 초기화
     //m_npcs.clear();
     m_portals.clear();
     m_mapData.clear();
+    m_encounterList.clear();
+    playerLevel = level;
 
     // mapFilePath 를 통해 mapData 를 읽어오기
     std::string filename = "Data/Map.json";
@@ -71,7 +73,7 @@ bool Field::LoadMapFromFile(int mapId)
             case '#': m_mapData[y][x] = TileType::WALL;     break;
             case '*': m_mapData[y][x] = TileType::BUSH;     break;
             case 'P': m_mapData[y][x] = TileType::PORTAL;   break;
-            case '♠': m_mapData[y][x] = TileType::WOOD;     break;
+            case '~': m_mapData[y][x] = TileType::WOOD;     break; // 맵에서 ♠를 ~로 입력해서 바꿨습니다
             case 't': m_mapData[y][x] = TileType::CROSS;    break;
             case 'N': m_mapData[y][x] = TileType::NPC;      break;
             case '&': m_mapData[y][x] = TileType::TOTEM;    break;
@@ -131,11 +133,16 @@ void Field::Draw(Actor* player, ConsoleRenderer& renderer) const
             case TileType::CROSS:   charToDraw = L't'; break;
             case TileType::NPC:     charToDraw = L'N'; break;
             case TileType::TOTEM:   charToDraw = L'&'; break;
-            case TileType::BOSS:    charToDraw = L'B'; break;
+            case TileType::BOSS:    // BOSS 는 Player 의 레벨이 10일 때만 출력
+            {
+                if(playerLevel >= 10)   charToDraw = L'▼';
+                else    charToDraw = L'·';
+                break;
+            }
             case TileType::BOX:     charToDraw = L'■'; break;
             case TileType::NPC_Shop:    charToDraw = L'$'; break;
             case TileType::NPC_Skill:   charToDraw = L'@'; break;
-            case TileType::NPC_Heal:    charToDraw = L'!'; break;
+            case TileType::NPC_Heal:    charToDraw = L'♨'; break;
             }
             renderer.Draw(x * 2, y, charToDraw);
             if (m_mapData[y][x] == TileType::BUSH) { // 수풀은 2칸
@@ -164,7 +171,7 @@ bool Field::IsWalkable(int x, int y) const
     if (m_mapData[y][x] == TileType::WOOD) return false;
     if (m_mapData[y][x] == TileType::TOTEM) return false;
     if (m_mapData[y][x] == TileType::CROSS) return false;
-    if (m_mapData[y][x] == TileType::BOSS) return false;
+    if (m_mapData[y][x] == TileType::BOSS && playerLevel >= 10) return false;   // Player 레벨 10 제한
     if (m_mapData[y][x] == TileType::NPC_Heal) return false;
     if (m_mapData[y][x] == TileType::NPC_Shop) return false;
     if (m_mapData[y][x] == TileType::NPC_Skill) return false;

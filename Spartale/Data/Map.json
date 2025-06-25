@@ -130,7 +130,7 @@
         "##########",
         "#.~~~~~~.#",
         "#..~~~~..#",
-        "P....B...P",
+        "P....*...P",
         "P...~~...P",
         "#..~~~~..#",
         "#.~~~~~~.#",
@@ -167,7 +167,7 @@
           "destY": 13
         }
       ],
-        "encounterList": [ "Prairie_Wolf", "Frail_Skeleton", "Forest_Rogue" ]
+      "encounterList": [ "Orc_Warrior" ]
     },
     {
       "mapID": 3,
@@ -224,7 +224,7 @@
           "destY": 6
         }
       ],
-        "encounterList": [ "Forest_Rogue", "Stonehide_Dwarf", "Hound_Pack_Leader" ]
+        "encounterList": [ "Forest_Rogue", "Hound_Pack_Leader" ]
     },
     {
       "mapID": 4,
@@ -235,7 +235,7 @@
       },
       "tiles": [
         "####P####",
-        "#~~~.~~~#",
+        "#~~~*~~~#",
         "#~~~.~~~#",
         "#~~...~~#",
         "#~.....~#",
@@ -260,7 +260,7 @@
           "destY": 13
         }
       ],
-        "encounterList": [ "Hound_Pack_Leader", "Gloomy_Zombie", "Shadow_Wisplight" ]
+        "encounterList": [ "Venom_Assassin" ]
     },
     {
       "mapID": 5,
@@ -317,7 +317,7 @@
           "destY": 1
         }
       ],
-        "encounterList": [ "Shadow_Wisplight", "Ironclad_Golem" ]
+        "encounterList": [ "Stonehide_Dwarf", "Thunder_Hawk" ]
     },
     {
       "mapID": 6,
@@ -331,7 +331,7 @@
         "#.*****.&###",
         "#.*****.&###",
         "P.*****..&##",
-        "P..........P",
+        "P.........*P",
         "P.*****..&##",
         "#.*****.&###",
         "#.*****.&###",
@@ -368,7 +368,7 @@
           "destY": 3
         }
       ],
-        "encounterList": [ "Shadow_Wisplight", "Ironclad_Golem", "Venom_Assassin" ]
+        "encounterList": [ "Ironclad_Golem" ]
     },
     {
       "mapID": 7,
@@ -426,7 +426,7 @@
           "destY": 7
         }
       ],
-        "encounterList": [ "Frozen_Specter", "Orc_Warrior" ]
+      "encounterList": [ "Frail_Skeleton", "Gloomy_Zombie", "Shadow_Wisplight" ]
     },
     {
       "mapID": 8,
@@ -438,11 +438,11 @@
       "tiles": [
         "####P####",
         "#t.t*t.t#",
-        "#t.***.t#",
-        "#**t.t**#",
-        "#**t.t**#",
-        "#t.***.t#",
-        "#t.t*t.t#",
+        "#t.t.t.t#",
+        "#t.t.t.t#",
+        "#t.t.t.t#",
+        "#t.t.t.t#",
+        "#t.t.t.t#",
         "P.......#",
         "#########"
       ],
@@ -463,7 +463,7 @@
           "destY": 11
         }
       ],
-        "encounterList": [ "Orc_Warrior", "Thunder_Hawk" ]
+        "encounterList": [ "Frozen_Specter" ]
     },
     {
       "mapID": 9,

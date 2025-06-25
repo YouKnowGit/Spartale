@@ -59,8 +59,12 @@ public:
 
     std::wstring UpdateActiveEffects();
 
+
+    //전투 종료 시 지속효과 클리어
+    void ClearAllActiveEffects();
     void Save(std::ofstream& file) const;
     void Load(std::ifstream& file);
+
 
 protected:
     // 이 컴포넌트의 소유자 

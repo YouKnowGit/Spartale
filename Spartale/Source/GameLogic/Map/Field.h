@@ -21,7 +21,7 @@ public:
 	Field();
 	~Field();
 
-	bool LoadMapFromFile(int mapId);
+	bool LoadMapFromFile(int mapId, int level);
 
 	void Draw(Actor* player, ConsoleRenderer& renderer) const;
 	bool IsWalkable(int x, int y) const;
@@ -36,6 +36,7 @@ public:
 private:
 	int m_width;
 	int m_height;
+	int playerLevel;
 
 	std::vector<std::vector<TileType>> m_mapData;
 	std::map<std::pair<int, int>, Portal> m_portals;

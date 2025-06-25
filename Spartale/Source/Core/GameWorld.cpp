@@ -32,7 +32,7 @@ void GameWorld::Initialize()
     // 렌더러 초기화
     m_renderer.Initialize();
 
-    if (!m_field.LoadMapFromFile(m_player->GetMapID())) {
+    if (!m_field.LoadMapFromFile(m_player->GetMapID(), m_player->GetAbilityComponent()->GetAttributeSet()->Level)) {
         std::wcout << L"맵 불러오기 실패" << std::endl;
     }
 }
@@ -182,7 +182,7 @@ void GameWorld::ProcessInput()
 
                 std::string nextMap;
 
-                if (m_field.LoadMapFromFile(nextMapID))
+                if (m_field.LoadMapFromFile(nextMapID, m_player->GetAbilityComponent()->GetAttributeSet()->Level))
                 {
                     PlaySound(NULL, NULL, SND_PURGE);
                     PlaySound(Warp, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP);
