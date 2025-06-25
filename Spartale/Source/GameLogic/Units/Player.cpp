@@ -28,6 +28,9 @@ void Player::Initialize()
         MyStats->Level = 1;
         MyStats->HP.BaseValue = 200.f;
         MyStats->HP.CurrentValue = 200.f;
+
+
+        
         MyStats->MP.BaseValue = 75.f;
         MyStats->MP.CurrentValue = 75.f;
 
@@ -39,6 +42,22 @@ void Player::Initialize()
         MyStats->Defence.CurrentValue = 15.f;
         MyStats->Intelligence.CurrentValue = 15.f;
         MyStats->Intelligence.BaseValue = 15.f;
+    }
+    const std::vector<std::string> allSkillIDs = {
+        "SK_NormalAttack",
+        "SK_PoisonCloud",
+        "SK_Fireball",
+        "SK_TripleSlash",
+        "SK_StrengthBuff",
+        "SK_Meditate",
+        "SK_Heal",
+        "SK_ArcaneBlast",
+        "SK_AbyssalCollapse",
+        "SK_Judgment"
+    };
+    for (const auto& id : allSkillIDs)
+    {
+        GetAbilityComponent()->GrantAbility(SkillFactory::CreateSkill(id));
     }
 
     // 기본 공격만 0번 슬롯에 장착

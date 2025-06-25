@@ -10,7 +10,7 @@ InventoryComponent::InventoryComponent(int capacity)
 {
     // m_slots 벡터의 크기를 capacity 만큼 미리 할당하고, 빈 슬롯으로 초기화합니다.
     m_slots.resize(capacity);
-    std::cout << "InventoryComponent created with " << capacity << " slots." << std::endl;
+    //std::cout << "InventoryComponent created with " << capacity << " slots." << std::endl;
 }
 
 // 소멸자: 현재는 특별히 동적으로 할당한 메모리가 없으므로 비워둡니다.
