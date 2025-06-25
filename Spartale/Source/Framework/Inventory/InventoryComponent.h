@@ -39,6 +39,4 @@ private:
     void Compact();
 
     const wchar_t* rejectsound = L"Sounds/UI/menu_reject.wav";
-
-    int a = 0;
 };
