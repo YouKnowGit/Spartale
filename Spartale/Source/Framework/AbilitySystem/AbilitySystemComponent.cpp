@@ -17,6 +17,7 @@ AbilitySystemComponent::AbilitySystemComponent(Actor* Owner)
 
     // EquippedAbilities(전투 시 사용할 스킬 4개) 벡터를 미리 4칸(0, 1, 2, 3번 슬롯)으로 초기화
     EquippedAbilities.resize(4, nullptr);
+
 }
 
 // unique_ptr 사용하니 소멸자는 구현만
@@ -34,7 +35,7 @@ bool AbilitySystemComponent::CheckAndProcessLevelUp()
     if (!myStats) return false;
 
     // 레벨업에 필요한 경험치 공식 (예: 레벨 * 50)
-    float requiredExp = 50.0f * myStats->Level;
+    float requiredExp = 100.0f * myStats->Level; // 레벨 * 50 에서 레벨 * 100으로 수정
     bool bLeveledUp = false;
 
 
@@ -58,7 +59,7 @@ bool AbilitySystemComponent::CheckAndProcessLevelUp()
         myStats->AdditionalStatPoints += 5;
 
         // 기본 스탯 자동 상승
-        myStats->HP.BaseValue += (myStats->Level * 20);
+        //myStats->HP.BaseValue += (myStats->Level * 20);
         myStats->HP.CurrentValue = myStats->HP.BaseValue;
         myStats->MP.BaseValue += (myStats->Level * 10);
         myStats->MP.CurrentValue = myStats->MP.BaseValue;
@@ -66,18 +67,19 @@ bool AbilitySystemComponent::CheckAndProcessLevelUp()
         myStats->Strength.CurrentValue += 2;
         myStats->Agility.BaseValue += 1;
         myStats->Agility.CurrentValue += 1;
-        myStats->Intelligence.BaseValue += 1;
-        myStats->Intelligence.CurrentValue += 1;
+        myStats->Intelligence.BaseValue += 2;
+        myStats->Intelligence.CurrentValue += 2;
         myStats->Defence.BaseValue += 1.5;
         myStats->Defence.CurrentValue += 1.5;
         myStats->MagicResistance.BaseValue += 1.5;
+
         myStats->MagicResistance.CurrentValue += 1.5;
 
         // 스탯 변경에 따른 최대 HP/MP 재계산
         myStats->AdjustDependentAttributes();
 
         // 다음 레벨업에 필요한 경험치를 다시 계산
-        requiredExp = 100.0f + (50 * myStats->Level);
+        requiredExp = 100.0f + (100 * myStats->Level);
     }
 
     return bLeveledUp;
@@ -267,4 +269,10 @@ GameplayAbility* AbilitySystemComponent::GetGrantedAbility(int32_t Index) const
 const std::vector<std::unique_ptr<GameplayAbility>>& AbilitySystemComponent::GetGrantedAbilities() const
 {
     return GrantedAbilities;
+}
+
+//전투 종료 시 지속효과 클리어
+void AbilitySystemComponent::ClearAllActiveEffects()
+{
+    ActiveEffects.clear();
 }

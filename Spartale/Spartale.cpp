@@ -16,7 +16,7 @@ using namespace std;
 
 int main()
 {
-    //_setmode(_fileno(stdin),_O_U16TEXT);
+    _setmode(_fileno(stdin),_O_U16TEXT);
     //_setmode(_fileno(stdout),_O_U16TEXT);
     ConsoleUtils::ShowConsoleCursor(false);
 
@@ -47,7 +47,7 @@ int main()
                 PrintString(L"주인공의 이름을 입력해주세요: ", 30, 15);
 
                 ConsoleUtils::ShowConsoleCursor(true);
-                std::wcin >> name;
+                getline(wcin, name);
 
                 ConsoleUtils::ShowConsoleCursor(false);
                 auto player = make_unique<Player>(name);

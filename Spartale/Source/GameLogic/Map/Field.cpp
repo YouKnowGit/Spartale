@@ -21,6 +21,7 @@ bool Field::LoadMapFromFile(int mapId)
     //m_npcs.clear();
     m_portals.clear();
     m_mapData.clear();
+    m_encounterList.clear();
 
     // mapFilePath 를 통해 mapData 를 읽어오기
     std::string filename = "Data/Map.json";
@@ -71,7 +72,7 @@ bool Field::LoadMapFromFile(int mapId)
             case '#': m_mapData[y][x] = TileType::WALL;     break;
             case '*': m_mapData[y][x] = TileType::BUSH;     break;
             case 'P': m_mapData[y][x] = TileType::PORTAL;   break;
-            case '♠': m_mapData[y][x] = TileType::WOOD;     break;
+            case '~': m_mapData[y][x] = TileType::WOOD;     break; // 맵에서 ♠를 ~로 입력해서 바꿨습니다
             case 't': m_mapData[y][x] = TileType::CROSS;    break;
             case 'N': m_mapData[y][x] = TileType::NPC;      break;
             case '&': m_mapData[y][x] = TileType::TOTEM;    break;

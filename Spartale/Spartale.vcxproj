@@ -199,6 +199,7 @@
     <Media Include="Sounds\Skills\Judgement_sound.wav" />
     <Media Include="Sounds\Skills\normal_attack_sound.wav" />
     <Media Include="Sounds\Skills\PoisonCloud_sound.wav" />
+    <Media Include="Sounds\Skills\RapidStrike_sound.wav" />
     <Media Include="Sounds\Skills\Triplehit_sound.wav" />
     <Media Include="Sounds\UI\mainmenu_confirm.wav" />
     <Media Include="Sounds\UI\mainmenu_select.wav" />
