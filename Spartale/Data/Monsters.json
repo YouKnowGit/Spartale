@@ -1,17 +1,18 @@
 {
-    "Young_Goblin": {
-        "name": "어린 고블린",
-        "level": 1,
-        "hp": 80,
-        "strength": 8,
-        "agility": 3,
-        "intelligence": 1,
-        "defence": 2,
-        "magicResistance": 0,
-      "skills": [
-        "SK_NormalAttack"
-      ]
-    },
+  "Young_Goblin": {
+    "name": "어린 고블린",
+    "level": 1,
+    "hp": 80,
+    "strength": 8,
+    "agility": 3,
+    "intelligence": 1,
+    "defence": 2,
+    "magicResistance": 0,
+    "skills": [
+      "SK_NormalAttack"
+    ],
+    "loottable": [ "equip_armor_chest_01", "consume_hp_potion_01" ]
+  },
     "Fanged_Spider": {
         "name": "독니 거미",
         "level": 2,

@@ -106,9 +106,22 @@ void GameWorld::ProcessInput()
                 {
                     m_bIsRunning = false; // GameWorld 루프를 종료하여 메인 메뉴로 돌아가게 함
                 }
-                // EPauseMenuResult::Resume의 경우, 아무것도 하지 않으면
-                // 이 함수가 끝나고 GameLoop가 계속되므로 자연스럽게 게임으로 복귀됩니다.
-                return; // PauseMenu가 끝난 후 다른 키 입력이 처리되지 않도록 return
+                return;
+            }
+            else if (tile == TileType::BOSS)
+            {
+                // 모듈화된 함수를 호출하여 몬스터를 생성
+                std::string BossName = "Ancient_Dragon";
+                auto boss = CreateRandomizedMonster(BossName);
+                if (!boss)
+                {
+                    return;
+                }
+                boss->SetID(BossName);
+
+                // 전투 실행 및 결과 처리
+                BattleManager battleManager(m_player.get(), boss.get(), m_renderer);
+                EBattleResult result = battleManager.Run(); // 전투 결과를 받음
             }
 
         }
@@ -197,6 +210,7 @@ void GameWorld::StartBattle()
     {
         return;
     }
+    monster->SetID(monsterId);
 
     // 전투 실행 및 결과 처리
     BattleManager battleManager(m_player.get(), monster.get(), m_renderer);

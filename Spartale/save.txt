@@ -1,21 +1,21 @@
 [Player]
-Name dd
-MapID 0
-PosX 28
-PosY 1
-Direction 3
+Name 배주영
+MapID 1
+PosX 2
+PosY 3
+Direction 2
 [Attributes]
-Level 1
-Gold 0
+Level 2
+Gold 231
 AdditionalStatPoints 0
-Experience 0 0
-HP 260 260
-MP 130 130
-Strength 30 30
-Agility 15 15
-Intelligence 15 15
-Defence 15 15
-MagicResistance 0 0
+Experience 200 74
+HP 280 280
+MP 142 142
+Strength 35 35
+Agility 17 17
+Intelligence 17 17
+Defence 16.5 16.5
+MagicResistance 1.5 1.5
 CriticalHitChance 0 0
 CriticalHitDamageMultiplier 0 0
 [GrantedAbilities]
@@ -30,15 +30,16 @@ SK_ArcaneBlast
 SK_AbyssalCollapse
 SK_Judgment
 SK_NormalAttack
+SK_Meditate
 [EquippedAbilities]
 SK_NormalAttack
 NULL
 NULL
 NULL
 [Items]
-Slot0,consume_hp_potion_01,6
+Slot0,consume_hp_potion_01,3
 Slot1,equip_weapon_sword_01,1
-Slot2,equip_weapon_sword_01,1
+Slot2,EMPTY
 Slot3,EMPTY
 Slot4,EMPTY
 Slot5,EMPTY
