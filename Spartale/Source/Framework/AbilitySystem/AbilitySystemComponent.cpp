@@ -2,6 +2,7 @@
 #include "Framework/AbilitySystem/AttributeSet.h"
 #include "Framework/AbilitySystem/GameplayAbility.h"
 #include "Framework/AbilitySystem/GameplayEffect.h"
+#include "GameLogic/Skills/SkillFactory.h"
 #include "Core/Actor.h"
 
 #include <algorithm> // std::max 사용을 위해 포함
@@ -36,6 +37,7 @@ bool AbilitySystemComponent::CheckAndProcessLevelUp()
     float requiredExp = 50.0f * myStats->Level;
     bool bLeveledUp = false;
 
+
     // 현재 경험치가 필요 경험치보다 많으면 레벨업 (여러 번 레벨업 가능하도록 while 사용)
     while (myStats->Experience.CurrentValue >= requiredExp)
     {
@@ -48,6 +50,8 @@ bool AbilitySystemComponent::CheckAndProcessLevelUp()
         // 레벨 1 증가
         myStats->Level++;
 
+        // 레벨을 인덱스로 사용해 각 레벨에 맞는 스킬을 습득
+        OwnerActor->GetAbilityComponent()->GrantAbility(SkillFactory::CreateSkill(allSkillIDs[myStats->Level - 2]));
         bLeveledUp = true;
 
         // 레벨업 보상 (스탯 포인트 5 지급)

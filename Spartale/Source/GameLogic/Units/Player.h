@@ -25,4 +25,5 @@ private:
     Direction m_direction;
 
 	InventoryComponent m_inventory; // 플레이어의 인벤토리 컴포넌트
+
 };

@@ -6,6 +6,7 @@
 #include "Framework/AbilitySystem/GameplayAbility.h"
 #include "Utils/ConsoleUtils.h"
 #include "Utils/ConsoleRenderer.h"
+#include "Utils/StringUtils.h"
 
 #include <algorithm>
 #include <iostream>
@@ -325,12 +326,18 @@ void BattleManager::EndBattle()
             LogAndWait(rewardMessage);
 
             // 레벨업 체크
-            bool bLeveledUp = m_player->GetAbilityComponent()->CheckAndProcessLevelUp();
+
+            AbilitySystemComponent* playerASC = m_player->GetAbilityComponent();
+            bool bLeveledUp = playerASC->CheckAndProcessLevelUp();
 
             // 레벨업
             if (bLeveledUp)
             {
                 std::wstring levelUpMessage = m_player->Name + L"은(는) 레벨 업 했다!";
+                LogAndWait(levelUpMessage);
+
+                std::wstring skillName = playerASC->GetGrantedAbility(playerASC->GetAttributeSet()->Level - 1)->AbilityName;
+                levelUpMessage = m_player->Name + L"은(는) " + skillName + L"을(를) 배웠다!";
                 LogAndWait(levelUpMessage);
             }
             break;

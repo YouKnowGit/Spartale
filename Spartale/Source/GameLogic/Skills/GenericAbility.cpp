@@ -95,14 +95,14 @@ std::wstring GenericAbility::ActivateAbility(AbilitySystemComponent* SourceASC, 
         {
             // 데미지 또는 비율 기반 힐 로그
             finalLogMessage += actualTarget->Name + L"이(가) "
-                + StringUtils::ConvertToWstring(effectData.effectName) + L" 효과로 "
+                + this->AbilityName + L"(으)로 "
                 + std::to_wstring(static_cast<int>(finalMagnitude))
                 + (effectData.isHeal ? L"을(를) 회복했습니다.\n" : L"의 피해를 입었습니다.\n");
         }
         else if (effectData.magnitudeCalculation == "Flat")
         {
             // 고정 수치 기반 버프/디버프 로그
-            finalLogMessage += actualTarget->Name + L"의 "
+            finalLogMessage += this->AbilityName + L"(으)로 인해 " + actualTarget->Name + L"의 "
                 + StringUtils::ConvertToWstring(effectData.targetAttribute) + L"이(가) "
                 + std::to_wstring(static_cast<int>(abs(finalMagnitude))) // Log 에는 양수로 표시되어야함
                 + (finalMagnitude >= 0 ? L" 만큼 증가했습니다.\n" : L" 만큼 감소했습니다.\n");

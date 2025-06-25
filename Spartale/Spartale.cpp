@@ -10,13 +10,14 @@
 #include "GameLogic/DataManager.h"
 #include "GameLogic/MainMenu.h"
 
+void PrintWide(const std::wstring& text);
 
 using namespace std;
 
 int main()
 {
-    _setmode(_fileno(stdin),_O_U16TEXT);
-    _setmode(_fileno(stdout),_O_U16TEXT);
+    //_setmode(_fileno(stdin),_O_U16TEXT);
+    //_setmode(_fileno(stdout),_O_U16TEXT);
     ConsoleUtils::ShowConsoleCursor(false);
 
     DataManager::GetInstance().LoadMonsterData("Data/Monsters.json");
@@ -39,9 +40,12 @@ int main()
             }
             case EGameState::World:
             {
-                std:wstring name;
+                std::wstring name; 
+                SetConsoleOutputCP(CP_UTF8);
+
                 system("cls");
-                wcout << L"주인공의 이름을 입력해주세요: ";
+                PrintWide(L"주인공의 이름을 입력해주세요: ");
+
                 ConsoleUtils::ShowConsoleCursor(true);
                 std::wcin >> name;
 
@@ -67,4 +71,10 @@ int main()
     ConsoleUtils::ShowConsoleCursor(true);
 
     return 0;
+}
+
+void PrintWide(const std::wstring & text) {
+    DWORD written;
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    WriteConsoleW(hConsole, text.c_str(), (DWORD)text.length(), &written, nullptr);
 }
