@@ -22,7 +22,8 @@ enum class ERightPaneState
     MainMenu,           // 기본 메뉴 목록
     StatDistribution,   // 스탯 분배 화면
     Inventory,          // 인벤토리 화면
-	InventoryActionSelection, // 인벤토리에서 아이템 선택 화면
+    InventoryActionSelection, // 인벤토리에서 아이템 선택 화면
+	InventoryDropQuantity,  // 아이템을 버릴 때 수량 선택 화면
     SkillBook,          // 세부 스킬 목록 화면
     SkillSelection,      // 전체 스킬 목록 화면
     Shop_Buy,           // 상점 구매 화면
@@ -61,6 +62,7 @@ private:
     void ProcessInventoryInput(int key);
     void ProcessInventoryActionInput(int key);
     void ProcessMainShopInput(int key);
+	void ProcessInventoryDropInput(int key);
 
     // UI를 그리는 헬퍼 함수
     void DrawPlayerInfo();
@@ -71,6 +73,7 @@ private:
     void DrawInventoryScreen();
 	void DrawInventoryActionMenu();
     void DrawShopOptions();
+    void DrawInventoryDropPrompt();
 
     // 오른쪽 화면 Clear 함수
     void ClearRightPane();
@@ -105,6 +108,7 @@ private:
     int m_inventoryScrollOffset;
     int m_itemActionCursor;         // "사용/장착" 메뉴의 커서
     std::vector<std::wstring> m_currentItemActions; // 현재 선택된 아이템에 가능한 행동 목록
+	std::wstring m_dropQuantityInput; // 아이템을 버릴 때 입력할 수량
 
     const wchar_t* m_navigateSoundPath;
     const wchar_t* m_confirmSoundPath;

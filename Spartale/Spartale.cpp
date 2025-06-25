@@ -12,22 +12,13 @@
 #include "GameLogic/SaveManager.h"
 #include "Framework/AbilitySystem/AbilitySystemComponent.h"
 
-<<<<<<< HEAD
 void PrintString(const std::wstring& text, SHORT x, SHORT y);
-=======
-void PrintWide(const std::wstring& text);
->>>>>>> c91c5f2 (fix: 레벨별 스킬 습득 로직, 스킬 사용 로그)
 
 using namespace std;
 
 int main()
 {
-<<<<<<< HEAD
     _setmode(_fileno(stdin), _O_U16TEXT);
-=======
-    //_setmode(_fileno(stdin),_O_U16TEXT);
-    //_setmode(_fileno(stdout),_O_U16TEXT);
->>>>>>> c91c5f2 (fix: 레벨별 스킬 습득 로직, 스킬 사용 로그)
     ConsoleUtils::ShowConsoleCursor(false);
 
     DataManager::GetInstance().LoadMonsterData("Data/Monsters.json");
@@ -55,11 +46,7 @@ int main()
                 SetConsoleOutputCP(CP_UTF8);
 
                 system("cls");
-<<<<<<< HEAD
                 PrintString(L"주인공의 이름을 입력해주세요: ", 30, 15);
-=======
-                PrintWide(L"주인공의 이름을 입력해주세요: ");
->>>>>>> c91c5f2 (fix: 레벨별 스킬 습득 로직, 스킬 사용 로그)
 
                 ConsoleUtils::ShowConsoleCursor(true);
                 getline(std::wcin, name);
@@ -100,18 +87,11 @@ int main()
 
     return 0;
 }
-<<<<<<< HEAD
 void PrintString(const std::wstring & text, SHORT x, SHORT y) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     DWORD written;
 
     COORD pos = { x, y };
     SetConsoleCursorPosition(hConsole, pos);
-=======
-
-void PrintWide(const std::wstring & text) {
-    DWORD written;
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
->>>>>>> c91c5f2 (fix: 레벨별 스킬 습득 로직, 스킬 사용 로그)
     WriteConsoleW(hConsole, text.c_str(), (DWORD)text.length(), &written, nullptr);
 }

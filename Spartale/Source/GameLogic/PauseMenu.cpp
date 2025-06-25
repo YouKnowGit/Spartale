@@ -126,6 +126,9 @@ void PauseMenu::ProcessInput()
         case ERightPaneState::InventoryActionSelection: 
             m_currentPaneState = ERightPaneState::Inventory; 
             break;
+		case ERightPaneState::InventoryDropQuantity:
+            m_currentPaneState = ERightPaneState::InventoryActionSelection; 
+			break;
         case ERightPaneState::SkillBook:
             m_currentPaneState = ERightPaneState::MainMenu;
             break;
@@ -143,6 +146,7 @@ void PauseMenu::ProcessInput()
     case ERightPaneState::StatDistribution: ProcessStatDistributionInput(key); break;
 	case ERightPaneState::Inventory:        ProcessInventoryInput(key); break;
 	case ERightPaneState::InventoryActionSelection: ProcessInventoryActionInput(key); break;
+	case ERightPaneState::InventoryDropQuantity: ProcessInventoryDropInput(key); break;
     case ERightPaneState::SkillBook:        ProcessSkillBookInput(key); break;
     case ERightPaneState::SkillSelection:   ProcessSkillSelectionInput(key); break;
     }
@@ -345,12 +349,8 @@ void PauseMenu::DrawStatDistributionScreen()
     for (size_t i = 0; i < statNames.size(); ++i)
     {
         int currentStatY = contentY + i * 2;
-<<<<<<< HEAD
         std::wstring cursor = L"  "; 
         if (i == m_statSelection)   cursor = L"▶ ";
-=======
-        std::wstring cursor = L"  ";
->>>>>>> c91c5f2 (fix: 레벨별 스킬 습득 로직, 스킬 사용 로그)
 
         // 스탯 이름 (왼쪽 정렬)
         m_renderer.DrawString(contentX, currentStatY, cursor + statNames[i]);
@@ -401,18 +401,31 @@ void PauseMenu::ProcessInventoryInput(int key)
     }
     else if (key == 13) // 엔터
     {
-        // 커서 변수 통일
         const InventorySlot* slot = m_player.GetInventory()->GetSlotAtIndex(m_inventorySlotSelection);
         if (slot && slot->Quantity > 0)
         {
             PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
 
             m_currentItemActions.clear();
-            const ItemData* data = DataManager::GetInstance().GetItemData(slot->ItemID);
+            const ItemData* data = slot->pItemData;
             if (data)
             {
-                if (data->Type == EItemType::Consumable) m_currentItemActions.push_back(L"사용하기");
-                if (data->Type == EItemType::Equipment) m_currentItemActions.push_back(L"장착하기");
+                if (data->Type == EItemType::Consumable)
+                {
+                    // 소모품은 항상 '사용하기'
+                    m_currentItemActions.push_back(L"사용하기");
+                }
+                else if (data->Type == EItemType::Equipment)
+                {
+                    if (slot->bIsEquipped)
+                    {
+                        m_currentItemActions.push_back(L"장착해제");
+                    }
+                    else
+                    {
+                        m_currentItemActions.push_back(L"장착하기");
+                    }
+                }
             }
             m_currentItemActions.push_back(L"버리기");
             m_currentItemActions.push_back(L"취소");
@@ -534,11 +547,7 @@ void PauseMenu::DrawInventoryScreen()
     if (!inventory) return;
 
     int boxX = m_renderer.GetWidth() / 2 + 5;
-<<<<<<< HEAD
     int boxY = 7; // 6
-=======
-    int boxY = 9; // 6
->>>>>>> c91c5f2 (fix: 레벨별 스킬 습득 로직, 스킬 사용 로그)
     int boxInnerWidth = 26;
     int boxHeight = 3;
     const int visibleSlots = 5; // 한 화면에 보여줄 아이템 개수
@@ -584,7 +593,13 @@ void PauseMenu::DrawInventoryScreen()
                 if (data->Type == EItemType::Equipment) typeStr = L"[장비]";
                 else if (data->Type == EItemType::Consumable) typeStr = L"[소모품]";
 
-                m_renderer.DrawString(boxX + 2, currentY + 1, data->Name + L" " + typeStr);
+                std::wstring line = data->Name;
+
+                if (slot->bIsEquipped) line += L" [E]";
+
+                line += L" " + typeStr;
+
+                m_renderer.DrawString(boxX + 2, currentY + 1, line);
 
                 std::wstring quantityStr = L"수량: " + std::to_wstring(slot->Quantity);
                 m_renderer.DrawString(boxX + 2, currentY + 2, quantityStr);
@@ -637,6 +652,83 @@ void PauseMenu::DrawInventoryActionMenu()
         {
             line = L"   " + line;
             m_renderer.DrawString(boxX + 2, boxY + 1 + i, line);
+        }
+    }
+}
+
+void PauseMenu::DrawInventoryDropPrompt()
+{
+    const InventorySlot* slot = m_player.GetInventory()->GetSlotAtIndex(m_inventorySlotSelection);
+    if (!slot || !slot->pItemData) return;
+
+    // 레이아웃 좌표 계산 (화면 중앙에 작은 박스)
+    int boxWidth = 40;
+    int boxHeight = 4;
+    int boxX = (m_renderer.GetWidth() - boxWidth) / 2;
+    int boxY = (m_renderer.GetHeight() - boxHeight) / 2;
+
+    // 반투명한 배경처럼 보이게 하기 위해 회색으로 클리어 (선택 사항)
+    // for (int y = boxY; ... )
+
+    // 박스 테두리 그리기
+    m_renderer.DrawString(boxX, boxY, L"┌" + std::wstring(boxWidth, L'─') + L"┐");
+    for (int i = 1; i <= boxHeight; ++i) m_renderer.DrawString(boxX, boxY + i, L"│" + std::wstring(boxWidth, L' ') + L"│");
+    m_renderer.DrawString(boxX, boxY + boxHeight + 1, L"└" + std::wstring(boxWidth, L'─') + L"┘");
+
+    int contentX = boxX + 2;
+    int contentY = boxY + 1;
+
+    std::wstring prompt = L"[" + slot->pItemData->Name + L"] 버릴 수량 입력 (1-" + std::to_wstring(slot->Quantity) + L"):";
+    m_renderer.DrawString(contentX, contentY, prompt);
+
+    m_renderer.DrawString(contentX, contentY + 2, L"> " + m_dropQuantityInput);
+
+    if (GetTickCount64() / 500 % 2 == 0) {
+        m_renderer.Draw(contentX + 2 + m_dropQuantityInput.length(), contentY + 2, L'█');
+    }
+}
+
+// 수량 입력을 처리하는 함수
+void PauseMenu::ProcessInventoryDropInput(int key)
+{
+    if (key >= '0' && key <= '9') // 숫자 입력
+    {
+        // 5자리 이상은 입력 방지
+        if (m_dropQuantityInput.length() < 5)
+        {
+            m_dropQuantityInput += static_cast<wchar_t>(key);
+        }
+    }
+    else if (key == 8) // 백스페이스
+    {
+        if (!m_dropQuantityInput.empty())
+        {
+            m_dropQuantityInput.pop_back();
+        }
+    }
+    else if (key == 13) // 엔터: 버리기 확정
+    {
+        if (m_dropQuantityInput.empty()) return;
+
+        try {
+            int quantityToDrop = std::stoi(m_dropQuantityInput);
+            int currentQuantity = m_player.GetInventory()->GetSlotAtIndex(m_inventorySlotSelection)->Quantity;
+
+            // 유효한 수량인지 확인 (1 이상, 현재 가진 수량 이하)
+            if (quantityToDrop > 0 && quantityToDrop <= currentQuantity)
+            {
+                PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+                m_player.GetInventory()->RemoveItem(m_inventorySlotSelection, quantityToDrop);
+                m_currentPaneState = ERightPaneState::Inventory; // 인벤토리 목록으로 복귀
+            }
+            else { // 잘못된 수량 입력
+                PlaySound(m_rejectSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+                m_dropQuantityInput.clear(); // 입력 초기화
+            }
+        }
+        catch (const std::invalid_argument&) { // 숫자로 변환 불가
+            PlaySound(m_rejectSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+            m_dropQuantityInput.clear();
         }
     }
 }
@@ -1016,6 +1108,49 @@ void PauseMenu::DrawPlayerInfo()
     m_renderer.DrawString(infoX, infoY++, L"방어력    : " + std::to_wstring(static_cast<int>(stats->Defence.CurrentValue)));
     infoY++;
     m_renderer.DrawString(infoX, infoY++, L"골드      : " + std::to_wstring(static_cast<int>(stats->Gold)) + L" G");
+
+    infoY++; // 골드와 장비 목록 사이에 한 줄 띄우기
+    m_renderer.DrawString(infoX, infoY++, L"--- [ 장착 장비 ] ---");
+
+    InventoryComponent* inventory = m_player.GetInventory();
+    if (inventory) // 인벤토리 포인터가 유효한지 확인
+    {
+        // 1. 무기 정보 가져오기
+        std::wstring weaponName = L"없음";
+        int weaponSlotIndex = m_player.GetEquippedWeaponSlot();
+        if (weaponSlotIndex != -1)
+        {
+            const InventorySlot* slot = inventory->GetSlotAtIndex(weaponSlotIndex);
+            if (slot && slot->pItemData) {
+                weaponName = slot->pItemData->Name;
+            }
+        }
+        m_renderer.DrawString(infoX, infoY++, L" 무기      : " + weaponName);
+
+        // 2. 방어구 정보 가져오기
+        std::wstring armorName = L"없음";
+        int armorSlotIndex = m_player.GetEquippedArmorSlot();
+        if (armorSlotIndex != -1)
+        {
+            const InventorySlot* slot = inventory->GetSlotAtIndex(armorSlotIndex);
+            if (slot && slot->pItemData) {
+                armorName = slot->pItemData->Name;
+            }
+        }
+        m_renderer.DrawString(infoX, infoY++, L" 방어구    : " + armorName);
+
+        // 3. 장신구 정보 가져오기
+        std::wstring accessoryName = L"없음";
+        int accessorySlotIndex = m_player.GetEquippedAccessorySlot();
+        if (accessorySlotIndex != -1)
+        {
+            const InventorySlot* slot = inventory->GetSlotAtIndex(accessorySlotIndex);
+            if (slot && slot->pItemData) {
+                accessoryName = slot->pItemData->Name;
+            }
+        }
+        m_renderer.DrawString(infoX, infoY++, L" 장신구    : " + accessoryName);
+    }
 }
 
 // 좌측 상태창: 체력, 마나, 경험치 바 그리는 함수
@@ -1075,17 +1210,51 @@ void PauseMenu::ProcessInventoryActionInput(int key)
 
         std::wstring selectedAction = m_currentItemActions[m_itemActionCursor];
 
-        if (selectedAction == L"사용하기" || selectedAction == L"장착하기")
+        if (selectedAction == L"사용하기")
         {
-            // TODO: 아이템 사용/장착 로직 호출
-            // m_player.GetInventory()->UseItem(m_inventorySlotSelection, &m_player);
+            // InventoryComponent의 UseItem 함수 호출
+            m_player.GetInventory()->UseItem(m_inventorySlotSelection, &m_player);
+            m_currentPaneState = ERightPaneState::Inventory;
+        }
+        else if (selectedAction == L"장착하기")
+        {
+            // Player의 Equip 함수 호출
+            m_player.Equip(m_inventorySlotSelection);
+            m_currentPaneState = ERightPaneState::Inventory;
+        }
+        else if (selectedAction == L"장착해제")
+        {
+            // Player의 Unequip 함수 호출
+            m_player.Unequip(m_inventorySlotSelection);
+            m_currentPaneState = ERightPaneState::Inventory;
         }
         else if (selectedAction == L"버리기")
         {
-            // TODO: 아이템 버리기 로직 호출
+            const InventorySlot* slot = m_player.GetInventory()->GetSlotAtIndex(m_inventorySlotSelection);
+            if (slot && slot->Quantity > 0)
+            {
+                // 아이템 수량을 확인
+                if (slot->Quantity > 1)
+                {
+                    // 수량이 1개보다 많으면, '수량 입력' 상태로 전환
+                    PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+                    m_currentPaneState = ERightPaneState::InventoryDropQuantity;
+                    m_dropQuantityInput.clear();
+                }
+                else
+                {
+                    // 수량이 1개뿐이면, 바로 버리고 인벤토리 목록으로
+                    PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+                    m_player.GetInventory()->RemoveItem(m_inventorySlotSelection, 1);
+                    m_currentPaneState = ERightPaneState::Inventory;
+                }
+            }
+            
         }
-
-        // 행동 후에는 인벤토리 목록으로 돌아감
-        m_currentPaneState = ERightPaneState::Inventory;
+        else if (selectedAction == L"취소")
+        {
+            PlaySound(m_escSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+            m_currentPaneState = ERightPaneState::Inventory; // 인벤토리 목록으로 복귀
+        }
     }
 }

@@ -12,8 +12,8 @@
     }
   },
   "consume_atk_boost_01": {
-    "name": "공격력 강화 물약",
-    "description": "일정 시간 동안 공격력을 10 증가시킵니다.",
+    "name": "힘 강화 물약",
+    "description": "일정 시간 동안 힘을 10 증가시킵니다.",
     "type": "Consumable",
     "price": 15,
     "isStackable": true,

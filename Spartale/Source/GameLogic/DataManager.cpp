@@ -127,38 +127,59 @@ void DataManager::LoadSkillData(const std::string& path)
 void DataManager::LoadItemData(const std::string& path)
 {
     std::ifstream file(path);
-    if (!file.is_open()) return;
-
+    if (!file.is_open()) { return; }
     json data = json::parse(file);
     file.close();
+
+    // '번역기' 람다 함수를 맨 위에 한 번만 정의하여 재사용합니다.
+    auto StringToStatType = [](const std::string& s) -> EStatType {
+        if (s == "HP") return EStatType::HP;
+        if (s == "MP") return EStatType::MP;
+        if (s == "STRENGTH") return EStatType::STRENGTH;
+        if (s == "DEFENCE") return EStatType::DEFENCE;
+        if (s == "AGILITY") return EStatType::AGILITY;
+        if (s == "MAGIC_RESISTANCE") return EStatType::MAGIC_RESISTANCE;
+        if (s == "INTELLIGENCE") return EStatType::INTELLIGENCE;
+        if (s == "CRITICAL_HIT_CHANCE") return EStatType::CRITICAL_HIT_CHANCE;
+        if (s == "CRITICAL_HIT_DAMAGE_MULTIPLIER") return EStatType::CRITICAL_HIT_DAMAGE_MULTIPLIER;
+        
+        /* ---이후 추가될 스탯에 대해서는 여기에 추가--- */
+
+        return EStatType::HP; // 매칭 안될 시 기본값
+        };
 
     for (auto& element : data.items())
     {
         const std::string& itemId = element.key();
         const json& itemJson = element.value();
-
         ItemData itemData;
         itemData.ID = itemId;
 
+        // 공통 데이터 파싱
         itemData.Name = StringUtils::ConvertToWstring(itemJson.value("name", ""));
         itemData.Description = StringUtils::ConvertToWstring(itemJson.value("description", ""));
         itemData.Price = itemJson.value("price", 0);
         itemData.bIsStackable = itemJson.value("isStackable", false);
         itemData.MaxStackSize = itemJson.value("maxStackSize", 1);
 
+        // 아이템 타입 변환
         std::string typeStr = itemJson.value("type", "");
         if (typeStr == "Consumable") itemData.Type = EItemType::Consumable;
         else if (typeStr == "Equipment") itemData.Type = EItemType::Equipment;
         else itemData.Type = EItemType::Miscellaneous;
 
+        // 타입별 세부 데이터 파싱
         if (itemData.Type == EItemType::Consumable && itemJson.contains("effectData"))
         {
             const auto& effectJson = itemJson["effectData"];
+            itemData.EffectData.Type = effectJson.value("effectType", "");
+            itemData.EffectData.Value = effectJson.value("value", 0.0f);
+            itemData.EffectData.Duration = effectJson.value("duration", 0);
+            itemData.EffectData.TargetStat = StringToStatType(effectJson.value("targetStat", ""));
         }
         else if (itemData.Type == EItemType::Equipment && itemJson.contains("equipmentData"))
         {
             const auto& equipJson = itemJson["equipmentData"];
-
             std::string equipTypeStr = equipJson.value("equipmentType", "");
             if (equipTypeStr == "WEAPON") itemData.EquipmentData.Type = EEquipmentType::WEAPON;
             else if (equipTypeStr == "ARMOR") itemData.EquipmentData.Type = EEquipmentType::ARMOR;
@@ -167,30 +188,12 @@ void DataManager::LoadItemData(const std::string& path)
 
             if (equipJson.contains("statBonuses"))
             {
-                auto StringToStatType = [](const std::string& s) -> EStatType {
-                    if (s == "HP") return EStatType::HP;
-                    if (s == "MP") return EStatType::MP;
-                    if (s == "STRENGTH") return EStatType::STRENGTH;
-                    if (s == "DEFENCE") return EStatType::DEFENCE;
-                    if (s == "AGILITY") return EStatType::AGILITY;
-					if (s == "MAGIC_RESISTANCE") return EStatType::MAGIC_RESISTANCE;
-					if (s == "INTELLIGENCE") return EStatType::INTELLIGENCE;
-					if (s == "CRITICAL_HIT_CHANCE") return EStatType::CRITICAL_HIT_CHANCE;
-					if (s == "CRITICAL_HIT_DAMAGE_MULTIPLIER") return EStatType::CRITICAL_HIT_DAMAGE_MULTIPLIER;
-
-					/* 이후 추가될 스탯에 대해서는 여기에 추가 */ 
-					
-                    return EStatType::HP; 
-                    };
-
                 for (const auto& bonus : equipJson["statBonuses"].items())
                 {
-                    EStatType statEnum = StringToStatType(bonus.key());
-                    itemData.EquipmentData.StatBonuses[statEnum] = bonus.value();
+                    itemData.EquipmentData.StatBonuses[StringToStatType(bonus.key())] = bonus.value();
                 }
             }
         }
-
         m_itemDatabase[itemId] = itemData;
     }
 }

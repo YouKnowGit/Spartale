@@ -80,10 +80,7 @@ protected:
 
 
     const wchar_t* Levelup = L"Sounds/Levelup.wav";
-<<<<<<< HEAD
-
-=======
->>>>>>> c91c5f2 (fix: 레벨별 스킬 습득 로직, 스킬 사용 로그)
+    
     // 각 레벨별 추가할 스킬 목록
     const std::vector<std::string> allSkillIDs = {
         "SK_Meditate",
