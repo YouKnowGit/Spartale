@@ -24,7 +24,17 @@ enum class ERightPaneState
     Inventory,          // 인벤토리 화면
 	InventoryActionSelection, // 인벤토리에서 아이템 선택 화면
     SkillBook,          // 세부 스킬 목록 화면
-    SkillSelection      // 전체 스킬 목록 화면
+    SkillSelection,      // 전체 스킬 목록 화면
+    Shop_Buy,           // 상점 구매 화면
+    Shop_Sell,           // 상점 판매 화면
+    Shop_Exit           // 상점 나가기
+};
+enum class EShopState
+{
+    MainMenu,           // 기본 메뉴 목록
+    Shop_Buy,           // 상점 구매 화면
+    Shop_Sell,           // 상점 판매 화면
+    Shop_Exit           // 상점 나가기
 };
 class PauseMenu
 {
@@ -35,10 +45,13 @@ public:
 
     // 메뉴를 실행하고, 사용자의 최종 선택을 반환
     EPauseMenuResult Run();
+    EPauseMenuResult Shop();
 
 private:
     void ProcessInput();
+    void ProcessInputShop();
     void Render();
+    void RenderShop();
 
     // 우측 메뉴 상태에 따른 분기 함수
     void ProcessMainMenuInput(int key);
@@ -47,6 +60,7 @@ private:
     void ProcessSkillSelectionInput(int key);
     void ProcessInventoryInput(int key);
     void ProcessInventoryActionInput(int key);
+    void ProcessMainShopInput(int key);
 
     // UI를 그리는 헬퍼 함수
     void DrawPlayerInfo();
@@ -56,6 +70,7 @@ private:
     void DrawSkillSelectionScreen();
     void DrawInventoryScreen();
 	void DrawInventoryActionMenu();
+    void DrawShopOptions();
 
     // 오른쪽 화면 Clear 함수
     void ClearRightPane();
@@ -76,9 +91,11 @@ private:
     bool m_bIsRunning;
     EPauseMenuResult m_result;
     ERightPaneState m_currentPaneState;
+    EShopState m_currentShopState;
 
     // 커서 및 컨텍스트 변수
     int m_mainMenuSelection;
+    int m_shopSelection;
     int m_statSelection;
     int m_skillBookSlotSelection;    // 스킬북: 현재 선택된 장착 슬롯 (0~3)
     int m_skillSelectionListCursor;  // 스킬 목록: 현재 선택된 스킬 커서

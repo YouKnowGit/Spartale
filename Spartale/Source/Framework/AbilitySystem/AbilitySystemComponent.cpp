@@ -33,19 +33,17 @@ bool AbilitySystemComponent::CheckAndProcessLevelUp()
 {
     if (!myStats) return false;
 
-    // 레벨업에 필요한 경험치 공식 (예: 레벨 * 50)
-    float requiredExp = 50.0f * myStats->Level;
     bool bLeveledUp = false;
 
 
     // 현재 경험치가 필요 경험치보다 많으면 레벨업 (여러 번 레벨업 가능하도록 while 사용)
-    while (myStats->Experience.CurrentValue >= requiredExp)
+    while (myStats->Experience.CurrentValue >= myStats->Experience.BaseValue)
     {
         // 최대 레벨 10으로 제한
         if (myStats->Level >= 10)    return false;
 
         // 레벨업 비용만큼 경험치 차감
-        myStats->Experience.CurrentValue -= requiredExp;
+        myStats->Experience.CurrentValue -= myStats->Experience.BaseValue;
 
         // 레벨 1 증가
         myStats->Level++;
@@ -77,7 +75,7 @@ bool AbilitySystemComponent::CheckAndProcessLevelUp()
         myStats->AdjustDependentAttributes();
 
         // 다음 레벨업에 필요한 경험치를 다시 계산
-        requiredExp = 100.0f + (50 * myStats->Level);
+        myStats->Experience.BaseValue = 100.0f + (50 * myStats->Level);
     }
 
     return bLeveledUp;
@@ -267,4 +265,77 @@ GameplayAbility* AbilitySystemComponent::GetGrantedAbility(int32_t Index) const
 const std::vector<std::unique_ptr<GameplayAbility>>& AbilitySystemComponent::GetGrantedAbilities() const
 {
     return GrantedAbilities;
+}
+void AbilitySystemComponent::Save(std::ofstream& file) const
+{
+    file << "[GrantedAbilities]\n";
+    for (const auto& ability_ptr : GrantedAbilities)
+    {
+        if (ability_ptr)    file << ability_ptr->GetID() << '\n';
+    }
+
+    file << "[EquippedAbilities]\n";
+    for (const GameplayAbility* ability_ptr : EquippedAbilities)
+    {
+        if (ability_ptr)    file << ability_ptr->GetID() << '\n';
+        else   file << "NULL" << '\n';
+    }
+}
+
+void AbilitySystemComponent::Load(std::ifstream& file)
+{
+    file.clear();
+    file.seekg(0, std::ios::beg);
+    GrantedAbilities.clear();
+    EquippedAbilities.clear();
+    ActiveEffects.clear();
+
+    std::string line;
+    std::string current_section;
+    std::vector<std::string> equipped_ids_to_link;
+
+    while (std::getline(file, line))
+    {
+        if (line.empty()) continue;
+
+        if (line[0] == '[') {
+            current_section = line;
+            continue;
+        }
+
+        if (current_section == "[GrantedAbilities]")
+        {
+            auto new_ability = SkillFactory::CreateSkill(line);
+            if (new_ability) {
+                GrantedAbilities.push_back(std::move(new_ability));
+            }
+        }
+        else if (current_section == "[EquippedAbilities]")
+        {
+            equipped_ids_to_link.push_back(line);
+        }
+    }
+
+    for (const std::string& skill_id : equipped_ids_to_link)
+    {
+        if (skill_id == "NULL") {
+            EquippedAbilities.push_back(nullptr);
+            continue;
+        }
+
+        GameplayAbility* found_ability = nullptr;
+        for (const auto& granted_ability : GrantedAbilities)
+        {
+            if (granted_ability && granted_ability->GetID() == skill_id) {
+                found_ability = granted_ability.get();
+                break;
+            }
+        }
+        EquippedAbilities.push_back(found_ability);
+    }
+
+    while (EquippedAbilities.size() < 4)
+    {
+        EquippedAbilities.push_back(nullptr);
+    }
 }

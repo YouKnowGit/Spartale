@@ -5,6 +5,23 @@
 namespace StringUtils
 {
     // 인라인 함수
+    // std::wstring(유니코드)을 std::string(UTF-8)으로 변환
+    inline std::string CovertToString(const std::wstring& wstr)
+    {
+        if (wstr.empty())
+        {
+            return std::string();
+        }
+
+        int sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), NULL, 0, NULL, NULL);
+
+        std::string strTo(sizeNeeded, 0);
+        WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &strTo[0], sizeNeeded, NULL, NULL);
+
+        return strTo;
+    }
+
+    // 인라인 함수
     // std::string(UTF-8)을 std::wstring(유니코드)으로 변환
     inline std::wstring ConvertToWstring(const std::string& str)
     {

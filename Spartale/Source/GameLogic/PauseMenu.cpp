@@ -3,7 +3,9 @@
 #include "GameLogic/Units/Player.h"
 #include "Framework/AbilitySystem/AbilitySystemComponent.h"
 #include "Framework/AbilitySystem/AttributeSet.h"
+#include "GameLogic/SaveManager.h"
 
+#include <iostream>
 #include <conio.h>
 #include <iomanip> 
 #include <sstream> 
@@ -19,8 +21,10 @@ PauseMenu::PauseMenu(ConsoleRenderer& renderer, Player& player)
     m_player(player),
     m_bIsRunning(true),
     m_result(EPauseMenuResult::Resume),
-    m_currentPaneState(ERightPaneState::MainMenu), // 시작은 메뉴 목록으로
+    m_currentPaneState(ERightPaneState::MainMenu),
+    m_currentShopState(EShopState::MainMenu),
     m_mainMenuSelection(0),
+    m_shopSelection(0),
     m_statSelection(0),
     m_skillBookSlotSelection(0),
     m_skillSelectionListCursor(0),
@@ -49,6 +53,53 @@ EPauseMenuResult PauseMenu::Run()
         Sleep(16);
     }
     return m_result;
+}
+EPauseMenuResult PauseMenu::Shop()
+{
+    m_renderer.Clear();
+
+    PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+    while (m_bIsRunning)
+    {
+        ProcessInputShop();
+        RenderShop();
+        Sleep(16);
+    }
+    return m_result;
+}
+void PauseMenu::Render()
+{
+    // --- 왼쪽 패널: 캐릭터 정보 (항상 고정) ---
+    DrawPlayerInfo();
+
+    // --- 오른쪽 패널: 상태에 따라 다르게 그림 ---
+    switch (m_currentPaneState)
+    {
+    case ERightPaneState::MainMenu:         DrawMainMenuOptions(); break;
+    case ERightPaneState::StatDistribution: DrawStatDistributionScreen(); break;
+    case ERightPaneState::Inventory:        DrawInventoryScreen(); break;
+    case ERightPaneState::InventoryActionSelection: DrawInventoryScreen(); DrawInventoryActionMenu(); break;
+    case ERightPaneState::SkillBook:        DrawSkillBookScreen(); break;
+    case ERightPaneState::SkillSelection:   DrawSkillSelectionScreen(); break;
+    }
+
+    m_renderer.Render();
+}
+
+void PauseMenu::RenderShop()
+{
+    // --- 왼쪽 패널: 캐릭터 정보 (항상 고정) ---
+    DrawPlayerInfo();
+
+    // --- 오른쪽 패널: 상태에 따라 다르게 그림 ---
+    switch (m_currentShopState)
+    {
+    case EShopState::MainMenu:         DrawShopOptions(); break;
+    case EShopState::Shop_Buy:         DrawStatDistributionScreen(); break;
+    case EShopState::Shop_Sell:        DrawInventoryScreen(); break;
+    }
+
+    m_renderer.Render();
 }
 
 void PauseMenu::ProcessInput()
@@ -97,27 +148,75 @@ void PauseMenu::ProcessInput()
     }
 }
 
-void PauseMenu::Render()
+void PauseMenu::ProcessInputShop()
 {
-    // --- 왼쪽 패널: 캐릭터 정보 (항상 고정) ---
-    DrawPlayerInfo();
+    if (!_kbhit()) return;
+    int key = _getch();
 
-    // --- 오른쪽 패널: 상태에 따라 다르게 그림 ---
-    switch (m_currentPaneState)
+    // ESC 키는 현재 상태에 따라 다르게 동작
+    if (key == 27) // ESC
     {
-    case ERightPaneState::MainMenu:         DrawMainMenuOptions(); break;
-    case ERightPaneState::StatDistribution: DrawStatDistributionScreen(); break;
-    case ERightPaneState::Inventory:        DrawInventoryScreen(); break;
-    case ERightPaneState::InventoryActionSelection: DrawInventoryScreen(); DrawInventoryActionMenu(); break;
-    case ERightPaneState::SkillBook:        DrawSkillBookScreen(); break;
-    case ERightPaneState::SkillSelection:   DrawSkillSelectionScreen(); break;
+        PlaySound(m_escSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+        switch (m_currentShopState)
+        {
+        case EShopState::MainMenu: // 메인 메뉴에서 누르면 PauseMenu 종료
+            m_bIsRunning = false;
+            m_result = EPauseMenuResult::Resume;
+            break;
+        case EShopState::Shop_Buy:
+            m_currentShopState = EShopState::MainMenu;
+            break;
+        case EShopState::Shop_Sell:
+            m_currentShopState = EShopState::MainMenu;
+            break;
+        case EShopState::Shop_Exit:
+            m_bIsRunning = false;
+            m_result = EPauseMenuResult::Resume;
+            break;
+        }
+        return;
     }
 
-    m_renderer.Render();
+    // 상태에 따라 입력을 분기 처리
+    switch (m_currentShopState)
+    {
+        case EShopState::MainMenu:  ProcessMainShopInput(key); break;
+    }
 }
 
 // --- 입력 처리 함수들 ---
+void PauseMenu::DrawShopOptions()
+{
+    // 그리기 전, 오른쪽 패널을 지움
+    ClearRightPane();
 
+    const std::vector<std::wstring> options = { L"구매", L"판매", L"나가기" };
+
+    // --- 레이아웃 좌표 및 박스 너비 설정 ---
+    int boxX = m_renderer.GetWidth() / 2 + 5;
+    int boxY = 10;
+    int boxInnerWidth = 24; // 박스 내부 너비 (텍스트와 공백, 커서가 들어갈 공간)
+
+    for (size_t i = 0; i < options.size(); ++i)
+    {
+        // 각 메뉴 아이템은 3줄의 높이를 차지합니다 (윗 테두리, 내용, 아래 테두리)
+        int currentY = boxY + i * 3;
+
+        // --- 박스 테두리 그리기 ---
+        m_renderer.DrawString(boxX, currentY, L"┌" + std::wstring(boxInnerWidth, L'─') + L"┐");
+        m_renderer.DrawString(boxX, currentY + 2, L"└" + std::wstring(boxInnerWidth, L'─') + L"┘");
+
+        // --- 박스 내용 그리기 ---
+        m_renderer.DrawString(boxX, currentY + 1, L"│");
+        m_renderer.DrawString(boxX + boxInnerWidth + 1, currentY + 1, L"│");
+        m_renderer.DrawString(boxX + 2, currentY + 1, options[i]);
+
+        if (i == m_shopSelection)
+        {
+            m_renderer.DrawString(boxX + boxInnerWidth - 2, currentY + 1, L"◀");
+        }
+    }
+}
 
 void PauseMenu::ProcessStatDistributionInput(int key)
 {
@@ -167,7 +266,6 @@ void PauseMenu::ProcessStatDistributionInput(int key)
         }
     }
 }
-
 
 void PauseMenu::DrawMainMenuOptions()
 {
@@ -324,8 +422,6 @@ void PauseMenu::ProcessInventoryInput(int key)
         }
     }
 }
-
-#include <sstream> // std::wstringstream을 사용하기 위해 추가
 
 void PauseMenu::DrawItemInfoBox()
 {
@@ -561,6 +657,7 @@ void PauseMenu::ProcessSkillBookInput(int key)
         m_currentPaneState = ERightPaneState::SkillSelection;
     }
 }
+
 void PauseMenu::DrawSkillBookScreen()
 {
     // 그리기 전, 오른쪽 패널을 깨끗하게 지움
@@ -814,7 +911,44 @@ void PauseMenu::ProcessMainMenuInput(int key)
         case 0: m_currentPaneState = ERightPaneState::StatDistribution; m_statSelection = 0; break;
         case 1: m_currentPaneState = ERightPaneState::Inventory; m_inventorySlotSelection = 0; break;
         case 2: m_currentPaneState = ERightPaneState::SkillBook; m_skillBookSlotSelection = 0; break;
+        case 3: 
+        {
+            SaveManager sm(m_player);
+            sm.SaveGame("save.txt");
+            break;
+        }
         case 4: m_bIsRunning = false; m_result = EPauseMenuResult::GoToMainMenu; break;
+        }
+    }
+}
+
+void PauseMenu::ProcessMainShopInput(int key)
+{
+    const std::vector<std::wstring> options = { L"구매", L"판매", L"나가기" };
+    if (key == 224)
+    {
+        key = _getch();
+        if (key == 72) // 위쪽 화살표
+        {
+            // 선택 인덱스를 1 감소. 0보다 작아지면 마지막 인덱스로 순환
+            PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+            m_shopSelection = (m_shopSelection == 0) ? static_cast<int>(options.size()) - 1 : m_shopSelection - 1;
+        }
+        else if (key == 80) // 아래쪽 화살표
+        {
+            // 선택 인덱스를 1 증가. 마지막 인덱스를 넘어가면 0으로 순환
+            PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+            m_shopSelection = (m_shopSelection + 1) % static_cast<int>(options.size());
+        }
+    }
+    else if (key == 13) // 엔터
+    {
+        PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+        switch (m_shopSelection)
+        {
+        case 0: m_currentShopState = EShopState::Shop_Buy; m_statSelection = 0; break;
+        case 1: m_currentShopState = EShopState::Shop_Sell; m_inventorySlotSelection = 0; break;
+        case 2: m_currentShopState = EShopState::Shop_Exit; m_bIsRunning = false; m_result = EPauseMenuResult::Resume; break;
         }
     }
 }

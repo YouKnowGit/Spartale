@@ -141,6 +141,7 @@
     <ClCompile Include="Source\GameLogic\Map\Field.cpp" />
     <ClCompile Include="Source\GameLogic\NPCMenu.cpp" />
     <ClCompile Include="Source\GameLogic\PauseMenu.cpp" />
+    <ClCompile Include="Source\GameLogic\SaveManager.cpp" />
     <ClCompile Include="Source\GameLogic\Skills\GenericAbility.cpp" />
     <ClCompile Include="Source\GameLogic\Skills\SkillFactory.cpp" />
     <ClCompile Include="Source\GameLogic\Units\Monster.cpp" />
@@ -174,6 +175,7 @@
     <ClInclude Include="Source\GameLogic\Map\Field.h" />
     <ClInclude Include="Source\GameLogic\NPCMenu.h" />
     <ClInclude Include="Source\GameLogic\PauseMenu.h" />
+    <ClInclude Include="Source\GameLogic\SaveManager.h" />
     <ClInclude Include="Source\GameLogic\Skills\GenericAbility.h" />
     <ClInclude Include="Source\GameLogic\Skills\SkillFactory.h" />
     <ClInclude Include="Source\GameLogic\Units\Monster.h" />

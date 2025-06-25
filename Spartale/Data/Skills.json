@@ -160,7 +160,7 @@
                     "calculation": "Ratio",
                     "ad_ratio": 0.0,
                     "ap_ratio": 1.5,
-                    "damage_type": "None",
+                    "damage_type": "Magical",
                     "is_heal": true
                 }
             }
