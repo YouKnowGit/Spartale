@@ -37,4 +37,6 @@ private:
     std::vector<InventorySlot> m_slots;
 
     void Compact();
+
+    const wchar_t* rejectsound = L"Sounds/UI/menu_reject.wav";
 };
