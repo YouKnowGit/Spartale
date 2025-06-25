@@ -3,6 +3,10 @@
 #include "Framework/AbilitySystem/AbilitySystemComponent.h"
 #include "Framework/AbilitySystem/AttributeSet.h"
 #include "Framework/AbilitySystem/GameplayAbility.h"
+#include "Utils/StringUtils.h"
+
+#include <sstream>
+
 
 Player::Player(std::wstring name)
 	: m_inventory(20) // 플레이어의 인벤토리 크기를 20으로 설정
@@ -57,10 +61,10 @@ void Player::Initialize()
     }
 
     // 기본 공격만 0번 슬롯에 장착
-    GetAbilityComponent()->EquipAbility(0, this->GetAbilityComponent()->GetGrantedAbility(0));
+    GetAbilityComponent()->GrantAbility(SkillFactory::CreateSkill("SK_NormalAttack"));
 
     // Player 위치 및 방향 관련 데이터
-    CurrentLocation.X = 5;
+    CurrentLocation.X = 9;
     CurrentLocation.Y = 5;
     m_direction = Direction::DOWN;
 
@@ -84,4 +88,70 @@ void Player::SetDirection(Direction dir)
 Direction Player::GetDirection() const
 {
     return m_direction;
+}
+void Player::Save(std::ofstream& file) const
+{
+    file << "[Player]" << '\n';
+    file << "Name " << StringUtils::CovertToString(Name) << '\n';
+    file << "MapID " << this->mapId << '\n';
+    file << "PosX " << this->CurrentLocation.X << '\n';
+    file << "PosY " << this->CurrentLocation.Y << '\n';
+    file << "Direction " << static_cast<int>(m_direction) << '\n';
+
+    if ( this->AbilityComponent && this->AbilityComponent->GetAttributeSet()) {
+        this->AbilityComponent->GetAttributeSet()->Save(file);
+        this->AbilityComponent->Save(file);
+    }
+}
+void Player::Load(std::ifstream& file)
+{
+    if (AbilityComponent && AbilityComponent->GetAttributeSet())
+    {
+        AbilityComponent->GetAttributeSet()->Load(file);
+    }
+
+    if (AbilityComponent)
+    {
+        AbilityComponent->Load(file);
+    }
+
+    file.clear();
+    file.seekg(0, std::ios::beg); 
+
+    std::string line;
+    bool in_player_section = false;
+    while (std::getline(file, line))
+    {
+        if (line.empty()) continue;
+
+        if (line == "[Player]") {
+            in_player_section = true;
+            continue;
+        }
+
+        if (in_player_section && line[0] == '[') {
+            break;
+        }
+
+        if (in_player_section)
+        {
+            std::stringstream ss(line);
+            std::string key;
+            ss >> key;
+
+            if (key == "Name") {
+                std::string utf8Value;
+                ss >> utf8Value;
+                Name = StringUtils::ConvertToWstring(utf8Value);
+            }
+            else if (key == "MapID") ss >> this->mapId;
+            else if (key == "PosX") ss >> this->CurrentLocation.X;
+            else if (key == "PosY") ss >> this->CurrentLocation.Y;
+            else if (key == "Direction") {
+                int dirValue;
+                ss >> dirValue;
+                m_direction = static_cast<Direction>(dirValue);
+            }
+        }
+    }
 }

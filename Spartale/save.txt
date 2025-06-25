@@ -1,0 +1,28 @@
+[Player]
+Name 23
+MapID 1
+PosX 1
+PosY 2
+Direction 2
+[Attributes]
+Level 2
+Gold 215
+AdditionalStatPoints 5
+Experience 200 82
+HP 268 268
+MP 136 136
+Strength 32 32
+Agility 16 16
+Intelligence 16 16
+Defence 16.5 16.5
+MagicResistance 1.5 1.5
+CriticalHitChance 0 0
+CriticalHitDamageMultiplier 0 0
+[GrantedAbilities]
+SK_NormalAttack
+SK_Meditate
+[EquippedAbilities]
+SK_NormalAttack
+NULL
+SK_Meditate
+NULL

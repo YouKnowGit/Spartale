@@ -8,9 +8,9 @@
         "intelligence": 1,
         "defence": 2,
         "magicResistance": 0,
-        "skills": [
-            "SK_NormalAttack"
-        ]
+      "skills": [
+        "SK_NormalAttack"
+      ]
     },
     "Fanged_Spider": {
         "name": "독니 거미",
@@ -36,10 +36,7 @@
         "defence": 3,
         "magicResistance": 0,
         "skills": [
-            "SK_NormalAttack",
-            "SK_Heal",
-            "SK_TripleSlash",
-            "SK_AgilityDown"
+            "SK_TripleSlash"
         ]
     },
     "Frail_Skeleton": {

@@ -36,9 +36,10 @@ BattleManager::BattleManager(Player* player, Monster* monster, ConsoleRenderer& 
 
 EBattleResult BattleManager::Run()
 {
-
+    
     while (!m_bIsBattleOver)
     {
+        m_monster->GetAbilityComponent()->GetAttributeSet()->MP = FAttributeData(5000);
         ProcessInput();
         Update();
         Render();
@@ -362,12 +363,12 @@ std::wstring BattleManager::DrawStatBar(const std::wstring& label, float current
     if (current < 0) current = 0;
     float ratio = (max > 0) ? (current / max) : 0;
     int filledLength = static_cast<int>(ratio * barLength);
-    std::wstring bar = label + L" [";
+    std::wstring bar = label + L" [ ";
     for (int i = 0; i < barLength; ++i) {
         if (i < filledLength) bar += L"■";
         else bar += L" ";
     }
-    bar += L"]";
+    bar += L" ]";
     return bar;
 }
 void BattleManager::PlayIntroAnimation()

@@ -39,4 +39,5 @@ void GameplayAbility::InitializeFromData(const SkillData* data)
     this->AbilityDescription = data->description;
     this->ManaCost = data->manaCost;
     this->soundId = data->soundId;
+    this->ABID = data->id;
 }

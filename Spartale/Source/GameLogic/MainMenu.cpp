@@ -1,4 +1,5 @@
 #include "GameLogic/MainMenu.h"
+#include "GameLogic/SaveManager.h"
 #include "Utils/ConsoleRenderer.h"
 #include <conio.h>
 #include <windows.h>
@@ -87,7 +88,8 @@ void MainMenu::OnEnterPressed()
         m_bIsRunning = false;
         break;
     case 1: // 불러오기
-        break;
+        m_nextState = EGameState::LoadGame;
+        m_bIsRunning = false;
     case 2: // 설정
         break;
     case 3: // 크레딧

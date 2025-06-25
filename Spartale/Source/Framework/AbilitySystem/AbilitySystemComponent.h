@@ -2,6 +2,8 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <iostream>
+#include <fstream>
 
 // 전방 선언
 class Actor;
@@ -56,6 +58,9 @@ public:
     const std::vector<std::unique_ptr<GameplayAbility>>& GetGrantedAbilities() const;
 
     std::wstring UpdateActiveEffects();
+
+    void Save(std::ofstream& file) const;
+    void Load(std::ifstream& file);
 
 protected:
     // 이 컴포넌트의 소유자 
