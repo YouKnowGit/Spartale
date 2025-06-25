@@ -10,7 +10,7 @@
 #include "GameLogic/DataManager.h"
 #include "GameLogic/MainMenu.h"
 
-void PrintWide(const std::wstring& text);
+void PrintString(const std::wstring& text, SHORT x, SHORT y);
 
 using namespace std;
 
@@ -44,7 +44,7 @@ int main()
                 SetConsoleOutputCP(CP_UTF8);
 
                 system("cls");
-                PrintWide(L"주인공의 이름을 입력해주세요: ");
+                PrintString(L"주인공의 이름을 입력해주세요: ", 30, 15);
 
                 ConsoleUtils::ShowConsoleCursor(true);
                 std::wcin >> name;
@@ -72,9 +72,11 @@ int main()
 
     return 0;
 }
-
-void PrintWide(const std::wstring & text) {
-    DWORD written;
+void PrintString(const std::wstring & text, SHORT x, SHORT y) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    DWORD written;
+
+    COORD pos = { x, y };
+    SetConsoleCursorPosition(hConsole, pos);
     WriteConsoleW(hConsole, text.c_str(), (DWORD)text.length(), &written, nullptr);
 }
