@@ -187,6 +187,7 @@
     <Media Include="Sounds\Buy_sell.wav" />
     <Media Include="Sounds\EnemyDown.wav" />
     <Media Include="Sounds\enemy_encounter.wav" />
+    <Media Include="Sounds\Healing.wav" />
     <Media Include="Sounds\Levelup.wav" />
     <Media Include="Sounds\Meet.wav" />
     <Media Include="Sounds\Move_map.wav" />
@@ -194,8 +195,7 @@
     <Media Include="Sounds\Skills\AbyssBlast_sound.wav" />
     <Media Include="Sounds\Skills\Buff_sound.wav" />
     <Media Include="Sounds\Skills\ElementalMagic_sound.wav" />
-    <Media Include="Sounds\Skills\Fireball__sound.wav" />
-    <Media Include="Sounds\Skills\Healing.wav" />
+    <Media Include="Sounds\Skills\Healing_sound.wav" />
     <Media Include="Sounds\Skills\Judgement_sound.wav" />
     <Media Include="Sounds\Skills\normal_attack_sound.wav" />
     <Media Include="Sounds\Skills\PoisonCloud_sound.wav" />
@@ -206,7 +206,11 @@
     <Media Include="Sounds\UI\menu_reject2.wav" />
     <Media Include="Sounds\UI\pausemenu_confirm.wav" />
     <Media Include="Sounds\UI\pausemenu_select.wav" />
+    <Media Include="Sounds\warp.wav" />
     <Media Include="Sounds\Win.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Sounds\Skills\Fireball_sound.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

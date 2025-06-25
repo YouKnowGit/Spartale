@@ -33,6 +33,7 @@ int main()
         switch (currentState)
         {
             case EGameState::MainMenu:
+            
             {
                 MainMenu menu(renderer);
                 currentState = menu.Run();

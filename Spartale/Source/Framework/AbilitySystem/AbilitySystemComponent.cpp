@@ -8,6 +8,10 @@
 #include <algorithm> // std::max 사용을 위해 포함
 #include <iostream> // 로그 출력을 위해 포함
 #include <string> // std::wstring 사용을 위해 포함
+#include <Windows.h>
+
+#include <mmsystem.h>
+#pragma comment(lib, "winmm.lib")
 
 AbilitySystemComponent::AbilitySystemComponent(Actor* Owner)
     : OwnerActor(Owner) // 멤버 이니셜라이저를 사용하여 OwnerActor를 초기화 (Actor.cpp 에서 사용함)
@@ -43,6 +47,10 @@ bool AbilitySystemComponent::CheckAndProcessLevelUp()
     {
         // 최대 레벨 10으로 제한
         if (myStats->Level >= 10)    return false;
+
+        // 레벨업 사운드 출력
+        PlaySound(NULL, NULL, SND_PURGE);
+        PlaySound(Levelup, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP);
 
         // 레벨업 비용만큼 경험치 차감
         myStats->Experience.CurrentValue -= requiredExp;
