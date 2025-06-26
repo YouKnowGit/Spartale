@@ -39,4 +39,5 @@ private:
     void Compact();
 
     const wchar_t* rejectsound = L"Sounds/UI/menu_reject.wav";
+    const wchar_t* Warp = L"Sounds/warp.wav";
 };

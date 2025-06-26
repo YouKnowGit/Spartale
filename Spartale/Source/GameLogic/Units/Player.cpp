@@ -27,24 +27,25 @@ void Player::Initialize()
     if (MyStats)
     {
 		// Player 초기 Stats 설정
-        MyStats->Level = 1;
-        MyStats->HP.BaseValue = 200.f;
-        MyStats->HP.CurrentValue = 200.f;
-
-
+        MyStats->Level = 10;
         
-        MyStats->MP.BaseValue = 75.f;
-        MyStats->MP.CurrentValue = 75.f;
+        MyStats->Experience.CurrentValue = 0.f;
+        MyStats->Experience.BaseValue = 100.f;
 
-        MyStats->Strength.BaseValue = 30.f;
-        MyStats->Strength.CurrentValue = 30.f;
-        MyStats->Agility.BaseValue = 15.f;
-        MyStats->Agility.CurrentValue = 15.f;
-        MyStats->Defence.BaseValue = 15.f;
-        MyStats->Defence.CurrentValue = 15.f;
-        MyStats->Intelligence.CurrentValue = 15.f;
-        MyStats->Intelligence.BaseValue = 15.f;
+        MyStats->HP = FAttributeData(2000.f);
+        MyStats->MP = FAttributeData(750.f);
+
+        MyStats->Strength = FAttributeData(300.f);
+        MyStats->Agility = FAttributeData(150.f);
+        MyStats->Intelligence = FAttributeData(300.f);
+
+        MyStats->Defence = FAttributeData(150.f);
+        MyStats->MagicResistance = FAttributeData(150.f);
+
+        MyStats->CriticalHitChance = FAttributeData(5.f);
+        MyStats->CriticalHitDamageMultiplier = FAttributeData(1.5f);
     }
+    // 테스트 종료 시 NormalAttack 빼고 다 지워야함. 밑에 for문도 지워야함
     const std::vector<std::string> allSkillIDs = {
         "SK_NormalAttack",
         "SK_PoisonCloud",
@@ -101,6 +102,7 @@ void Player::Save(std::ofstream& file) const
         this->AbilityComponent->GetAttributeSet()->Save(file);
         this->AbilityComponent->Save(file);
     }
+
     file << "[Items]\n";
     for (int i = 0; i < m_inventory.GetCapacity(); ++i)
     {
@@ -116,6 +118,11 @@ void Player::Save(std::ofstream& file) const
             file << "Slot" << i << ",EMPTY\n";
         }
     }
+
+    file << "[EquippedItems]\n";
+    file << "eWeapon " << m_equippedWeaponSlot << '\n';
+    file << "eArmor " << m_equippedArmorSlot << '\n';
+    file << "eAccessory " << m_equippedAccessorySlot << '\n';
 }
 void Player::Load(std::ifstream& file)
 {
@@ -132,24 +139,35 @@ void Player::Load(std::ifstream& file)
         AbilityComponent->Load(file);
     }
 
+    file.clear();
+    file.seekg(0, std::ios::beg);
+
     std::string line;
     bool in_player_section = false;
     bool in_items_section = false;
+    bool in_equippeditem_section = false;
     while (std::getline(file, line))
     {
+        
         if (line.empty()) continue;
 
-        if (line == "[Player]") {
-            in_player_section = true;
-            continue;
-        }
-        if (line == "[Items]") {
-            in_items_section = true;
-            continue;
-        }
-
-        if (in_player_section && line[0] == '[') {
+        if (line[0] == '[') {
             in_player_section = false;
+            in_items_section = false;
+            in_equippeditem_section = false;
+
+            if (line == "[Player]") {
+                in_player_section = true;
+                continue;
+            }
+            if (line == "[Items]") {
+                in_items_section = true;
+                continue;
+            }
+            if (line == "[EquippedItems]") {
+                in_equippeditem_section = true;
+                continue;
+            }
         }
 
 
@@ -188,7 +206,24 @@ void Player::Load(std::ifstream& file)
                 if (slotIndex != -1)    m_inventory.AddItem(itemID, quantity);
             }
         }
+
+        if (in_equippeditem_section)
+        {
+            std::stringstream ss(line);
+            std::string key;
+            ss >> key;
+            
+            if (key == "eWeapon")    ss >> this->m_equippedWeaponSlot;
+            else if (key == "eArmor")    ss >> this->m_equippedArmorSlot;
+            else if (key == "eAccessory")   ss >> this->m_equippedAccessorySlot;
+
+            this->Equip(m_equippedWeaponSlot);
+            this->Equip(m_equippedArmorSlot);
+            this->Equip(m_equippedAccessorySlot);
+        }
     }
+
+    this->GetAbilityComponent()->GetAttributeSet()->AdjustDependentAttributes();
 }
 
 void Player::AddStatModifiers(const std::map<EStatType, float>& bonuses)

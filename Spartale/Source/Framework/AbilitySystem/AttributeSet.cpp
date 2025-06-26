@@ -93,14 +93,13 @@ void AttributeSet::Save(std::ofstream& file) const
     file << "Experience " << Experience.BaseValue << " " << Experience.CurrentValue << '\n';
     file << "HP " << HP.BaseValue << " " << HP.CurrentValue << '\n';
     file << "MP " << MP.BaseValue << " " << MP.CurrentValue << '\n';
-    file << "Strength " << Strength.BaseValue << " " << Strength.CurrentValue << '\n';
-    file << "Agility " << Agility.BaseValue << " " << Agility.CurrentValue << '\n';
-    file << "Intelligence " << Intelligence.BaseValue << " " << Intelligence.CurrentValue << '\n';
-    file << "Defence " << Defence.BaseValue << " " << Defence.CurrentValue << '\n';
-    file << "MagicResistance " << MagicResistance.BaseValue << " " << MagicResistance.CurrentValue << '\n';
-    file << "CriticalHitChance " << CriticalHitChance.BaseValue << " " << CriticalHitChance.CurrentValue << '\n';
-    file << "CriticalHitDamageMultiplier " << CriticalHitDamageMultiplier.BaseValue << " " << CriticalHitDamageMultiplier.CurrentValue << '\n';
-
+    file << "Strength "  << Strength.BaseValue << '\n';
+    file << "Agility "  << Agility.BaseValue << '\n';
+    file << "Intelligence "  << Intelligence.BaseValue << '\n';
+    file << "Defence " <<  Defence.BaseValue << '\n';
+    file << "MagicResistance "  << MagicResistance.BaseValue << '\n';
+    file << "CriticalHitChance "  << CriticalHitChance.BaseValue << '\n';
+    file << "CriticalHitDamageMultiplier " << CriticalHitDamageMultiplier.BaseValue << '\n';
 
 }
 void AttributeSet::Load(std::ifstream& file)
@@ -121,27 +120,26 @@ void AttributeSet::Load(std::ifstream& file)
         std::stringstream ss(line);
         std::string key;
         ss >> key;
-
         if (key == "Level") ss >> Level;
         else if (key == "Gold") ss >> Gold;
         else if (key == "AdditionalStatPoints") ss >> AdditionalStatPoints;
         else if (key == "Experience") ss >> Experience.BaseValue >> Experience.CurrentValue;
         else if (key == "HP") ss >> HP.BaseValue >> HP.CurrentValue;
         else if (key == "MP") ss >> MP.BaseValue >> MP.CurrentValue;
-        else if (key == "Strength") ss >> Strength.BaseValue >> Strength.CurrentValue;
-        else if (key == "Agility") ss >> Agility.BaseValue >> Agility.CurrentValue;
-        else if (key == "Intelligence") ss >> Intelligence.BaseValue >> Intelligence.CurrentValue;
-        else if (key == "Defence") ss >> Defence.BaseValue >> Defence.CurrentValue;
-        else if (key == "MagicResistance") ss >> MagicResistance.BaseValue >> MagicResistance.CurrentValue;
-        else if (key == "CriticalHitChance") ss >> CriticalHitChance.BaseValue >> CriticalHitChance.CurrentValue;
-        else if (key == "CriticalHitDamageMultiplier") ss >> CriticalHitDamageMultiplier.BaseValue >> CriticalHitDamageMultiplier.CurrentValue;
-        else if (key == "bIsDefending")
-        {
-            int defendingFlag;
-            ss >> defendingFlag;
-            bIsDefending = (defendingFlag == 1);
-        }
-    }
+        else if (key == "Strength") ss >> Strength.BaseValue;
+        else if (key == "Agility") ss >> Agility.BaseValue;
+        else if (key == "Intelligence") ss >> Intelligence.BaseValue;
+        else if (key == "Defence") ss >> Defence.BaseValue;
+        else if (key == "MagicResistance") ss >> MagicResistance.BaseValue;
+        else if (key == "CriticalHitChance") ss >> CriticalHitChance.BaseValue;
+        else if (key == "CriticalHitDamageMultiplier") ss >> CriticalHitDamageMultiplier.BaseValue;
 
-    AdjustDependentAttributes();
+    }
+    this->Strength.CurrentValue = Strength.BaseValue;
+    this->Agility.CurrentValue = Agility.BaseValue;
+    this->Intelligence.CurrentValue = Intelligence.BaseValue;
+    this->Defence.CurrentValue = Defence.BaseValue;
+    this->MagicResistance.CurrentValue = MagicResistance.BaseValue;
+    this->CriticalHitChance.CurrentValue = CriticalHitChance.BaseValue;
+    this->CriticalHitDamageMultiplier.CurrentValue = CriticalHitDamageMultiplier.BaseValue;
 }
