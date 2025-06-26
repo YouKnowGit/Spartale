@@ -267,6 +267,8 @@ void BattleManager::Update()
         {
             m_bIsOne = true;
             LogAndWait(m_monster->Name + L"이 몸을 일으켜세운다.");
+            PlaySound(NULL, NULL, SND_PURGE);
+            PlaySound(BossAwake, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP);// 보스 부활 사운드
             LogAndWait(m_monster->Name + L"이 깨어났다.");
             m_monster->Name = L"깨어난 데스페라도";
             AttributeSet* monStats = m_monster->GetAbilityComponent()->GetAttributeSet();
@@ -414,6 +416,8 @@ void BattleManager::EndBattle()
             {
                 std::wstring rewardMessage = m_monster->Name + L"을(를) 쓰러뜨렸다. . . ";
                 LogAndWait(rewardMessage);
+                PlaySound(NULL, NULL, SND_PURGE);  
+                PlaySound(MainTheme, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP);
                 LogAndWait(L"축하드립니다. 게임을 클리어하셨습니다 !");
                 LogAndWait(L"© 2025 언리얼 3-4기 Yee조. All rights reserved.");
                 LogAndWait(L"제작: 김준우");
