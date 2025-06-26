@@ -11,9 +11,45 @@
       "value": 50
     }
   },
+  "consume_big_hp_potion_01": {
+    "name": "대형 체력 포션",
+    "description": "사용 시 체력을 150 회복합니다.",
+    "type": "Consumable",
+    "price": 20,
+    "isStackable": true,
+    "maxStackSize": 99,
+    "effectData": {
+      "effectType": "HEAL_HP",
+      "value": 150
+    }
+  },
+  "consume_mp_potion_01": {
+    "name": "마나 포션",
+    "description": "사용 시 마나를 60 회복합니다.",
+    "type": "Consumable",
+    "price": 12,
+    "isStackable": true,
+    "maxStackSize": 99,
+    "effectData": {
+      "effectType": "HEAL_MP",
+      "value": 60
+    }
+  },
+  "consume_big_mp_potion_01": {
+    "name": "대형 마나 포션",
+    "description": "사용 시 마나를 170 회복합니다.",
+    "type": "Consumable",
+    "price": 20,
+    "isStackable": true,
+    "maxStackSize": 99,
+    "effectData": {
+      "effectType": "HEAL_MP",
+      "value": 170
+    }
+  },
   "consume_atk_boost_01": {
     "name": "힘 강화 물약",
-    "description": "일정 시간 동안 힘을 10 증가시킵니다.",
+    "description": "일정 시간 동안 힘을 15 증가시킵니다.",
     "type": "Consumable",
     "price": 15,
     "isStackable": true,
@@ -21,7 +57,49 @@
     "effectData": {
       "effectType": "BUFF_STAT",
       "targetStat": "STRENGTH",
-      "value": 10,
+      "value": 15,
+      "duration": 5
+    }
+  },
+  "consume_ap_boost_01": {
+    "name": "마법 강화 물약",
+    "description": "일정 시간 동안 지능을 15 증가시킵니다.",
+    "type": "Consumable",
+    "price": 15,
+    "isStackable": true,
+    "maxStackSize": 20,
+    "effectData": {
+      "effectType": "BUFF_STAT",
+      "targetStat": "INTELLIGENCE",
+      "value": 15,
+      "duration": 5
+    }
+  },
+  "consume_def_boost_01": {
+    "name": "방어 강화 물약",
+    "description": "일정 시간 동안 방어력을 8 증가시킵니다.",
+    "type": "Consumable",
+    "price": 18,
+    "isStackable": true,
+    "maxStackSize": 20,
+    "effectData": {
+      "effectType": "BUFF_STAT",
+      "targetStat": "DEFENCE",
+      "value": 8,
+      "duration": 5
+    }
+  },
+  "consume_MGdef_boost_01": {
+    "name": "마법저항력 강화 물약",
+    "description": "일정 시간 동안 마법저항력을 8 증가시킵니다.",
+    "type": "Consumable",
+    "price": 18,
+    "isStackable": true,
+    "maxStackSize": 20,
+    "effectData": {
+      "effectType": "BUFF_STAT",
+      "targetStat": "MAGIC_RESISTANCE",
+      "value": 16,
       "duration": 5
     }
   },
@@ -40,6 +118,38 @@
       }
     }
   },
+  "equip_weapon_axe_01": {
+    "name": "강철 도끼",
+    "description": "묵직한 무게와 파괴력을 자랑하는 도끼.",
+    "type": "Equipment",
+    "price": 80,
+    "isStackable": false,
+    "maxStackSize": 1,
+    "equipmentData": {
+      "equipmentType": "WEAPON",
+      "statBonuses": {
+        "STRENGTH": 14,
+        "ATTACK_SPEED": -2
+      }
+    }
+  },
+  "equip_weapon_VA_sword_01": {
+    "name": "맹독 암살자의 단검",
+    "description": "맹독 암살자의 어둠마법이 부여되어있다.",
+    "type": "Equipment",
+    "price": 70,
+    "isStackable": false,
+    "maxStackSize": 1,
+    "equipmentData": {
+      "equipmentType": "WEAPON",
+      "statBonuses": {
+        "STRENGTH": 6,
+        "INTELLIGENCE": 18,
+        "AGILITY": 10,
+        "CRITICAL_GIT_CHANCE": 20
+      }
+    }
+  },
   "equip_armor_chest_01": {
     "name": "가죽 갑옷",
     "description": "가볍고 질겨 기본적인 보호를 제공한다.",
@@ -50,7 +160,40 @@
     "equipmentData": {
       "equipmentType": "ARMOR",
       "statBonuses": {
-        "DEFENSE": 12
+        "DEFENCE": 12,
+        "HP": 50
+      }
+    }
+  },
+  "equip_armor_robe_01": {
+    "name": "마법사의 로브",
+    "description": "마법사에게 적합한 가벼운 로브.",
+    "type": "Equipment",
+    "price": 60,
+    "isStackable": false,
+    "maxStackSize": 1,
+    "equipmentData": {
+      "equipmentType": "ARMOR",
+      "statBonuses": {
+        "INTELLIGENCE": 20,
+        "MAGIC_RESISTANCE": 5,
+        "HP": -50
+      }
+    }
+  },
+  "equip_armor_plate_01": {
+    "name": "무쇠 갑옷 골렘의 투구",
+    "description": "골렘의 거대한 투구를 입는다.",
+    "type": "Equipment",
+    "price": 120,
+    "isStackable": false,
+    "maxStackSize": 1,
+    "equipmentData": {
+      "equipmentType": "ARMOR",
+      "statBonuses": {
+        "HP": 100,
+        "DEFENSE": 25,
+        "AGILITY": -3
       }
     }
   },
@@ -64,8 +207,39 @@
     "equipmentData": {
       "equipmentType": "ACCESSORY",
       "statBonuses": {
-        "AGILITY": 5,
-        "CRIT_CHANCE": 3
+        "AGILITY": 10,
+        "CRIT_HIT_CHANCE": 20
+      }
+    }
+  },
+  "equip_accessory_necklace_01": {
+    "name": "지혜의 반지",
+    "description": "지식을 탐구하는 자에게 영감을 준다.",
+    "type": "Equipment",
+    "price": 90,
+    "isStackable": false,
+    "maxStackSize": 1,
+    "equipmentData": {
+      "equipmentType": "ACCESSORY",
+      "statBonuses": {
+        "INTELLIGENCE": 20,
+        "MP": 50
+      }
+    }
+  },
+  "equip_accessory_bracelet_01": {
+    "name": "팔라딘의 반지",
+    "description": "착용자의 신체를 강건하게 만든다.",
+    "type": "Equipment",
+    "price": 85,
+    "isStackable": false,
+    "maxStackSize": 1,
+    "equipmentData": {
+      "equipmentType": "ACCESSORY",
+      "statBonuses": {
+        "DEFENCE": 15,
+        "MAGIC_RESISTANCE": 15,
+        "HP": 60
       }
     }
   }
