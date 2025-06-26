@@ -18,7 +18,8 @@ enum class EBattleState
     ExecutingPlayerAction, // 플레이어 행동 실행 및 결과 표시
     EnemyTurn,            // 적 턴 실행
     TurnEnd,              // 턴 종료 (지속 효과 등 처리)
-    BattleOver            // 전투 종료 메시지 표시
+    BattleOver,            // 전투 종료 메시지 표시
+    ItemInven
 };
 
 class BattleManager {
@@ -61,6 +62,9 @@ private:
     EBattleState m_battleState;
     EBattleResult m_battleResult; // 전투 결과를 저장할 변수
 
+    std::vector<int> potions;
+
+    bool m_bIsItemMenu = false;
     bool m_bIsOne = false;
     bool m_bIsBattleOver;
     int m_CurrentTurn;

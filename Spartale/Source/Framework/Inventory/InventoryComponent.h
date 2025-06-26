@@ -31,6 +31,7 @@ public:
     InventorySlot* GetSlotAtIndex_Mutable(int index);
     
     int GetCapacity() const { return m_capacity; }
+    int GetUsedSlotCount() const;
 
 private:
     int m_capacity; // 인벤토리의 최대 칸 수
