@@ -14,7 +14,8 @@
 ### Desperado란?
 `Desperado`는 C++과 Windows 콘솔 환경을 기반으로 제작된 클래식 턴제 텍스트 RPG입니다. 플레이어는 동료의 복수와 왕국의 운명을 짊어지고 절차적으로 생성된 미궁을 탐험하며, 강력한 몬스터들과의 전략적인 턴제 전투를 통해 성장하여 모든 것의 원흉인 '데스페라도'를 물리쳐야 합니다.
 
-![게임 플레이 메인 화면](https://github.com/user-attachments/assets/19c1cb68-f59c-4f39-bb88-d3bb73f48b95)
+[![Watch the video](https://img.youtube.com/vi/vGe3DBCeu0Y/0.jpg)](https://www.youtube.com/watch?v=vGe3DBCeu0Y)  
+🔗 [**Desperado 시연영상 전체 보기 ▶**](https://www.youtube.com/watch?v=vGe3DBCeu0Y)
 
 게임은 필드 탐험과 턴제 전투, 두 가지 핵심 파트로 진행됩니다.
 -   **필드 탐험:** 플레이어는 마을에서 정비를 마친 뒤, 포탈을 통해 다양한 테마의 필드로 이동합니다. 필드를 자유롭게 이동하며 NPC와 상호작용하고, 위험지대에서는 무작위로 몬스터와 조우하게 됩니다.
@@ -69,11 +70,6 @@ Desperado/
 | 전투 화면 | 인벤토리 화면 |
 |:---:|:---:|
 | <img src="https://github.com/user-attachments/assets/752e7f91-f6a9-4c86-8bc2-a18cb504b151" width="400"/> | <img src="https://github.com/user-attachments/assets/199dda3c-7870-45de-a4ea-fae7647fb49b" width="400"/> |
-
-
-## ▶️ 시연 영상 (Gameplay Video)
-
-[![Watch the video](https://img.youtube.com/vi/vGe3DBCeu0Y/0.jpg)](https://www.youtube.com/watch?v=vGe3DBCeu0Y)
 
 ## ✨ 주요 기능 및 콘텐츠
 
