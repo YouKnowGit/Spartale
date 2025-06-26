@@ -113,7 +113,7 @@
     "equipmentData": {
       "equipmentType": "WEAPON",
       "statBonuses": {
-        "STRENGTH": 8,
+        "STRENGTH": 10,
         "AGILITY": -1
       }
     }
@@ -128,7 +128,7 @@
     "equipmentData": {
       "equipmentType": "WEAPON",
       "statBonuses": {
-        "STRENGTH": 14,
+        "STRENGTH": 40,
         "ATTACK_SPEED": -2
       }
     }
@@ -143,9 +143,9 @@
     "equipmentData": {
       "equipmentType": "WEAPON",
       "statBonuses": {
-        "STRENGTH": 6,
-        "INTELLIGENCE": 18,
-        "AGILITY": 10,
+        "STRENGTH": 10,
+        "INTELLIGENCE": 30,
+        "AGILITY": 30,
         "CRITICAL_GIT_CHANCE": 20
       }
     }
@@ -160,8 +160,7 @@
     "equipmentData": {
       "equipmentType": "WEAPON",
       "statBonuses": {
-        "INTELLIGENCE": 80,
-        "MP": 150
+        "INTELLIGENCE": 100
       }
     }
   },
@@ -192,7 +191,7 @@
       "statBonuses": {
         "STRENGTH": 20,
         "AGILITY": 30,
-        "CRITICAL_HIT_CHANCE": 20
+        "CRITICAL_HIT_CHANCE": 30
       }
     }
   },
@@ -221,9 +220,8 @@
     "equipmentData": {
       "equipmentType": "ARMOR",
       "statBonuses": {
-        "INTELLIGENCE": 20,
-        "MAGIC_RESISTANCE": 5,
-        "HP": -50
+        "INTELLIGENCE": 40,
+        "MAGIC_RESISTANCE": 20
       }
     }
   },
@@ -237,10 +235,10 @@
     "equipmentData": {
       "equipmentType": "ARMOR",
       "statBonuses": {
-        "AGILITY": 10,
+        "AGILITY": 40,
         "DEFENSE": 5,
         "MAGIC_RESISTANCE": 5,
-        "CRITICAL_HIT_CHANCE": 10
+        "CRITICAL_HIT_CHANCE": 20
       }
     }
   },
@@ -254,9 +252,7 @@
     "equipmentData": {
       "equipmentType": "ARMOR",
       "statBonuses": {
-        "HP": 100,
-        "DEFENSE": 25,
-        "AGILITY": -3
+        "DEFENCE": 100
       }
     }
   },
@@ -270,9 +266,7 @@
     "equipmentData": {
       "equipmentType": "ARMOR",
       "statBonuses": {
-        "HP": -80,
         "INTELLIGENCE": 40,
-        "MP": 100,
         "MAGIC_RESISTANCE": 50,
         "DEFENCE": 30
       }
@@ -320,8 +314,7 @@
     "equipmentData": {
       "equipmentType": "ACCESSORY",
       "statBonuses": {
-        "INTELLIGENCE": 20,
-        "MP": 50
+        "INTELLIGENCE": 40
       }
     }
   },
@@ -335,9 +328,8 @@
     "equipmentData": {
       "equipmentType": "ACCESSORY",
       "statBonuses": {
-        "DEFENCE": 15,
-        "MAGIC_RESISTANCE": 15,
-        "HP": 60
+        "DEFENCE": 100,
+        "MAGIC_RESISTANCE": 100
       }
     }
   },
@@ -367,7 +359,7 @@
     "equipmentData": {
       "equipmentType": "ACCESSORY",
       "statBonuses": {
-        "HP": 350
+        "HP": 999
       }
     }
   },
@@ -381,10 +373,9 @@
     "equipmentData": {
       "equipmentType": "ACCESSORY",
       "statBonuses": {
-        "DEFENCE": 15,
-        "MAGIC_RESISTANCE": 40,
-        "HP": 100,
-        "INTELLIGENCE": 50
+        "DEFENCE": 40,
+        "MAGIC_RESISTANCE": 60,
+        "INTELLIGENCE": 100
       }
     }
   }
