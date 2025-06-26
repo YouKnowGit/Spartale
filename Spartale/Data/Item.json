@@ -54,14 +54,6 @@
       }
     }
   },
-  "consume_town_portal_scroll": {
-    "name": "마을 귀환 주문서",
-    "description": "사용 시 마을로 즉시 이동합니다.",
-    "type": "Consumable",
-    "price": 50,
-    "isStackable": true,
-    "maxStackSize": 99
-  },
   "equip_accessory_ring_01": {
     "name": "민첩의 반지",
     "description": "착용자의 몸놀림을 한결 가볍게 만들어준다.",
