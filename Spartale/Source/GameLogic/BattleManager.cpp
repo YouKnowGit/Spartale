@@ -585,7 +585,7 @@ std::wstring BattleManager::DrawStatBar(const std::wstring& label, float current
     float ratio = (max > 0) ? (current / max) : 0;
     int filledLength = static_cast<int>(ratio * barLength);
 
-    std::wstring bar = label + L"[";
+    std::wstring bar = label + L" [";
     for (int i = 0; i < barLength; ++i)
         bar += (i < filledLength) ? L"■" : L" ";
     bar += L"]";

@@ -1,61 +1,1 @@
-[Player]
-Name 
-MapID 9
-PosX 6
-PosY 4
-Direction 0
-[Attributes]
-Level 10
-Gold 10713
-AdditionalStatPoints 0
-Experience 900 14687
-HP 1072 1072
-MP 328 328
-Strength 93
-Agility 24
-Intelligence 48
-Defence 42
-MagicResistance 42
-CriticalHitChance 50
-CriticalHitDamageMultiplier 1.5
-[GrantedAbilities]
-SK_NormalAttack
-SK_Meditate
-SK_StrengthBuff
-SK_Fireball
-SK_PoisonCloud
-SK_ArcaneBlast
-SK_TripleSlash
-SK_Heal
-SK_AbyssalCollapse
-SK_Judgment
-[EquippedAbilities]
-SK_NormalAttack
-SK_Judgment
-SK_TripleSlash
-NULL
-[Items]
-Slot0,consume_hp_potion_01,61
-Slot1,consume_mp_potion_01,70
-Slot2,equip_weapon_axe_01,1
-Slot3,equip_thief_robe_01,1
-Slot4,equip_armor_plate_01,1
-Slot5,equip_skeleton's_sword_01,1
-Slot6,equip_armor_plate_01,1
-Slot7,equip_paladin's_ring_01,1
-Slot8,equip_armor_plate_01,1
-Slot9,EMPTY
-Slot10,EMPTY
-Slot11,EMPTY
-Slot12,EMPTY
-Slot13,EMPTY
-Slot14,EMPTY
-Slot15,EMPTY
-Slot16,EMPTY
-Slot17,EMPTY
-Slot18,EMPTY
-Slot19,EMPTY
-[EquippedItems]
-eWeapon 8
-eArmor 6
-eAccessory 7
+ZQm`xds\O`ld!L`qHE!8QnrY!7QnrX!5Ehsdbuhno!1Z@uushctudr\Mdwdm!01Fnme!01602@eehuhno`mRu`uQnhour!1Dyqdshdobd!811!05796IQ!0163!0163LQ!239!239Rusdofui!82@fhmhux!35Houdmmhfdobd!59Edgdobd!53L`fhbSdrhru`obd!53Bshuhb`mIhuBi`obd!41Bshuhb`mIhuE`l`fdLtmuhqmhds!0/4ZFs`oude@chmhuhdr\RJ^Onsl`m@uu`bjRJ^Ldehu`udRJ^RusdofuiCtggRJ^Ghsdc`mmRJ^QnhrnoBmnteRJ^@sb`odCm`ruRJ^UshqmdRm`riRJ^Id`mRJ^@cxrr`mBnmm`qrdRJ^KtefldouZDpthqqde@chmhuhdr\RJ^Onsl`m@uu`bjRJ^KtefldouRJ^UshqmdRm`riOTMMZHudlr\Rmnu1-bnortld^iq^qnuhno^10-70Rmnu0-bnortld^lq^qnuhno^10-61Rmnu3-dpthq^vd`qno^`yd^10-0Rmnu2-dpthq^uihdg^sncd^10-0Rmnu5-dpthq^`slns^qm`ud^10-0Rmnu4-dpthq^rjdmduno&r^rvnse^10-0Rmnu7-dpthq^`slns^qm`ud^10-0Rmnu6-dpthq^q`m`eho&r^shof^10-0Rmnu9-dpthq^`slns^qm`ud^10-0Rmnu8-DLQUXRmnu01-DLQUXRmnu00-DLQUXRmnu03-DLQUXRmnu02-DLQUXRmnu05-DLQUXRmnu04-DLQUXRmnu07-DLQUXRmnu06-DLQUXRmnu09-DLQUXRmnu08-DLQUXZDpthqqdeHudlr\dVd`qno!9d@slns!7d@bbdrrnsx!6

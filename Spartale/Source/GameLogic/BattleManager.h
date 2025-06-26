@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <random>
+#include <windows.h>
 
 // 전방 선언
 class Player;

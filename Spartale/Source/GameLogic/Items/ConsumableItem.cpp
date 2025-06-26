@@ -45,7 +45,6 @@ bool ConsumableItem::use(Player* targetPlayer, int sourceSlotIndex)
     // "HEAL_MP" 효과 처리
     else if (effectData.Type == "HEAL_MP")
     {
-        // MP 회복 로직 직접 추가
         AttributeSet* stats = targetPlayer->GetAbilityComponent()->GetAttributeSet();
         if (stats)
         {
