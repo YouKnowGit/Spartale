@@ -353,3 +353,8 @@ void AbilitySystemComponent::Load(std::ifstream& file)
         EquippedAbilities.push_back(nullptr);
     }
 }
+
+void AbilitySystemComponent::ClearAllActiveEffects()
+{
+    ActiveEffects.clear();
+}
