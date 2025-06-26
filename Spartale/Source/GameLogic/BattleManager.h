@@ -61,6 +61,7 @@ private:
     EBattleState m_battleState;
     EBattleResult m_battleResult; // 전투 결과를 저장할 변수
 
+    bool m_bIsOne = false;
     bool m_bIsBattleOver;
     int m_CurrentTurn;
 
