@@ -222,3 +222,16 @@ void InventoryComponent::Compact()
         it->bIsEquipped = false;
     }
 }
+// 모든 슬롯 순회하고 유효한 슬롯이 몇개인지 반환
+int InventoryComponent::GetUsedSlotCount() const
+{
+    int count = 0;
+    for (const InventorySlot& slot : m_slots)
+    {
+        if (slot.Quantity > 0)
+        {
+            count++;
+        }
+    }
+    return count;
+}

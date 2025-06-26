@@ -3,6 +3,7 @@
 #include "GameLogic/Units/Monster.h"
 #include "GameLogic/DataManager.h"
 #include "GameLogic/Items/ItemData.h"
+#include "Framework/Inventory/InventoryComponent.h"
 #include "Framework/AbilitySystem/AttributeSet.h"
 #include "Framework/AbilitySystem/AbilitySystemComponent.h"
 #include "Framework/AbilitySystem/GameplayAbility.h"
@@ -58,8 +59,11 @@ void BattleManager::ProcessInput()
 
     int key = _getch();
 
+    InventoryComponent* inventory = m_player->GetInventory();
+    if (!inventory) return;
+
     // 메뉴 선택 상태일 때만 위/아래/엔터/ESC 키가 작동
-    if (m_battleState == EBattleState::PlayerActionSelect || m_battleState == EBattleState::PlayerSkillSelect)
+    if (m_battleState == EBattleState::PlayerActionSelect || m_battleState == EBattleState::PlayerSkillSelect || m_battleState == EBattleState::ItemInven)
     {
         if (key == 224) // 방향키
         {
@@ -79,6 +83,9 @@ void BattleManager::ProcessInput()
         {
             PlaySound(m_escSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
             if (m_battleState == EBattleState::PlayerSkillSelect)
+                m_battleState = EBattleState::PlayerActionSelect;
+
+            if (m_battleState == EBattleState::ItemInven)
                 m_battleState = EBattleState::PlayerActionSelect;
         }
     }
@@ -118,6 +125,7 @@ void BattleManager::Update()
 
     case EBattleState::PlayerSkillSelect:
     {
+        m_bIsItemMenu = false;
         m_statusMessage = L"사용할 스킬을 선택하세요.";
         m_currentMenuOptions.clear();
         AbilitySystemComponent* pASC = m_player->GetAbilityComponent();
@@ -126,6 +134,33 @@ void BattleManager::Update()
         {
             if (skill) m_currentMenuOptions.push_back(skill->AbilityName + L" (MP:" + std::to_wstring((int)skill->ManaCost) + L")");
             else m_currentMenuOptions.push_back(L"(비어있음)");
+        }
+        break;
+    }
+    case EBattleState::ItemInven:
+    {
+        m_bIsItemMenu = true;
+        m_statusMessage = L"사용할 아이템을 선택하세요.";
+        m_currentMenuOptions.clear();
+        InventoryComponent* inventory = m_player->GetInventory();
+        if (!inventory) return;
+
+       
+        for (int i = 0; i < inventory->GetUsedSlotCount(); i++)
+        {
+            const InventorySlot* slot = inventory->GetSlotAtIndex(i);
+            if (slot->ItemID == "consume_potion_01" || slot->ItemID == "consume_potion_02" ||
+                slot->ItemID == "consume_potion_03" || slot->ItemID == "consume_potion_04")
+            {
+                if (slot->ItemID == "consume_potion_01") potions.push_back(i);
+                if (slot->ItemID == "consume_potion_02") potions.push_back(i);
+                if (slot->ItemID == "consume_potion_03") potions.push_back(i);
+                if (slot->ItemID == "consume_potion_04") potions.push_back(i);
+
+                const ItemData* data = DataManager::GetInstance().GetItemData(slot->ItemID);
+                if(data)    m_currentMenuOptions.push_back((data->Name)+ L"(" + std::to_wstring(slot->Quantity) +L"개)");
+                else m_currentMenuOptions.push_back(L"(비어있음)");
+            }
         }
     }
     break;
@@ -143,14 +178,15 @@ void BattleManager::Update()
             else if (choice == 1) { // 방어
                 m_player->GetAbilityComponent()->GetAttributeSet()->bIsDefending = true;
                 LogAndWait(m_player->Name + L"은(는) 방어 태세를 갖췄다!");
+                m_bIsItemMenu = false;
                 m_battleState = EBattleState::TurnEnd;
             }
             else if (choice == 2) { // 아이템
-                LogAndWait(L"아이템 가방이 비어있습니다!");
-                m_battleState = EBattleState::TurnEnd;
+                m_battleState = EBattleState::ItemInven;
             }
             else if (choice == 3) { // 도망가기
 
+                m_bIsItemMenu = false;
                 if (m_monster->GetID() == "Ancient_Dragon")
                 {
                     LogAndWait(L"이 녀석을 상대로는 도망갈 수 없다..");
@@ -177,7 +213,24 @@ void BattleManager::Update()
                 }
             }
         }
-        else { // 스킬 사용
+        else if (m_bIsItemMenu)
+        {
+            //아이템 사용
+            const InventorySlot* slot = m_player->GetInventory()->GetSlotAtIndex(choice);
+            if (slot && slot->Quantity > 0)
+            {
+                m_player->GetInventory()->RemoveItem(potions.at(choice), 1);
+                LogAndWait(m_player->Name + L"은(는) " + slot->pItemData->Name + L"을(를) 사용했다 !");
+                m_player->GetInventory()->UseItem(choice, m_player);
+                Render();
+                if (choice < 3) LogAndWait(m_player->Name + L"은(는) 체력(를)을 회복했다 !");
+                else    LogAndWait(m_player->Name + L"은(는) 마나을(를) 회복했다 !");
+                m_battleState = EBattleState::TurnEnd;
+                m_bIsItemMenu = false;
+            }
+        }
+        else
+        { // 스킬 사용
             // 반환된 결과 구조체를 받음
             FActivationResult result = m_player->GetAbilityComponent()->TryActivateAbility(choice, m_monster);
             LogAndWait(result.LogMessage);
@@ -258,8 +311,9 @@ void BattleManager::Render()
     // 상태에 따라 메뉴 그리기
     if (m_battleState == EBattleState::PlayerActionSelect)
         DrawActionSelectMenu();
-    else if (m_battleState == EBattleState::PlayerSkillSelect)
+    else if (m_battleState == EBattleState::PlayerSkillSelect || m_battleState == EBattleState::ItemInven) // 아이템창, 스킬창은 같은 함수 공유
         DrawSkillSelectMenu();
+
 
     m_renderer.Render();
 }
