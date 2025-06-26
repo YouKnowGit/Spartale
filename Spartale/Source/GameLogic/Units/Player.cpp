@@ -101,6 +101,7 @@ void Player::Save(std::ofstream& file) const
         this->AbilityComponent->GetAttributeSet()->Save(file);
         this->AbilityComponent->Save(file);
     }
+
     file << "[Items]\n";
     for (int i = 0; i < m_inventory.GetCapacity(); ++i)
     {
@@ -116,6 +117,11 @@ void Player::Save(std::ofstream& file) const
             file << "Slot" << i << ",EMPTY\n";
         }
     }
+
+    file << "[EquippedItems]\n";
+    file << "eWeapon " << m_equippedWeaponSlot << '\n';
+    file << "eArmor " << m_equippedArmorSlot << '\n';
+    file << "eAccessory " << m_equippedAccessorySlot << '\n';
 }
 void Player::Load(std::ifstream& file)
 {
@@ -132,24 +138,35 @@ void Player::Load(std::ifstream& file)
         AbilityComponent->Load(file);
     }
 
+    file.clear();
+    file.seekg(0, std::ios::beg);
+
     std::string line;
     bool in_player_section = false;
     bool in_items_section = false;
+    bool in_equippeditem_section = false;
     while (std::getline(file, line))
     {
+        
         if (line.empty()) continue;
 
-        if (line == "[Player]") {
-            in_player_section = true;
-            continue;
-        }
-        if (line == "[Items]") {
-            in_items_section = true;
-            continue;
-        }
-
-        if (in_player_section && line[0] == '[') {
+        if (line[0] == '[') {
             in_player_section = false;
+            in_items_section = false;
+            in_equippeditem_section = false;
+
+            if (line == "[Player]") {
+                in_player_section = true;
+                continue;
+            }
+            if (line == "[Items]") {
+                in_items_section = true;
+                continue;
+            }
+            if (line == "[EquippedItems]") {
+                in_equippeditem_section = true;
+                continue;
+            }
         }
 
 
@@ -188,7 +205,24 @@ void Player::Load(std::ifstream& file)
                 if (slotIndex != -1)    m_inventory.AddItem(itemID, quantity);
             }
         }
+
+        if (in_equippeditem_section)
+        {
+            std::stringstream ss(line);
+            std::string key;
+            ss >> key;
+            
+            if (key == "eWeapon")    ss >> this->m_equippedWeaponSlot;
+            else if (key == "eArmor")    ss >> this->m_equippedArmorSlot;
+            else if (key == "eAccessory")   ss >> this->m_equippedAccessorySlot;
+
+            this->Equip(m_equippedWeaponSlot);
+            this->Equip(m_equippedArmorSlot);
+            this->Equip(m_equippedAccessorySlot);
+        }
     }
+
+    this->GetAbilityComponent()->GetAttributeSet()->AdjustDependentAttributes();
 }
 
 void Player::AddStatModifiers(const std::map<EStatType, float>& bonuses)

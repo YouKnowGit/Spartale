@@ -262,10 +262,6 @@ std::wstring AbilitySystemComponent::UpdateActiveEffects()
     return LogMessage;
 }
 
-void AbilitySystemComponent::ClearAllActiveEffects()
-{
-
-}
 // Getter
 GameplayAbility* AbilitySystemComponent::GetGrantedAbility(int32_t Index) const
 {
@@ -356,4 +352,9 @@ void AbilitySystemComponent::Load(std::ifstream& file)
     {
         EquippedAbilities.push_back(nullptr);
     }
+}
+
+void AbilitySystemComponent::ClearAllActiveEffects()
+{
+    ActiveEffects.clear();
 }
