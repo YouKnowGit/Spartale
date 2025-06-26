@@ -79,4 +79,7 @@ private:
     const wchar_t* meet = L"Sounds/Meet.wav";
     const wchar_t* win = L"Sounds/Win.wav";
     const wchar_t* encounter = L"Sounds/enemy_encounter.wav";
+    const wchar_t* Lose = L"Sounds/Lose.wav";
+    const wchar_t* Runway = L"Sounds/Runway.wav";
+    const wchar_t* RunwayFailure = L"Sounds/RunwayFailure";
 };

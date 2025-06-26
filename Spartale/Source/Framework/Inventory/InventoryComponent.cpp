@@ -89,7 +89,10 @@ int InventoryComponent::AddItem(const std::string& itemID, int quantity)
     // 모든 슬롯을 다 확인했는데도 아이템이 남았다면, 인벤토리가 가득 찬 것
     if (quantityToAdd > 0)
     {
+        PlaySound(NULL, NULL, 0); // 실패 사운드 추가
+        PlaySound(rejectsound, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP);
         std::cerr << "Inventory is full. Could not add " << quantityToAdd << " " << itemID << std::endl;
+        Sleep(400);
     }
 
     // 최종적으로 추가하지 못한 아이템의 개수를 반환
