@@ -621,9 +621,9 @@ void PauseMenu::ProcessShopBuyInput(int key)
     {
         PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
 
-        // 가능한 행동 목록("구매하기", "취소")
+        // 가능한 행동 목록("구매", "취소")
         m_currentItemActions.clear();
-        m_currentItemActions.push_back(L"구매하기");
+        m_currentItemActions.push_back(L"구매");
         m_currentItemActions.push_back(L"취소");
 
         // '구매 액션 선택' 상태로 전환하고 커서를 초기화
