@@ -19,7 +19,7 @@
     "hp": 120,
     "strength": 40,
     "agility": 5,
-    "intelligence": 40,
+    "intelligence": 30,
     "defence": 0,
     "magicResistance": 0,
     "skills": [
@@ -57,7 +57,7 @@
       "SK_StrengthBuff",
       "SK_TripleSlash"
     ],
-    "loottable": [ "consume_mp_potion_01", "consume_hp_potion_01", "equip_weapon_axe_01", "consume_mp_potion_01" ]
+    "loottable": [ "equip_weapon_axe_01" ]
   },
   "Forest_Rogue": {
     "name": "숲의 부랑자",
@@ -103,7 +103,7 @@
       "SK_StrengthBuff",
       "SK_PoisonCloud"
     ],
-    "loottable": [ "consume_mp_potion_02", "consume_hp_potion_02", "equip_thief_robe_01", "equip_thief_ring_01", "equip_weapon_VA_sword_01" ]
+    "loottable": [ "equip_thief_robe_01" ]
   },
   "Stonehide_Dwarf": {
     "name": "돌껍질 드워프",
@@ -141,14 +141,14 @@
     "hp": 500,
     "strength": 100,
     "agility": 7,
-    "intelligence": 3,
+    "intelligence": 50,
     "defence": 50,
     "magicResistance": 0,
     "skills": [
       "SK_NormalAttack",
       "SK_Judgment"
     ],
-    "loottable": [ "consume_mp_potion_02", "consume_hp_potion_02", "equip_armor_plate_01", "equip_paladin's_ring_01" ]
+    "loottable": [ "equip_armor_plate_01", "equip_paladin's_ring_01" ]
   },
   "Frail_Skeleton": {
     "name": "약골 스켈레톤",
@@ -185,7 +185,7 @@
   "Shadow_Wisplight": {
     "name": "어둠의 위스프",
     "level": 11,
-    "hp": 200,
+    "hp": 100,
     "strength": 0,
     "agility": 7,
     "intelligence": 120,
@@ -204,7 +204,7 @@
     "hp": 600,
     "strength": 120,
     "agility": 8,
-    "intelligence": 150,
+    "intelligence": 120,
     "defence": 20,
     "magicResistance": 40,
     "skills": [
@@ -213,7 +213,7 @@
       "SK_AbyssalCollapse",
       "SK_Fireball"
     ],
-    "loottable": [ "consume_mp_potion_02", "consume_hp_potion_02", "equip_specter's_ring_01", "equip_Specter's_sword_01" ]
+    "loottable": [ "equip_specter's_ring_01", "equip_Specter's_sword_01" ]
   },
   "Ancient_Dragon": {
     "name": "고대 드래곤 데스페라도",
