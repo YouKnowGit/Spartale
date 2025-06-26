@@ -10,7 +10,9 @@
 #include "GameLogic/DataManager.h"
 #include "GameLogic/MainMenu.h"
 #include "GameLogic/SaveManager.h"
+#include "GameLogic/Skills/SkillFactory.h"
 #include "Framework/AbilitySystem/AbilitySystemComponent.h"
+#include "Framework/AbilitySystem/GameplayAbility.h"
 
 void PrintString(const std::wstring& text, SHORT x, SHORT y);
 
@@ -56,12 +58,12 @@ int main()
 
                 ConsoleUtils::ShowConsoleCursor(false);
                 auto player = make_unique<Player>(name);
+                player->GetAbilityComponent()->GrantAbility(SkillFactory::CreateSkill("SK_NormalAttack"));
                 player->GetAbilityComponent()->EquipAbility(0, player->GetAbilityComponent()->GetGrantedAbility(0));
 
                 // 시작 아이템으로 HP 포션을 3개와 청동 검을 추가합니다.
                 player->GetInventory()->AddItem("consume_hp_potion_01", 3);
                 player->GetInventory()->AddItem("equip_weapon_sword_01", 1);
-                player->GetInventory()->AddItem("consume_town_portal_scroll", 1);
                 GameWorld world(std::move(player));
                 world.Run();
 
@@ -70,7 +72,6 @@ int main()
             }
             case EGameState::LoadGame:
             {
-
                 auto loadPlayer = make_unique<Player>(L" ");
                 SaveManager sm(*loadPlayer);
                 sm.LoadGame("save.txt");

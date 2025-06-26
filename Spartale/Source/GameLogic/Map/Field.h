@@ -37,6 +37,7 @@ private:
 	int m_width;
 	int m_height;
 	int playerLevel;
+	std::wstring m_name;
 
 	std::vector<std::vector<TileType>> m_mapData;
 	std::map<std::pair<int, int>, Portal> m_portals;

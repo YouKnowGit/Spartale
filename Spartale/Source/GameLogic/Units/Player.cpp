@@ -27,44 +27,42 @@ void Player::Initialize()
     if (MyStats)
     {
 		// Player 초기 Stats 설정
-        MyStats->Level = 10;
+        MyStats->Level = 1;
         
         MyStats->Experience.CurrentValue = 0.f;
         MyStats->Experience.BaseValue = 100.f;
 
-        MyStats->HP = FAttributeData(2000.f);
-        MyStats->MP = FAttributeData(750.f);
+        MyStats->HP = FAttributeData(200.f);
+        MyStats->MP = FAttributeData(75.f);
 
-        MyStats->Strength = FAttributeData(300.f);
-        MyStats->Agility = FAttributeData(150.f);
-        MyStats->Intelligence = FAttributeData(300.f);
+        MyStats->Strength = FAttributeData(30.f);
+        MyStats->Agility = FAttributeData(15.f);
+        MyStats->Intelligence = FAttributeData(30.f);
 
-        MyStats->Defence = FAttributeData(150.f);
-        MyStats->MagicResistance = FAttributeData(150.f);
+        MyStats->Defence = FAttributeData(15.f);
+        MyStats->MagicResistance = FAttributeData(15.f);
 
         MyStats->CriticalHitChance = FAttributeData(5.f);
         MyStats->CriticalHitDamageMultiplier = FAttributeData(1.5f);
     }
-    // 테스트 종료 시 NormalAttack 빼고 다 지워야함. 밑에 for문도 지워야함
+    /*
     const std::vector<std::string> allSkillIDs = {
-        "SK_NormalAttack",
-        "SK_PoisonCloud",
-        "SK_Fireball",
-        "SK_TripleSlash",
-        "SK_StrengthBuff",
-        "SK_Meditate",
-        "SK_Heal",
-        "SK_ArcaneBlast",
-        "SK_AbyssalCollapse",
-        "SK_Judgment"
+        "SK_NormalAttack"
+        //"SK_PoisonCloud",
+        //"SK_Fireball",
+        //"SK_TripleSlash",
+        //"SK_StrengthBuff",
+        //"SK_Meditate",
+        //"SK_Heal",
+        //"SK_ArcaneBlast",
+        //"SK_AbyssalCollapse",
+        //"SK_Judgment"
     };
     for (const auto& id : allSkillIDs)
     {
         GetAbilityComponent()->GrantAbility(SkillFactory::CreateSkill(id));
     }
-
-    // 기본 공격만 0번 슬롯에 장착
-    GetAbilityComponent()->GrantAbility(SkillFactory::CreateSkill("SK_NormalAttack"));
+    */
 
     // Player 위치 및 방향 관련 데이터
     CurrentLocation.X = 9;

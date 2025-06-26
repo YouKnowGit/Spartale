@@ -43,14 +43,14 @@
           "x": 5,
           "y": 5,
           "destMapID": 11,
-          "destX": 11,
+          "destX": 10,
           "destY": 4
         },
         {
           "x": 5,
           "y": 6,
           "destMapID": 11,
-          "destX": 11,
+          "destX": 10,
           "destY": 5
         },
         {
@@ -58,7 +58,7 @@
           "y": 3,
           "destMapID": 12,
           "destX": 7,
-          "destY": 9
+          "destY": 8
         }
       ]
     },
@@ -502,7 +502,7 @@
       "header": {
         "width": 12,
         "height": 10,
-        "name": "Shop"
+        "name": "상점"
       },
       "tiles": [
         "############",
@@ -522,14 +522,14 @@
           "x": 11,
           "y": 4,
           "destMapID": 0,
-          "destX": 5,
+          "destX": 6,
           "destY": 5
         },
         {
           "x": 11,
           "y": 5,
           "destMapID": 0,
-          "destX": 5,
+          "destX": 6,
           "destY": 6
         }
       ]
@@ -560,7 +560,7 @@
           "y": 9,
           "destMapID": 0,
           "destX": 14,
-          "destY": 3
+          "destY": 4
         }
       ]
     },
