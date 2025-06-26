@@ -89,7 +89,7 @@ private:
     void DrawInventoryScreen(bool bIsSellMode = false);
     void DrawInventoryActionMenu();
     void DrawInventoryDropPrompt();
-    void DrawItemInfoBox(bool bIsSellMode = false);
+    void DrawItemInfoBox(const ItemData* itemData, bool bIsSellMode = false);
 
     // --- 헬퍼 함수 ---
     void ClearRightPane();
@@ -102,7 +102,7 @@ private:
 
     // --- UI 레이아웃 상수 ---
     const int m_skillListVisibleCount = 10;
-    const int m_inventoryVisibleCount = 8;
+    const int m_inventoryVisibleCount = 5;
 
     // --- 상태 관리 변수 ---
     bool m_bIsRunning;

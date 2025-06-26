@@ -73,6 +73,7 @@ private:
     std::wstring m_statusMessage;
     int m_currentMenuSelection;
     std::vector<std::wstring> m_currentMenuOptions;
+    std::vector<std::wstring> m_currentItemOptions;
 
     // 난수 생성 엔진을 멤버 변수로 추가
     std::mt19937 m_rng;

@@ -621,9 +621,9 @@ void PauseMenu::ProcessShopBuyInput(int key)
     {
         PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
 
-        // 가능한 행동 목록("구매하기", "취소")
+        // 가능한 행동 목록("구매", "취소")
         m_currentItemActions.clear();
-        m_currentItemActions.push_back(L"구매하기");
+        m_currentItemActions.push_back(L"구매");
         m_currentItemActions.push_back(L"취소");
 
         // '구매 액션 선택' 상태로 전환하고 커서를 초기화
@@ -658,7 +658,7 @@ void PauseMenu::ProcessShopBuyActionInput(int key)
         const ItemData* itemData = DataManager::GetInstance().GetItemData(itemId);
         if (!itemData) return;
 
-        if (selectedAction == L"구매하기")
+        if (selectedAction == L"구매")
         {
             if (itemData->MaxStackSize > 1)
             {
@@ -1273,10 +1273,17 @@ void PauseMenu::DrawShopBuyScreen()
         }
     }
 
+    const ItemData* selectedItemData = nullptr; // 기본적으로는 비어있음
+
+    // 현재 커서가 유효한 아이템을 가리키고 있는지 확인
+    if (m_shopBuyCursor >= 0 && m_shopBuyCursor < shopData->itemIds.size()) {
+        selectedItemData = DataManager::GetInstance().GetItemData(shopData->itemIds[m_shopBuyCursor]);
+    }
+
     m_renderer.DrawString(m_renderer.GetWidth() / 2 + 3, m_renderer.GetHeight() - 2, L"[Enter: 구매 | ESC: 뒤로 가기]");
 
     // 아이템 정보창은 항상 그림
-    DrawItemInfoBox(false);
+    DrawItemInfoBox(selectedItemData, false);
 
     // 피드백 메시지 표시
     if (!m_feedbackMessage.empty() && GetTickCount64() < m_feedbackMessageEndTime)
@@ -1392,11 +1399,18 @@ void PauseMenu::DrawInventoryScreen(bool bIsSellMode)
             m_renderer.DrawString(boxX + 2, currentY + 1, L"( 비어있음 )");
         }
     }
+    
+    const InventorySlot* selectedSlot = inventory->GetSlotAtIndex(m_inventorySlotSelection);
+    const ItemData* selectedItemData = nullptr;
+    if (selectedSlot)
+    {
+        selectedItemData = selectedSlot->pItemData; // 슬롯에 캐싱된 포인터를 사용
+    }
 
+    // 아이템 정보창 및 피드백 메시지 처리
     m_renderer.DrawString(m_renderer.GetWidth() / 2 + 3, m_renderer.GetHeight() - 2, L"[Enter: 선택 | ESC: 뒤로 가기]");
 
-    // 아이템 정보창은 항상 그림
-    DrawItemInfoBox(bIsSellMode);
+    DrawItemInfoBox(selectedSlot ? selectedSlot->pItemData : nullptr, bIsSellMode);
 }
 
 void PauseMenu::DrawInventoryActionMenu()
@@ -1490,48 +1504,37 @@ void PauseMenu::DrawInventoryDropPrompt()
     }
 }
 
-void PauseMenu::DrawItemInfoBox(bool bIsSellMode)
+void PauseMenu::DrawItemInfoBox(const ItemData* data, bool bIsSellMode)
 {
-    InventoryComponent* inventory = m_player.GetInventory();
-    if (!inventory) return;
+	if (!data) return;
 
-    // 현재 커서가 가리키는 슬롯의 정보를 가져옵니다.
-    const InventorySlot* slot = inventory->GetSlotAtIndex(m_inventorySlotSelection);
-    if (!slot || slot->Quantity == 0) return; // 슬롯이 비어있거나 아이템이 없으면 그리지 않음
-
-    const ItemData* data = DataManager::GetInstance().GetItemData(slot->ItemID);
-    if (!data) return;
-
-    // --- 1. 레이아웃 및 박스 그리기 ---
+    // --- 레이아웃 및 박스 그리기 ---
     int boxY = m_renderer.GetHeight() - 9;
     int boxX = m_renderer.GetWidth() / 2 + 3;
     int boxWidth = m_renderer.GetWidth() - boxX - 10;
 
-    // 박스 테두리 그리기
     m_renderer.DrawString(boxX, boxY, L"┌" + std::wstring(boxWidth, L'─') + L"┐");
     for (int i = 1; i < 5; ++i) {
         m_renderer.DrawString(boxX, boxY + i, L"│" + std::wstring(boxWidth, L' ') + L"│");
     }
     m_renderer.DrawString(boxX, boxY + 5, L"└" + std::wstring(boxWidth, L'─') + L"┘");
 
-    // --- 2. 박스 안에 내용 채우기 ---
+    // --- 박스 안에 내용 채우기 ---
     int contentX = boxX + 2;
     int contentY = boxY + 1;
 
-    // 아이템 이름 표시
+    // 2. 이제 'data'는 함수 내부에서 새로 선언하는 것이 아니라,
+    //    매개변수로 받은 'data'를 그대로 사용합니다.
     std::wstring title = L"[" + data->Name + L"]";
     m_renderer.DrawString(contentX, contentY, title);
 
-    // bIsSellMode 값에 따라 판매가(60%) 또는 일반 구매가를 계산합니다.
     float priceToShow = bIsSellMode ? (data->Price * 0.6f) : data->Price;
     std::wstring price = std::to_wstring(static_cast<int>(priceToShow)) + L" G";
-
     m_renderer.DrawString(contentX + boxWidth - price.length() - 1, contentY, price);
     contentY++;
 
-    // 아이템 설명 표시
     m_renderer.DrawString(contentX, contentY, data->Description);
-    contentY += 2; // 설명과 효과 사이에 한 줄 띄우기
+    contentY += 2;
 
     // --- 3. 아이템 타입에 따라 다른 상세 정보 표시 ---
 
