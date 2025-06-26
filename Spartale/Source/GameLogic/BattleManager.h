@@ -73,6 +73,7 @@ private:
     std::wstring m_statusMessage;
     int m_currentMenuSelection;
     std::vector<std::wstring> m_currentMenuOptions;
+    std::vector<std::wstring> m_currentItemOptions;
 
     // 난수 생성 엔진을 멤버 변수로 추가
     std::mt19937 m_rng;
@@ -86,4 +87,6 @@ private:
     const wchar_t* Lose = L"Sounds/Lose.wav";
     const wchar_t* Runway = L"Sounds/Runway.wav";
     const wchar_t* RunwayFailure = L"Sounds/RunwayFailure";
+    const wchar_t* BossAwake = L"Sounds/BossAwake.wav";
+    const wchar_t* MainTheme = L"Sounds/MainTheme.wav";
 };

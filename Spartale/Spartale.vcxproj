@@ -157,6 +157,7 @@
   <ItemGroup>
     <None Include="Data\Item.json" />
     <None Include="Data\Monsters.json" />
+    <None Include="Data\Shop.json" />
     <None Include="Data\Skills.json" />
     <None Include="Data\Map.json" />
   </ItemGroup>

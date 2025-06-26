@@ -42,6 +42,20 @@ bool ConsumableItem::use(Player* targetPlayer, int sourceSlotIndex)
         // Player에 만들어 두었던 Heal 함수 호출
         targetPlayer->Heal(effectData.Value);
     }
+    // "HEAL_MP" 효과 처리
+    else if (effectData.Type == "HEAL_MP")
+    {
+        // MP 회복 로직 직접 추가
+        AttributeSet* stats = targetPlayer->GetAbilityComponent()->GetAttributeSet();
+        if (stats)
+        {
+            stats->MP.CurrentValue += effectData.Value;
+            if (stats->MP.CurrentValue > stats->MP.BaseValue)
+            {
+                stats->MP.CurrentValue = stats->MP.BaseValue;
+            }
+        }
+    }
     // "BUFF_STAT" 효과 처리
     else if (effectData.Type == "BUFF_STAT")
     {

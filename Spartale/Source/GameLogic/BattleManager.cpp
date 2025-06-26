@@ -67,6 +67,11 @@ void BattleManager::ProcessInput()
     {
         if (key == 224) // 방향키
         {
+            if (m_currentMenuOptions.empty())
+            {
+                PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+                return;
+            }
             PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
             key = _getch();
             if (key == 72) // 위
@@ -142,6 +147,7 @@ void BattleManager::Update()
         m_bIsItemMenu = true;
         m_statusMessage = L"사용할 아이템을 선택하세요.";
         m_currentMenuOptions.clear();
+        potions.clear();
         InventoryComponent* inventory = m_player->GetInventory();
         if (!inventory) return;
 
@@ -149,17 +155,15 @@ void BattleManager::Update()
         for (int i = 0; i < inventory->GetUsedSlotCount(); i++)
         {
             const InventorySlot* slot = inventory->GetSlotAtIndex(i);
+            if (!slot)   continue;
             if (slot->ItemID == "consume_potion_01" || slot->ItemID == "consume_potion_02" ||
                 slot->ItemID == "consume_potion_03" || slot->ItemID == "consume_potion_04")
             {
-                if (slot->ItemID == "consume_potion_01") potions.push_back(i);
-                if (slot->ItemID == "consume_potion_02") potions.push_back(i);
-                if (slot->ItemID == "consume_potion_03") potions.push_back(i);
-                if (slot->ItemID == "consume_potion_04") potions.push_back(i);
+                potions.push_back(i);
 
                 const ItemData* data = DataManager::GetInstance().GetItemData(slot->ItemID);
                 if(data)    m_currentMenuOptions.push_back((data->Name)+ L"(" + std::to_wstring(slot->Quantity) +L"개)");
-                else m_currentMenuOptions.push_back(L"(비어있음)");
+                else m_currentMenuOptions.push_back(L"-");
             }
         }
     }
@@ -170,7 +174,7 @@ void BattleManager::Update()
         int choice = m_currentMenuSelection;
         m_currentMenuSelection = 0; // 메뉴 선택 인덱스 초기화
 
-        if (m_currentMenuOptions[0] == L"공격") // 현재 메뉴가 '행동 선택' 메뉴였다면
+        if (!m_currentMenuOptions.empty() && m_currentMenuOptions[0] == L"공격") // 현재 메뉴가 '행동 선택' 메뉴였다면
         {
             if (choice == 0) { // 공격
                 m_battleState = EBattleState::PlayerSkillSelect;
@@ -182,7 +186,29 @@ void BattleManager::Update()
                 m_battleState = EBattleState::TurnEnd;
             }
             else if (choice == 2) { // 아이템
-                m_battleState = EBattleState::ItemInven;
+                bool bHasItem = false;
+
+                InventoryComponent* inventory = m_player->GetInventory();
+                for (int i = 0; i < inventory->GetUsedSlotCount(); i++)
+                {
+                    const InventorySlot* slot = inventory->GetSlotAtIndex(i);
+                    if (!slot)   continue;
+                    if (slot->ItemID == "consume_potion_01" || slot->ItemID == "consume_potion_02" ||
+                        slot->ItemID == "consume_potion_03" || slot->ItemID == "consume_potion_04")
+                    {
+                        potions.push_back(i);
+
+                        const ItemData* data = DataManager::GetInstance().GetItemData(slot->ItemID);
+                        if (data)    m_currentMenuOptions.push_back((data->Name) + L"(" + std::to_wstring(slot->Quantity) + L"개)");
+                        else m_currentMenuOptions.push_back(L"-");
+                    }
+                }
+                if (bHasItem)    m_battleState = EBattleState::PlayerActionSelect;
+                else
+                {
+                    LogAndWait(L"사용할 수 있는 아이템이 없습니다.");
+                    m_battleState = EBattleState::PlayerActionSelect;
+                }
             }
             else if (choice == 3) { // 도망가기
 
@@ -216,16 +242,46 @@ void BattleManager::Update()
         else if (m_bIsItemMenu)
         {
             //아이템 사용
-            const InventorySlot* slot = m_player->GetInventory()->GetSlotAtIndex(choice);
+            if (potions.empty() || m_currentMenuOptions.empty())
+            {
+                LogAndWait(L"사용할 수 있는 아이템이 없다.");
+                m_battleState = EBattleState::PlayerActionSelect;
+                m_bIsItemMenu = false;
+                break;
+            }
+
+            int choice = m_currentMenuSelection;
+            m_currentMenuSelection = 0; 
+
+            if (choice < 0 || choice >= potions.size())
+            {
+                m_battleState = EBattleState::PlayerActionSelect;
+                m_bIsItemMenu = false;
+                break;
+            }
+            int realItemIndex = potions.at(choice);
+
+            const InventorySlot* slot = m_player->GetInventory()->GetSlotAtIndex(realItemIndex);
             if (slot && slot->Quantity > 0)
             {
-                m_player->GetInventory()->RemoveItem(potions.at(choice), 1);
                 LogAndWait(m_player->Name + L"은(는) " + slot->pItemData->Name + L"을(를) 사용했다 !");
-                m_player->GetInventory()->UseItem(choice, m_player);
+
+                m_player->GetInventory()->UseItem(realItemIndex, m_player);
+                m_player->GetInventory()->RemoveItem(realItemIndex, 1);
+
                 Render();
-                if (choice < 3) LogAndWait(m_player->Name + L"은(는) 체력(를)을 회복했다 !");
-                else    LogAndWait(m_player->Name + L"은(는) 마나을(를) 회복했다 !");
+
+                if (slot->ItemID == "consume_potion_01" || slot->ItemID == "consume_potion_02")
+                    LogAndWait(m_player->Name + L"은(는) 체력을 회복했다!");
+                else
+                    LogAndWait(m_player->Name + L"은(는) 마나를 회복했다!");
+
                 m_battleState = EBattleState::TurnEnd;
+                m_bIsItemMenu = false;
+            }
+            else
+            {
+                m_battleState = EBattleState::PlayerActionSelect;
                 m_bIsItemMenu = false;
             }
         }
@@ -267,8 +323,10 @@ void BattleManager::Update()
         {
             m_bIsOne = true;
             LogAndWait(m_monster->Name + L"이 몸을 일으켜세운다.");
+            PlaySound(NULL, NULL, SND_PURGE);
+            PlaySound(BossAwake, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP);// 보스 부활 사운드
             LogAndWait(m_monster->Name + L"이 깨어났다.");
-            m_monster->Name = L"깨어난 드래곤";
+            m_monster->Name = L"깨어난 데스페라도";
             AttributeSet* monStats = m_monster->GetAbilityComponent()->GetAttributeSet();
             monStats->Level = 20;
             monStats->HP = FAttributeData(999);
@@ -414,6 +472,8 @@ void BattleManager::EndBattle()
             {
                 std::wstring rewardMessage = m_monster->Name + L"을(를) 쓰러뜨렸다. . . ";
                 LogAndWait(rewardMessage);
+                PlaySound(NULL, NULL, SND_PURGE);  
+                PlaySound(MainTheme, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP);
                 LogAndWait(L"축하드립니다. 게임을 클리어하셨습니다 !");
                 LogAndWait(L"© 2025 언리얼 3-4기 Yee조. All rights reserved.");
                 LogAndWait(L"제작: 김준우");

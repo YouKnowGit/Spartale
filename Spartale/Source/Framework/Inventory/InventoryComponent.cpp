@@ -129,6 +129,30 @@ void InventoryComponent::RemoveItem(int slotIndex, int quantity)
     }
 }
 
+void InventoryComponent::RemoveItemByItemID(const std::string& itemID, int quantity)
+{
+    int quantityToRemove = quantity;
+
+    for (int i = m_capacity - 1; i >= 0; --i)
+    {
+        if (m_slots[i].ItemID == itemID)
+        {
+            int amountInSlot = m_slots[i].Quantity;
+            int amountToRemove = std::min(quantityToRemove, amountInSlot);
+
+            // 기존에 만든 RemoveItem 함수를 재사용
+            RemoveItem(i, amountToRemove);
+
+            quantityToRemove -= amountToRemove;
+            if (quantityToRemove <= 0)
+            {
+                // 제거할 수량을 모두 채웠으면 함수 종료
+                break;
+            }
+        }
+    }
+}
+
 // 특정 인덱스의 슬롯 정보를 반환하는 함수
 const InventorySlot* InventoryComponent::GetSlotAtIndex(int index) const
 {

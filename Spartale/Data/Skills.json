@@ -98,7 +98,7 @@
                 "magnitude": {
                     "calculation": "Ratio",
                     "ad_ratio": 0.0,
-                    "ap_ratio": 0.33,
+                    "ap_ratio": 1.00,
                     "damage_type": "Magical",
                     "is_heal": false
                 }
