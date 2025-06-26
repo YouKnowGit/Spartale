@@ -27,42 +27,42 @@ void Player::Initialize()
     if (MyStats)
     {
 		// Player 초기 Stats 설정
-        MyStats->Level = 1;
+        MyStats->Level = 10;
         
         MyStats->Experience.CurrentValue = 0.f;
         MyStats->Experience.BaseValue = 100.f;
 
-        MyStats->HP = FAttributeData(200.f);
-        MyStats->MP = FAttributeData(75.f);
+        MyStats->HP = FAttributeData(1121.f);
+        MyStats->MP = FAttributeData(853.f);
 
-        MyStats->Strength = FAttributeData(30.f);
-        MyStats->Agility = FAttributeData(15.f);
-        MyStats->Intelligence = FAttributeData(30.f);
+        MyStats->Strength = FAttributeData(142.f);
+        MyStats->Agility = FAttributeData(88.f);
+        MyStats->Intelligence = FAttributeData(141.f);
 
-        MyStats->Defence = FAttributeData(15.f);
-        MyStats->MagicResistance = FAttributeData(15.f);
+        MyStats->Defence = FAttributeData(55.f);
+        MyStats->MagicResistance = FAttributeData(63.f);
 
-        MyStats->CriticalHitChance = FAttributeData(5.f);
+        MyStats->CriticalHitChance = FAttributeData(15.f);
         MyStats->CriticalHitDamageMultiplier = FAttributeData(1.5f);
     }
-    /*
+    
     const std::vector<std::string> allSkillIDs = {
         "SK_NormalAttack"
-        //"SK_PoisonCloud",
-        //"SK_Fireball",
-        //"SK_TripleSlash",
-        //"SK_StrengthBuff",
-        //"SK_Meditate",
-        //"SK_Heal",
-        //"SK_ArcaneBlast",
-        //"SK_AbyssalCollapse",
-        //"SK_Judgment"
+        "SK_PoisonCloud",
+        "SK_Fireball",
+        "SK_TripleSlash",
+        "SK_StrengthBuff",
+        "SK_Meditate",
+        "SK_Heal",
+        "SK_ArcaneBlast",
+        "SK_AbyssalCollapse",
+        "SK_Judgment"
     };
     for (const auto& id : allSkillIDs)
     {
         GetAbilityComponent()->GrantAbility(SkillFactory::CreateSkill(id));
     }
-    */
+    
 
     // Player 위치 및 방향 관련 데이터
     CurrentLocation.X = 9;

@@ -658,7 +658,7 @@ void PauseMenu::ProcessShopBuyActionInput(int key)
         const ItemData* itemData = DataManager::GetInstance().GetItemData(itemId);
         if (!itemData) return;
 
-        if (selectedAction == L"구매하기")
+        if (selectedAction == L"구매")
         {
             if (itemData->MaxStackSize > 1)
             {

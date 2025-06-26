@@ -83,7 +83,11 @@ std::wstring GenericAbility::ActivateAbility(AbilitySystemComponent* SourceASC, 
         float finalMagnitude = 0.0f;
         if (effectData.magnitudeCalculation == "Ratio")
         {
-            finalMagnitude = DamageUtils::CalculateDamage(sourceActor, actualTarget, effectData.adRatio, effectData.apRatio, effectData.damageType);
+            finalMagnitude = DamageUtils::CalculateDamage(sourceActor, 
+                                                            actualTarget, 
+                                                            effectData.adRatio, 
+                                                            effectData.apRatio, 
+                                                            effectData.damageType);
         }
         else // "Flat" 또는 그 외
         {
