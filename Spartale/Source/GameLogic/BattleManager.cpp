@@ -95,7 +95,15 @@ void BattleManager::Update()
     case EBattleState::Intro:
         PlaySound(NULL, NULL, SND_PURGE);  // 이전사운드 중지
         PlaySound(meet, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP); // 사운드 재생
-        LogAndWait(L"야생의 " + m_monster->Name + L"이(가) 나타났다!");
+        if (m_monster->GetID() == "Ancient_Dragon")
+        {
+            LogAndWait(m_monster->Name + L"을 마주했다.");
+            LogAndWait(L"현재까지의 진행 상황이 저장되었습니다.");
+        }
+        else 
+        {
+            LogAndWait(L"야생의 " + m_monster->Name + L"이(가) 나타났다!");
+        }
         m_battleState = EBattleState::PlayerActionSelect; // 바로 플레이어 선택으로 전환
         break;
 
@@ -119,7 +127,6 @@ void BattleManager::Update()
             if (skill) m_currentMenuOptions.push_back(skill->AbilityName + L" (MP:" + std::to_wstring((int)skill->ManaCost) + L")");
             else m_currentMenuOptions.push_back(L"(비어있음)");
         }
-        m_currentMenuOptions.push_back(L"뒤로가기");
     }
     break;
 
@@ -143,7 +150,13 @@ void BattleManager::Update()
                 m_battleState = EBattleState::TurnEnd;
             }
             else if (choice == 3) { // 도망가기
-                if (AttemptToFlee())
+
+                if (m_monster->GetID() == "Ancient_Dragon")
+                {
+                    LogAndWait(L"이 녀석을 상대로는 도망갈 수 없다..");
+                    m_battleState = EBattleState::TurnEnd;
+                }
+                else if (AttemptToFlee())
                 {
                     // 성공
                     LogAndWait(L"성공적으로 도망쳤다!");
@@ -191,6 +204,25 @@ void BattleManager::Update()
 
     case EBattleState::EnemyTurn:
     {
+        if (!m_bIsOne && m_monster->GetID() == "Ancient_Dragon" && m_monster->GetAbilityComponent()->GetAttributeSet()->HP.CurrentValue < 300)
+        {
+            m_bIsOne = true;
+            LogAndWait(m_monster->Name + L"이 몸을 일으켜세운다.");
+            LogAndWait(m_monster->Name + L"이 깨어났다.");
+            m_monster->Name = L"깨어난 드래곤";
+            AttributeSet* monStats = m_monster->GetAbilityComponent()->GetAttributeSet();
+            monStats->Level = 20;
+            monStats->HP = FAttributeData(999);
+            monStats->Strength = FAttributeData(200);
+            monStats->Agility = FAttributeData(40);
+            monStats->Intelligence = FAttributeData(200);
+            monStats->Defence = FAttributeData(100);
+            monStats->MagicResistance = FAttributeData(100);
+            monStats->AdjustDependentAttributes();
+
+            Render();
+        }
+
         m_monster->GetAbilityComponent()->GetAttributeSet()->MP = FAttributeData(5000);
         LogAndWait(m_monster->Name + L"의 턴!");
         LogAndWait(m_monster->RunAI(m_player));
@@ -316,67 +348,86 @@ void BattleManager::EndBattle()
 
         case EBattleResult::PlayerWon:
         {
-            AttributeSet* playerStats = m_player->GetAbilityComponent()->GetAttributeSet();
-            AttributeSet* monsterStats = m_monster->GetAbilityComponent()->GetAttributeSet();
-            if (!playerStats || !monsterStats) break;
-
-            // --- 보상 계산 ---
-            const float BaseExpPerLevel = 50.0f;
-            const float BaseGoldPerLevel = 33.0f;
-            std::uniform_real_distribution<float> rewardMultiplier(0.8f, 1.2f);
-
-            int expGained = static_cast<int>(BaseExpPerLevel * monsterStats->Level * rewardMultiplier(m_rng));
-            int goldGained = static_cast<int>(BaseGoldPerLevel * monsterStats->Level * rewardMultiplier(m_rng));
-
-            // --- 보상 지급 ---
-            playerStats->Experience.CurrentValue += expGained;
-            playerStats->Gold += goldGained;
-
-            // 몬스터 처치 및 보상 획득 메시지를 먼저 출력
-            std::wstring rewardMessage = m_monster->Name + L"을(를) 쓰러뜨렸다! 경험치 "
-                + std::to_wstring(expGained) + L", "
-                + std::to_wstring(goldGained) + L" G를 획득했다!";
-            LogAndWait(rewardMessage);
-
-
-            // 레벨업 체크
-            AbilitySystemComponent* playerASC = m_player->GetAbilityComponent();
-            bool bLeveledUp = playerASC->CheckAndProcessLevelUp();
-
-            // 레벨업
-            if (bLeveledUp)
+            if (m_monster->GetID() == "Ancient_Dragon") // 상대: 드래곤, 상태: PlayerWon = 엔딩
             {
-                std::wstring levelUpMessage = m_player->Name + L"은(는) 레벨 업 했다!";
-                LogAndWait(levelUpMessage);
-
-                std::wstring skillName = playerASC->GetGrantedAbility(playerASC->GetAttributeSet()->Level - 1)->AbilityName;
-                levelUpMessage = m_player->Name + L"은(는) " + skillName + L"을(를) 배웠다!";
-                LogAndWait(levelUpMessage);
+                std::wstring rewardMessage = m_monster->Name + L"을(를) 쓰러뜨렸다. . . ";
+                LogAndWait(rewardMessage);
+                LogAndWait(L"축하드립니다. 게임을 클리어하셨습니다 !");
+                LogAndWait(L"© 2025 언리얼 3-4기 Yee조. All rights reserved.");
+                LogAndWait(L"제작: 김준우");
+                LogAndWait(L"제작: 정현수");
+                LogAndWait(L"제작: 김기인");
+                LogAndWait(L"제작: 곽규환");
+                LogAndWait(L"제작: 김민구");
+                LogAndWait(L"제작: 최윤호");
+                LogAndWait(L"Special thanks to Gemini, ChatGPT, Copilot 기타 등등");
+                LogAndWait(L"게임을 플레이해주셔서 감사합니다.");
             }
-
-            std::uniform_int_distribution<int> dropChance(1, 100);
-            if (dropChance(m_rng) <= 30) // 드랍률 30%
+            else 
             {
-                const MonsterData* monsterData = DataManager::GetInstance().GetMonsterData(m_monster->GetID());
-                
-                const std::vector<std::string>& lootTable = monsterData->lootTable;
+                AttributeSet* playerStats = m_player->GetAbilityComponent()->GetAttributeSet();
+                AttributeSet* monsterStats = m_monster->GetAbilityComponent()->GetAttributeSet();
+                if (!playerStats || !monsterStats) break;
 
-                if (!lootTable.empty())
+                // --- 보상 계산 ---
+                const float BaseExpPerLevel = 50.0f;
+                const float BaseGoldPerLevel = 33.0f;
+                std::uniform_real_distribution<float> rewardMultiplier(0.8f, 1.2f);
+
+                int expGained = static_cast<int>(BaseExpPerLevel * monsterStats->Level * rewardMultiplier(m_rng));
+                int goldGained = static_cast<int>(BaseGoldPerLevel * monsterStats->Level * rewardMultiplier(m_rng));
+
+                // --- 보상 지급 ---
+                playerStats->Experience.CurrentValue += expGained;
+                playerStats->Gold += goldGained;
+
+                // 몬스터 처치 및 보상 획득 메시지를 먼저 출력
+                std::wstring rewardMessage = m_monster->Name + L"을(를) 쓰러뜨렸다! 경험치 "
+                    + std::to_wstring(expGained) + L", "
+                    + std::to_wstring(goldGained) + L" G를 획득했다!";
+                LogAndWait(rewardMessage);
+
+
+                // 레벨업 체크
+                AbilitySystemComponent* playerASC = m_player->GetAbilityComponent();
+                bool bLeveledUp = playerASC->CheckAndProcessLevelUp();
+
+                // 레벨업
+                if (bLeveledUp)
                 {
-                    std::uniform_int_distribution<int> itemIndex(0, lootTable.size() - 1);
-                    const std::string& droppedItemId = lootTable[itemIndex(m_rng)];
+                    std::wstring levelUpMessage = m_player->Name + L"은(는) 레벨 업 했다!";
+                    LogAndWait(levelUpMessage);
 
-                    m_player->GetInventory()->AddItem(droppedItemId, 1);
+                    std::wstring skillName = playerASC->GetGrantedAbility(playerASC->GetAttributeSet()->Level - 1)->AbilityName;
+                    levelUpMessage = m_player->Name + L"은(는) " + skillName + L"을(를) 배웠다!";
+                    LogAndWait(levelUpMessage);
+                }
 
-                    const ItemData* itemData = DataManager::GetInstance().GetItemData(droppedItemId);
+                std::uniform_int_distribution<int> dropChance(1, 100);
+                if (dropChance(m_rng) <= 30) // 드랍률 30%
+                {
+                    const MonsterData* monsterData = DataManager::GetInstance().GetMonsterData(m_monster->GetID());
 
-                    std::wstring dropMessage = m_monster->Name + L"이(가) 무언가를 떨어뜨렸다.";
-                    LogAndWait(dropMessage);
+                    const std::vector<std::string>& lootTable = monsterData->lootTable;
 
-                    std::wstring itemGetMessage = L"[" + itemData->Name + L"] 1개를 획득했다!";
-                    LogAndWait(itemGetMessage);
+                    if (!lootTable.empty())
+                    {
+                        std::uniform_int_distribution<int> itemIndex(0, lootTable.size() - 1);
+                        const std::string& droppedItemId = lootTable[itemIndex(m_rng)];
+
+                        m_player->GetInventory()->AddItem(droppedItemId, 1);
+
+                        const ItemData* itemData = DataManager::GetInstance().GetItemData(droppedItemId);
+
+                        std::wstring dropMessage = m_monster->Name + L"이(가) 무언가를 떨어뜨렸다.";
+                        LogAndWait(dropMessage);
+
+                        std::wstring itemGetMessage = L"[" + itemData->Name + L"] 1개를 획득했다!";
+                        LogAndWait(itemGetMessage);
+                    }
                 }
             }
+            
 
             break;
         }

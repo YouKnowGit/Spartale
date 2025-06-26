@@ -11,10 +11,11 @@ namespace DamageUtils
     {
         if (!SourceActor || !TargetActor) return 0.0f;
 
+        static std::random_device rd;  // 예측 불가능한 시드값을 생성
+        static std::mt19937 gen(rd()); // 시드값으로 메르센 트위스터 엔진을 초기화
+
         const AttributeSet* SourceStats = SourceActor->GetAbilityComponent()->GetAttributeSet();
         const AttributeSet* TargetStats = TargetActor->GetAbilityComponent()->GetAttributeSet();
-
-        if (!SourceStats || !TargetStats) return 0.0f;
 
         float Damage = 0.0f;
 
@@ -42,21 +43,22 @@ namespace DamageUtils
             break;
         }
 
+        // 치명타 계산 로직
+        const float CritChance = SourceStats->CriticalHitChance.CurrentValue;
+        const float CritMultiplier = SourceStats->CriticalHitDamageMultiplier.CurrentValue;
 
+        if (Damage > 0 && CritChance > 0)
         {
-            // 데미지 편차를 위한 난수 발생 구간
-            // static으로 선언하여, 이 함수가 처음 호출될 때 단 한 번만 생성
-            static std::random_device rd;  // 예측 불가능한 시드값을 생성
-            static std::mt19937 gen(rd()); // 시드값으로 메르센 트위스터 엔진을 초기화
+            static std::uniform_real_distribution<float> crit_distrib(0.0f, 100.0f);
+            if (crit_distrib(gen) < CritChance) Damage *= CritMultiplier;
+        }
 
-            // 0.95f ~ 1.15f 사이의 실수를 균등하게 생성하는 분포를 정의 (-15% ~ +15% 편차)
-            static std::uniform_real_distribution<float> distrib(0.95f, 1.15f);
-
-            // 최종 데미지에 랜덤 배율을 곱합니다.
-            if (Damage > 0)
-            {
-                Damage *= distrib(gen);
-            }
+        // 0.95f ~ 1.15f 사이의 실수를 균등하게 생성하는 분포를 정의 (-15% ~ +15% 편차)
+        static std::uniform_real_distribution<float> distrib(0.95f, 1.15f);
+        // 최종 데미지에 랜덤 배율을 곱합니다.
+        if (Damage > 0)
+        {
+           Damage *= distrib(gen);
         }
 
         // 최소 데미지는 1로 설정

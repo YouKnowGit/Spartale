@@ -9,6 +9,7 @@
 #include "GameLogic/Units/Monster.h"
 #include "GameLogic/Skills/SkillFactory.h"
 #include "Utils/StringUtils.h"
+#include "GameLogic/SaveManager.h"
 
 #include <iostream>
 #include <conio.h>
@@ -110,18 +111,22 @@ void GameWorld::ProcessInput()
             }
             else if (tile == TileType::BOSS)
             {
-                // 모듈화된 함수를 호출하여 몬스터를 생성
+                SaveManager sm(*m_player);
+                sm.SaveGame("save.txt");
+
                 std::string BossName = "Ancient_Dragon";
                 auto boss = CreateRandomizedMonster(BossName);
-                if (!boss)
-                {
-                    return;
-                }
+                if (!boss)  return;
                 boss->SetID(BossName);
 
-                // 전투 실행 및 결과 처리
                 BattleManager battleManager(m_player.get(), boss.get(), m_renderer);
                 EBattleResult result = battleManager.Run(); // 전투 결과를 받음
+                if (result == EBattleResult::PlayerLost)    m_bIsRunning = false;
+                else if (result == EBattleResult::PlayerWon)
+                {
+
+                    m_bIsRunning = false; // 전투 승리하면 끝 (메인메뉴로 돌아감)
+                }
             }
 
         }
@@ -179,8 +184,6 @@ void GameWorld::ProcessInput()
                 const int destinationX = portal->destX;
                 const int destinationY = portal->destY;
                 const int nextMapID = portal->destMapID;
-
-                std::string nextMap;
 
                 if (m_field.LoadMapFromFile(nextMapID, m_player->GetAbilityComponent()->GetAttributeSet()->Level))
                 {

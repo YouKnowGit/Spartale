@@ -1,23 +1,23 @@
 [Player]
-Name 1212
-MapID 0
-PosX 9
-PosY 6
-Direction 1
+Name asd
+MapID 9
+PosX 6
+PosY 4
+Direction 0
 [Attributes]
-Level 1
-Gold 0
+Level 10
+Gold 187
 AdditionalStatPoints 0
-Experience 0 0
-HP 200 200
-MP 75 75
-Strength 30
-Agility 15
-Intelligence 15
-Defence 15
-MagicResistance 0
-CriticalHitChance 0
-CriticalHitDamageMultiplier 0
+Experience 100 326
+HP 1492 1492
+MP 1840 1840
+Strength 300
+Agility 150
+Intelligence 300
+Defence 150
+MagicResistance 150
+CriticalHitChance 5
+CriticalHitDamageMultiplier 1.5
 [GrantedAbilities]
 SK_NormalAttack
 SK_PoisonCloud
@@ -32,13 +32,13 @@ SK_Judgment
 SK_NormalAttack
 [EquippedAbilities]
 SK_NormalAttack
-NULL
-NULL
-NULL
+SK_StrengthBuff
+SK_ArcaneBlast
+SK_Judgment
 [Items]
 Slot0,consume_hp_potion_01,3
 Slot1,equip_weapon_sword_01,1
-Slot2,EMPTY
+Slot2,consume_town_portal_scroll,1
 Slot3,EMPTY
 Slot4,EMPTY
 Slot5,EMPTY

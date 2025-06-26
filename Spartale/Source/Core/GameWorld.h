@@ -16,6 +16,7 @@ public:
 
     void Run();
 
+    void SetCheat(int id) { m_currentMapID = id; }
 private:
     void Initialize();
     void GameLoop();
