@@ -1376,6 +1376,11 @@ void PauseMenu::ProcessInventoryActionInput(int key)
             const InventorySlot* slot = m_player.GetInventory()->GetSlotAtIndex(m_inventorySlotSelection);
             if (slot && slot->Quantity > 0)
             {
+                // 장착 중인 아이템 장착 해제 먼저
+                if (slot->bIsEquipped)
+                {
+					m_player.Unequip(m_inventorySlotSelection);
+				}
                 // 아이템 수량을 확인
                 if (slot->Quantity > 1)
                 {
