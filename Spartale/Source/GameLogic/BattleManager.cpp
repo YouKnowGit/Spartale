@@ -1,6 +1,8 @@
 #include "GameLogic/BattleManager.h"
 #include "GameLogic/Units/Player.h"
 #include "GameLogic/Units/Monster.h"
+#include "GameLogic/DataManager.h"
+#include "GameLogic/Items/ItemData.h"
 #include "Framework/AbilitySystem/AttributeSet.h"
 #include "Framework/AbilitySystem/AbilitySystemComponent.h"
 #include "Framework/AbilitySystem/GameplayAbility.h"
@@ -338,7 +340,6 @@ void BattleManager::EndBattle()
 
 
             // 레벨업 체크
-
             AbilitySystemComponent* playerASC = m_player->GetAbilityComponent();
             bool bLeveledUp = playerASC->CheckAndProcessLevelUp();
 
@@ -352,6 +353,31 @@ void BattleManager::EndBattle()
                 levelUpMessage = m_player->Name + L"은(는) " + skillName + L"을(를) 배웠다!";
                 LogAndWait(levelUpMessage);
             }
+
+            std::uniform_int_distribution<int> dropChance(1, 100);
+            if (dropChance(m_rng) <= 30) // 드랍률 30%
+            {
+                const MonsterData* monsterData = DataManager::GetInstance().GetMonsterData(m_monster->GetID());
+                
+                const std::vector<std::string>& lootTable = monsterData->lootTable;
+
+                if (!lootTable.empty())
+                {
+                    std::uniform_int_distribution<int> itemIndex(0, lootTable.size() - 1);
+                    const std::string& droppedItemId = lootTable[itemIndex(m_rng)];
+
+                    m_player->GetInventory()->AddItem(droppedItemId, 1);
+
+                    const ItemData* itemData = DataManager::GetInstance().GetItemData(droppedItemId);
+
+                    std::wstring dropMessage = m_monster->Name + L"이(가) 무언가를 떨어뜨렸다.";
+                    LogAndWait(dropMessage);
+
+                    std::wstring itemGetMessage = L"[" + itemData->Name + L"] 1개를 획득했다!";
+                    LogAndWait(itemGetMessage);
+                }
+            }
+
             break;
         }
         case EBattleResult::PlayerLost:
@@ -374,9 +400,10 @@ std::wstring BattleManager::DrawStatBar(const std::wstring& label, float current
         if (i < filledLength) bar += L"■";
         else bar += L" ";
     }
-    bar += L" ]";
+    bar += L"  ]";
     return bar;
 }
+
 void BattleManager::PlayIntroAnimation()
 {
     PlaySound(NULL, NULL, SND_PURGE);
@@ -425,6 +452,7 @@ void BattleManager::PlayIntroAnimation()
         Sleep(5);
     }
 }
+
 bool BattleManager::AttemptToFlee()
 {
     // - - - 도망 확률 조절 - - -

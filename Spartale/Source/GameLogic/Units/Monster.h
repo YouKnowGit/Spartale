@@ -14,10 +14,14 @@ public:
 
     std::wstring RunAI(Actor* Target);
 
+    void SetID(std::string id) { m_id = id; }
+    const std::string& GetID() const { return m_id; }
+
     // 몬스터는 Actor의 기본 Initialize, Update, Render를 그대로 사용
     // 몬스터만의 특별한 로직이 필요하다면 여기서도 재정의하여 처리
 
 private:
     // 난수용 변수
     std::mt19937 m_rng;
+    std::string m_id;
 };

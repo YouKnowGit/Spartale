@@ -10,7 +10,8 @@
     "magicResistance": 0,
     "skills": [
       "SK_NormalAttack"
-    ]
+    ],
+    "loottable": [ "equip_armor_chest_01", "consume_hp_potion_01" ]
   },
   "Fanged_Spider": {
     "name": "독니 거미",

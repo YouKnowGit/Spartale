@@ -38,6 +38,7 @@ struct MonsterData
     float baseIntelligence;
     float baseMagicResistance;
     std::vector<std::string> skillIds;
+    std::vector<std::string> lootTable;
 };
 
 struct SkillData

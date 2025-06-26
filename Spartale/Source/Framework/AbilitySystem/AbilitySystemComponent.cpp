@@ -262,6 +262,10 @@ std::wstring AbilitySystemComponent::UpdateActiveEffects()
     return LogMessage;
 }
 
+void AbilitySystemComponent::ClearAllActiveEffects()
+{
+
+}
 // Getter
 GameplayAbility* AbilitySystemComponent::GetGrantedAbility(int32_t Index) const
 {

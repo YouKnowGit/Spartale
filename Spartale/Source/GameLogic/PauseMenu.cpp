@@ -1274,7 +1274,7 @@ void PauseMenu::ProcessShopActionInput(int key)
     if (key == 224) // 방향키
     {
         key = _getch();
-        //PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+        PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
         if (key == 72) // 위
         {
             m_itemActionCursor = (m_itemActionCursor == 0) ? m_currentItemActions.size() - 1 : m_itemActionCursor - 1;
@@ -1286,7 +1286,7 @@ void PauseMenu::ProcessShopActionInput(int key)
     }
     else if (key == 13) // 엔터: 행동 선택
     {
-        //PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+        PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
 
         std::wstring selectedAction = m_currentItemActions[m_itemActionCursor];
 
