@@ -146,14 +146,20 @@ void BattleManager::Update()
                 if (AttemptToFlee())
                 {
                     // 성공
+                    PlaySound(NULL, NULL, SND_PURGE);
+                    PlaySound(Runway, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP); // 도망 성공시 출력 사운드
                     LogAndWait(L"성공적으로 도망쳤다!");
+                    Sleep(800);
                     m_battleResult = EBattleResult::PlayerFled;
                     m_bIsBattleOver = true;
                 }
                 else
                 {
                     // 실패
+                    PlaySound(NULL, NULL, SND_PURGE);
+                    PlaySound(RunwayFailure, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP); // 도망 성공시 출력 사운드
                     LogAndWait(L"도망에 실패했다!");
+                    Sleep(800);
                     m_battleState = EBattleState::TurnEnd;
                 }
             }
@@ -302,6 +308,8 @@ void BattleManager::CheckBattleStatus()
     {
         m_bIsBattleOver = true;
         m_battleResult = EBattleResult::PlayerLost; // 패배 상태로 설정
+        PlaySound(NULL, NULL, SND_PURGE);  
+        PlaySound(Lose, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP); // 패배시 출력 사운드
     }
 }
 
@@ -382,6 +390,7 @@ void BattleManager::EndBattle()
         }
         case EBattleResult::PlayerLost:
             LogAndWait(m_player->Name + L"은(는) 쓰러졌다...");
+            Sleep(2500);
             break;
         case EBattleResult::PlayerFled:
             break;
