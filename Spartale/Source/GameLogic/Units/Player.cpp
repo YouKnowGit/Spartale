@@ -281,15 +281,36 @@ void Player::Heal(float amount)
     }
 }
 
+void Player::IncreaseGold(int amount)
+{
+    AttributeSet* stats = GetAbilityComponent()->GetAttributeSet();
+    if (stats && amount > 0) // stats가 유효하고, 증가량이 0보다 클 때만
+    {
+        stats->Gold += amount;
+    }
+}
+
+bool Player::DecreaseGold(int amount)
+{
+    AttributeSet* stats = GetAbilityComponent()->GetAttributeSet();
+    
+    // stats가 유효하고, 골드가 충분한지 확인
+    if (stats && stats->Gold >= amount)
+    {
+        stats->Gold -= amount;
+        return true;
+    }
+
+    // 골드가 부족하거나 stats가 유효하지 않으면 실패
+    return false;
+}
+
 // 아이템 장착 해제 함수
 bool Player::Unequip(int slotIndex)
 {
     InventoryComponent* inventory = GetInventory();
     if (!inventory || slotIndex < 0) return false;
 
-    // 슬롯 정보를 직접 수정해야 하므로, const가 아닌 일반 포인터를 가져옵니다.
-    // (이를 위해 GetSlotAtIndex_Mutable() 같은 함수가 필요할 수 있습니다. 
-    //  지금은 vector에 직접 접근하는 것으로 가정)
     InventorySlot* slot = inventory->GetSlotAtIndex_Mutable(slotIndex);
 
     if (!slot || !slot->bIsEquipped) return false; // 장착된 아이템이 아니면 해제할 수 없음
@@ -297,10 +318,10 @@ bool Player::Unequip(int slotIndex)
     const ItemData* data = slot->pItemData;
     if (!data || data->Type != EItemType::Equipment) return false;
 
-    // 1. 스탯 보너스를 제거합니다.
+    // 1. 스탯 보너스를 제거
     RemoveStatModifiers(data->EquipmentData.StatBonuses);
 
-    // 2. Player의 장착 슬롯 인덱스를 초기화합니다.
+    // 2. Player의 장착 슬롯 인덱스를 초기화
     switch (data->EquipmentData.Type)
     {
     case EEquipmentType::WEAPON: m_equippedWeaponSlot = -1; break;
@@ -308,7 +329,7 @@ bool Player::Unequip(int slotIndex)
     case EEquipmentType::ACCESSORY: m_equippedAccessorySlot = -1; break;
     }
 
-    // 3. 인벤토리 슬롯의 상태를 '장착 해제'로 변경합니다.
+    // 3. 인벤토리 슬롯의 상태를 '장착 해제'로 변경
     slot->bIsEquipped = false;
 
     return true;

@@ -31,6 +31,8 @@ public:
     void Load(std::ifstream& file);
 
     void Heal(float amount);
+    void IncreaseGold(int amount);
+    bool DecreaseGold(int amount);
 	bool Equip(int slotIndex);
     bool Unequip(int slotIndex);
 	bool IsSlotEquipped(int slotIndex) const;

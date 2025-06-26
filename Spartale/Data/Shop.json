@@ -1,0 +1,17 @@
+{
+  "vendor_general": {
+    "name": "마을 상인",
+    "itemIds": [
+      "equip_weapon_sword_01",
+      "equip_armor_chest_01",
+      "consume_hp_potion_01",
+      "consume_hp_potion_02",
+      "consume_mp_potion_01",
+      "consume_mp_potion_02",
+      "consume_atk_boost_01",
+      "consume_ap_boost_01",
+      "consume_def_boost_01",
+      "consume_MGRS_boost_01"
+    ]
+  }
+}
