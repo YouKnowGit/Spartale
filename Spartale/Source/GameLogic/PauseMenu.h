@@ -89,7 +89,7 @@ private:
     void DrawInventoryScreen(bool bIsSellMode = false);
     void DrawInventoryActionMenu();
     void DrawInventoryDropPrompt();
-    void DrawItemInfoBox(bool bIsSellMode = false);
+    void DrawItemInfoBox(const ItemData* itemData, bool bIsSellMode = false);
 
     // --- 헬퍼 함수 ---
     void ClearRightPane();
