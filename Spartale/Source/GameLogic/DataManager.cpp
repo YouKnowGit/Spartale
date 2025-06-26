@@ -205,6 +205,30 @@ void DataManager::LoadItemData(const std::string& path)
     }
 }
 
+void DataManager::LoadShopData(const std::string& path)
+{
+    std::ifstream file(path);
+    if (!file.is_open()) return;
+    json data = json::parse(file);
+    file.close();
+
+    for (auto& element : data.items())
+    {
+        const std::string& shopId = element.key();
+        const json& shopJson = element.value();
+        ShopData shopData;
+        shopData.name = StringUtils::ConvertToWstring(shopJson.value("name", ""));
+        if (shopJson.contains("itemIds"))
+        {
+            for (const auto& itemId : shopJson["itemIds"])
+            {
+                shopData.itemIds.push_back(itemId);
+            }
+        }
+        m_shopDatabase[shopId] = shopData;
+    }
+}
+
 const MonsterData* DataManager::GetMonsterData(const std::string& monsterId) const
 {
     auto it = m_monsterDatabase.find(monsterId);
@@ -228,6 +252,16 @@ const ItemData* DataManager::GetItemData(const std::string& itemId) const
 {
     auto it = m_itemDatabase.find(itemId);
     if (it != m_itemDatabase.end())
+    {
+        return &it->second;
+    }
+    return nullptr;
+}
+
+const ShopData* DataManager::GetShopData(const std::string& shopId) const
+{
+    auto it = m_shopDatabase.find(shopId);
+    if (it != m_shopDatabase.end())
     {
         return &it->second;
     }

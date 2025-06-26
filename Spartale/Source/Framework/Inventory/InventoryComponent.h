@@ -23,7 +23,7 @@ public:
 
     int AddItem(const std::string& itemID, int quantity);
     void RemoveItem(int slotIndex, int quantity);
-
+    void RemoveItemByItemID(const std::string& itemID, int quantity);
     void UseItem(int slotIndex, Player* owner);
 
     const InventorySlot* GetSlotAtIndex(int index) const;
