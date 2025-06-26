@@ -1,6 +1,7 @@
 ﻿#include "GameLogic/Map/Field.h"
 #include "GameLogic/Units/Player.h"
 #include "Utils/ConsoleUtils.h"
+#include "Utils/StringUtils.h"
 
 #include <iostream>
 #include <fstream> // 파일 입출력
@@ -59,6 +60,7 @@ bool Field::LoadMapFromFile(int mapId, int level)
     const json& selectedMap = *it;
 
     // Header 정보
+    m_name = StringUtils::ConvertToWstring(selectedMap["header"]["name"]);
     m_width = selectedMap["header"]["width"];
     m_height = selectedMap["header"]["height"];
 
@@ -120,6 +122,8 @@ bool Field::LoadMapFromFile(int mapId, int level)
 }
 void Field::Draw(Actor* player, ConsoleRenderer& renderer) const
 {
+    // 맵 오른쪽에 필드 이름 출력
+    renderer.DrawString((m_width * 2) + 2, 1, this->m_name);
     // 맵 타일 그리기
     for (int y = 0; y < m_height; ++y) {
         for (int x = 0; x < m_width; ++x) {

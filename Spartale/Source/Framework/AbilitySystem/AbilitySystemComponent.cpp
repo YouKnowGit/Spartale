@@ -76,18 +76,20 @@ bool AbilitySystemComponent::CheckAndProcessLevelUp()
         myStats->Agility.CurrentValue += 1;
         myStats->Intelligence.BaseValue += 2;
         myStats->Intelligence.CurrentValue += 2;
-        myStats->Defence.BaseValue += 1.5;
-        myStats->Defence.CurrentValue += 1.5;
-        myStats->MagicResistance.BaseValue += 1.5;
+        myStats->Defence.BaseValue += 3;
+        myStats->Defence.CurrentValue += 3;
+        myStats->MagicResistance.BaseValue += 3;
+        myStats->MagicResistance.CurrentValue += 3;
 
-        myStats->MagicResistance.CurrentValue += 1.5;
+        myStats->CriticalHitChance.BaseValue += (myStats->Agility.BaseValue * 0.25f);
+        myStats->CriticalHitChance.CurrentValue = myStats->CriticalHitDamageMultiplier.BaseValue;
 
         // 스탯 변경에 따른 최대 HP/MP 재계산
         myStats->AdjustDependentAttributes();
 
         // 다음 레벨업에 필요한 경험치를 다시 계산
 
-        myStats->Experience.BaseValue = 100.0f + (50 * myStats->Level);
+        myStats->Experience.BaseValue = 100.0f * (myStats->Level - 1);
 
     }
 
@@ -262,10 +264,6 @@ std::wstring AbilitySystemComponent::UpdateActiveEffects()
     return LogMessage;
 }
 
-void AbilitySystemComponent::ClearAllActiveEffects()
-{
-
-}
 // Getter
 GameplayAbility* AbilitySystemComponent::GetGrantedAbility(int32_t Index) const
 {
@@ -356,6 +354,7 @@ void AbilitySystemComponent::Load(std::ifstream& file)
     {
         EquippedAbilities.push_back(nullptr);
     }
+    
 }
 
 void AbilitySystemComponent::ClearAllActiveEffects()
