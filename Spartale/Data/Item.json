@@ -1,5 +1,5 @@
 {
-  "consume_hp_potion_01": {
+  "consume_potion_01": {
     "name": "체력 포션",
     "description": "사용 시 체력을 50 회복합니다.",
     "type": "Consumable",
@@ -11,7 +11,7 @@
       "value": 50
     }
   },
-  "consume_hp_potion_02": {
+  "consume_potion_02": {
     "name": "대형 체력 포션",
     "description": "사용 시 체력을 150 회복합니다.",
     "type": "Consumable",
@@ -23,7 +23,7 @@
       "value": 300
     }
   },
-  "consume_mp_potion_01": {
+  "consume_potion_03": {
     "name": "마나 포션",
     "description": "사용 시 마나를 60 회복합니다.",
     "type": "Consumable",
@@ -35,7 +35,7 @@
       "value": 60
     }
   },
-  "consume_mp_potion_02": {
+  "consume_potion_04": {
     "name": "대형 마나 포션",
     "description": "사용 시 마나를 170 회복합니다.",
     "type": "Consumable",
