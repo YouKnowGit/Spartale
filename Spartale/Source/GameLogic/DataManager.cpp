@@ -57,6 +57,13 @@ void DataManager::LoadMonsterData(const std::string& path)
 
             }
         }
+
+        if (monsterJson.contains("loottable")) {
+            for (const auto& monsterId : monsterJson["loottable"]) {
+                monsterData.lootTable.push_back(monsterId);
+            }
+        }
+
         m_monsterDatabase[id] = monsterData;
     }
 }

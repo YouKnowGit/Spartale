@@ -1274,7 +1274,7 @@ void PauseMenu::ProcessShopActionInput(int key)
     if (key == 224) // 방향키
     {
         key = _getch();
-        //PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+        PlaySound(m_navigateSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
         if (key == 72) // 위
         {
             m_itemActionCursor = (m_itemActionCursor == 0) ? m_currentItemActions.size() - 1 : m_itemActionCursor - 1;
@@ -1286,7 +1286,7 @@ void PauseMenu::ProcessShopActionInput(int key)
     }
     else if (key == 13) // 엔터: 행동 선택
     {
-        //PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
+        PlaySound(m_confirmSoundPath, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
 
         std::wstring selectedAction = m_currentItemActions[m_itemActionCursor];
 
@@ -1366,22 +1366,9 @@ void PauseMenu::ProcessInventoryActionInput(int key)
 
         std::wstring selectedAction = m_currentItemActions[m_itemActionCursor];
 
-        if (selectedAction == L"사용하기")
+        if (selectedAction == L"사용하기" || selectedAction == L"장착하기" || selectedAction == L"장착해제")
         {
-            // InventoryComponent의 UseItem 함수 호출
             m_player.GetInventory()->UseItem(m_inventorySlotSelection, &m_player);
-            m_currentPaneState = ERightPaneState::Inventory;
-        }
-        else if (selectedAction == L"장착하기")
-        {
-            // Player의 Equip 함수 호출
-            m_player.Equip(m_inventorySlotSelection);
-            m_currentPaneState = ERightPaneState::Inventory;
-        }
-        else if (selectedAction == L"장착해제")
-        {
-            // Player의 Unequip 함수 호출
-            m_player.Unequip(m_inventorySlotSelection);
             m_currentPaneState = ERightPaneState::Inventory;
         }
         else if (selectedAction == L"버리기")

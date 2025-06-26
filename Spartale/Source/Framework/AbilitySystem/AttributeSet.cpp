@@ -105,14 +105,17 @@ void AttributeSet::Save(std::ofstream& file) const
 }
 void AttributeSet::Load(std::ifstream& file)
 {
+    file.clear();
+    file.seekg(0, std::ios::beg);
+
     std::string line;
+
     while (std::getline(file, line))
     {
         if (line.empty())   continue;
 
         if (line[0] == '[') {
-            file.seekg(static_cast<long>(file.tellg()) - static_cast<long>(line.length()) - 1);
-            break;
+            continue;
         }
 
         std::stringstream ss(line);
