@@ -22,7 +22,7 @@
       "effectType": "BUFF_STAT",
       "targetStat": "STRENGTH",
       "value": 10,
-      "duration": 5 
+      "duration": 5
     }
   },
   "equip_weapon_sword_01": {
