@@ -215,7 +215,7 @@ void BattleManager::Update()
             m_bIsOne = true;
             LogAndWait(m_monster->Name + L"이 몸을 일으켜세운다.");
             LogAndWait(m_monster->Name + L"이 깨어났다.");
-            m_monster->Name = L"깨어난 드래곤";
+            m_monster->Name = L"깨어난 드래곤 데스페라도";
             AttributeSet* monStats = m_monster->GetAbilityComponent()->GetAttributeSet();
             monStats->Level = 20;
             monStats->HP = FAttributeData(999);

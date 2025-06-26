@@ -11,7 +11,7 @@
     "skills": [
       "SK_NormalAttack"
     ],
-    "loottable": [ "equip_armor_chest_01", "consume_hp_potion_01" ]
+    "loottable": [ "equip_armor_chest_01", "consume_hp_potion_01", "consume_mp_potion_01" ]
   },
   "Fanged_Spider": {
     "name": "독니 거미",
@@ -25,7 +25,8 @@
     "skills": [
       "SK_NormalAttack",
       "SK_PoisonCloud"
-    ]
+    ],
+    "loottable": [ "consume_mp_potion_01", "consume_hp_potion_01", "consume_mp_potion_01" ]
   },
   "Prairie_Wolf": {
     "name": "초원 늑대",
@@ -39,7 +40,8 @@
     "skills": [
       "SK_NormalAttack",
       "SK_TripleSlash"
-    ]
+    ],
+    "loottable": [ "consume_mp_potion_01", "consume_hp_potion_01", "equip_weapon_sword_01", "equip_armor_chest_01", "consume_mp_potion_01" ]
   },
   "Orc_Warrior": {
     "name": "오크 전사",
@@ -54,7 +56,8 @@
       "SK_NormalAttack",
       "SK_StrengthBuff",
       "SK_TripleSlash"
-    ]
+    ],
+    "loottable": [ "consume_mp_potion_01", "consume_hp_potion_01", "equip_weapon_axe_01", "consume_mp_potion_01" ]
   },
   "Forest_Rogue": {
     "name": "숲의 부랑자",
@@ -69,7 +72,8 @@
       "SK_NormalAttack",
       "SK_Heal",
       "SK_StrengthBuff"
-    ]
+    ],
+    "loottable": [ "consume_mp_potion_01", "consume_hp_potion_01", "equip_weapon_axe_01" ]
   },
   "Hound_Pack_Leader": {
     "name": "사냥개 무리 우두머리",
@@ -83,7 +87,8 @@
     "skills": [
       "SK_NormalAttack",
       "SK_TripleSlash"
-    ]
+    ],
+    "loottable": [ "consume_mp_potion_01", "consume_hp_potion_01", "equip_weapon_axe_01", "equip_armor_chest_01", "equip_armor_robe_01" ]
   },
   "Venom_Assassin": {
     "name": "맹독 암살자",
@@ -97,7 +102,8 @@
     "skills": [
       "SK_StrengthBuff",
       "SK_PoisonCloud"
-    ]
+    ],
+    "loottable": [ "consume_mp_potion_02", "consume_hp_potion_02", "equip_thief_robe_01", "equip_thief_ring_01", "equip_weapon_VA_sword_01" ]
   },
   "Stonehide_Dwarf": {
     "name": "돌껍질 드워프",
@@ -110,7 +116,8 @@
     "magicResistance": 0,
     "skills": [
       "SK_NormalAttack"
-    ]
+    ],
+    "loottable": [ "consume_mp_potion_02", "consume_hp_potion_02", "equip_weapon_axe_01"]
   },
   "Thunder_Hawk": {
     "name": "번개 매",
@@ -125,7 +132,8 @@
       "SK_Heal",
       "SK_ArcaneBlast",
       "SK_Meditate"
-    ]
+    ],
+    "loottable": [ "consume_mp_potion_02", "consume_hp_potion_02", "equip_thunderh's_orb_sword_01", "equip_accessory_ring_01"]
   },
   "Ironclad_Golem": {
     "name": "무쇠 갑옷 골렘",
@@ -139,7 +147,8 @@
     "skills": [
       "SK_NormalAttack",
       "SK_Judgment"
-    ]
+    ],
+    "loottable": [ "consume_mp_potion_02", "consume_hp_potion_02", "equip_armor_plate_01", "equip_paladin's_ring_01" ]
   },
   "Frail_Skeleton": {
     "name": "약골 스켈레톤",
@@ -154,7 +163,8 @@
       "SK_NormalAttack",
       "SK_PoisonCloud",
       "SK_Fireball"
-    ]
+    ],
+    "loottable": [ "consume_mp_potion_02", "consume_hp_potion_02", "equip_skeleton's_ring_01", "equip_skeleton's_sword_01" ]
   },
   "Gloomy_Zombie": {
     "name": "음침한 좀비",
@@ -169,7 +179,8 @@
       "SK_TripleSlash",
       "SK_NormalAttack",
       "SK_PoisonCloud"
-    ]
+    ],
+    "loottable": [ "consume_mp_potion_02", "consume_hp_potion_02", "equip_zombie's_plate_01", "equip_zombie's_ring_01"]
   },
   "Shadow_Wisplight": {
     "name": "어둠의 위스프",
@@ -184,7 +195,8 @@
       "SK_Meditate",
       "SK_ArcaneBlast",
       "SK_AbyssalCollapse"
-    ]
+    ],
+    "loottable": [ "consume_mp_potion_02", "consume_hp_potion_02", "equip_wisplight's_plate_01", "equip_armor_robe_01"]
   },
   "Frozen_Specter": {
     "name": "얼어붙은 스펙터",
@@ -200,10 +212,11 @@
       "SK_Meditate",
       "SK_AbyssalCollapse",
       "SK_Fireball"
-    ]
+    ],
+    "loottable": [ "consume_mp_potion_02", "consume_hp_potion_02", "equip_specter's_ring_01", "equip_Specter's_sword_01" ]
   },
   "Ancient_Dragon": {
-    "name": "고대 드래곤",
+    "name": "고대 드래곤 데스페라도",
     "level": 15,
     "hp": 666,
     "strength": 111,
