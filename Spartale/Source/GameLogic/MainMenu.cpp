@@ -21,6 +21,7 @@ MainMenu::MainMenu(ConsoleRenderer& renderer)
 
 EGameState MainMenu::Run()
 {
+    PlaySound(MainTheme, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT); // 메인 테마 재생
     while (m_bIsRunning)
     {
         ProcessInput();
