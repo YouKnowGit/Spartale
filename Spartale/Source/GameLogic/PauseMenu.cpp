@@ -97,7 +97,8 @@ void PauseMenu::RenderShop()
     switch (m_currentShopState)
     {
     case EShopState::MainMenu:          DrawShopOptions(); break;
-    case EShopState::Shop_Buy:          DrawStatDistributionScreen(); break;
+    case EShopState::Shop_Buy:          DrawShopBuyScreen(); break;
+    case EShopState::Shop_Buy_Action:   DrawShopBuyScreen(); DrawInventoryActionMenu(); break;
     case EShopState::Shop_Sell:         DrawInventoryScreen(); break;
     case EShopState::Shop_Sell_Action:  DrawInventoryScreen(); DrawInventoryActionMenu(); break;
     case EShopState::Shop_Sell_Action_Drop:  DrawInventoryScreen(); DrawInventoryActionMenu(); DrawInventoryDropPrompt(); break;
@@ -174,6 +175,9 @@ void PauseMenu::ProcessInputShop()
         case EShopState::Shop_Buy:
             m_currentShopState = EShopState::MainMenu;
             break;
+        case EShopState::Shop_Buy_Action:
+            m_currentShopState = EShopState::Shop_Buy;
+            break;
         case EShopState::Shop_Sell:
             m_currentShopState = EShopState::MainMenu;
             break;
@@ -195,7 +199,8 @@ void PauseMenu::ProcessInputShop()
     switch (m_currentShopState)
     {
         case EShopState::MainMenu:  ProcessMainShopInput(key); break;
-        case EShopState::Shop_Buy: break;
+        case EShopState::Shop_Buy:  ProcessInventoryInput(key); break;
+        case EShopState::Shop_Buy_Action:  ProcessShopActionInput(key); break;
         case EShopState::Shop_Sell: ProcessInventoryInput(key); break;
         case EShopState::Shop_Sell_Action: ProcessShopActionInput(key); break;
         case EShopState::Shop_Sell_Action_Drop: ProcessShopDropInput(key); break;
@@ -419,7 +424,7 @@ void PauseMenu::ProcessInventoryInput(int key)
     {
         // 커서 변수 통일
         if (m_currentPaneState == ERightPaneState::MainMenu)
-        {   // 상점 (판매)
+        {   // 상점
             const InventorySlot* slot = m_player.GetInventory()->GetSlotAtIndex(m_inventorySlotSelection);
             if (slot && slot->Quantity > 0)
             {
@@ -427,10 +432,19 @@ void PauseMenu::ProcessInventoryInput(int key)
 
                 m_currentItemActions.clear();
                 const ItemData* data = DataManager::GetInstance().GetItemData(slot->ItemID);
-                m_currentItemActions.push_back(L"판매");
+                switch (m_currentShopState)
+                {
+                case EShopState::Shop_Buy:  m_currentItemActions.push_back(L"구매");  break;
+                case EShopState::Shop_Sell:  m_currentItemActions.push_back(L"판매");  break;
+                }
                 m_currentItemActions.push_back(L"취소");
 
-                m_currentShopState = EShopState::Shop_Sell_Action;
+                switch (m_currentShopState)
+                {
+                case EShopState::Shop_Buy:  m_currentShopState = EShopState::Shop_Buy_Action;  break;
+                case EShopState::Shop_Sell:  m_currentShopState = EShopState::Shop_Sell_Action;;  break;
+                }
+                
                 m_itemActionCursor = 0;
             }
             else
@@ -592,6 +606,84 @@ void PauseMenu::DrawItemInfoBox()
     }
 }
 
+void PauseMenu::DrawShopBuyScreen()
+{
+    ClearRightPane();
+
+    InventoryComponent* inventory = m_player.GetInventory();
+    if (!inventory) return;
+
+    int boxX = m_renderer.GetWidth() / 2 + 5;
+    int boxY = 7; // 6
+    int boxInnerWidth = 26;
+    int boxHeight = 3;
+    const int visibleSlots = 5; // 한 화면에 보여줄 아이템 개수
+
+    m_renderer.DrawString(boxX, boxY, L"      [ 상점 ]");
+    boxY += 2;
+
+    const int totalSlots = inventory->GetCapacity();
+
+    // 스크롤바 그리기
+    if (m_inventoryScrollOffset > 0) {
+        m_renderer.DrawString(boxX + 15, boxY - 1, L"▲");
+    }
+    if (m_inventoryScrollOffset + visibleSlots < totalSlots) {
+        m_renderer.DrawString(boxX + 15, boxY + (visibleSlots * (boxHeight + 1)), L"▼");
+    }
+
+    // 아이템 목록 그리기
+    for (int i = 0; i < visibleSlots; ++i)
+    {
+        int slotIndex = m_inventoryScrollOffset + i;
+        if (slotIndex >= totalSlots) break;
+
+        int currentY = boxY + i * (boxHeight + 1);
+
+        // 커서는 m_inventorySlotSelection 변수를 기준으로 그림
+        if (slotIndex == m_inventorySlotSelection)
+        {
+            m_renderer.DrawString(boxX - 2, currentY + (boxHeight / 2), L"▶");
+        }
+
+        m_renderer.DrawString(boxX, currentY, L"┌" + std::wstring(boxInnerWidth, L'─') + L"┐");
+        for (int h = 1; h < boxHeight; ++h) m_renderer.DrawString(boxX, currentY + h, L"│" + std::wstring(boxInnerWidth, L' ') + L"│");
+        m_renderer.DrawString(boxX, currentY + boxHeight, L"└" + std::wstring(boxInnerWidth, L'─') + L"┘");
+
+        const InventorySlot* slot = inventory->GetSlotAtIndex(slotIndex);
+        if (slot && slot->Quantity > 0)
+        {
+            const ItemData* data = DataManager::GetInstance().GetItemData(slot->ItemID);
+            if (data)
+            {
+                std::wstring typeStr = L"";
+                if (data->Type == EItemType::Equipment) typeStr = L"[장비]";
+                else if (data->Type == EItemType::Consumable) typeStr = L"[소모품]";
+
+                std::wstring line = data->Name;
+
+                if (slot->bIsEquipped) line += L" [E]";
+
+                line += L" " + typeStr;
+
+                m_renderer.DrawString(boxX + 2, currentY + 1, line);
+
+                std::wstring quantityStr = L"수량: " + std::to_wstring(slot->Quantity);
+                m_renderer.DrawString(boxX + 2, currentY + 2, quantityStr);
+            }
+        }
+        else
+        {
+            m_renderer.DrawString(boxX + 2, currentY + 1, L"( 비어있음 )");
+        }
+    }
+
+    m_renderer.DrawString(m_renderer.GetWidth() / 2 + 3, m_renderer.GetHeight() - 2, L"[Enter: 선택 | ESC: 뒤로 가기]");
+    // 하단 안내 문구
+
+    // 아이템 정보창은 항상 그림
+    DrawItemInfoBox();
+}
 void PauseMenu::DrawInventoryScreen()
 {
     ClearRightPane();
@@ -1290,12 +1382,13 @@ void PauseMenu::ProcessShopActionInput(int key)
 
         std::wstring selectedAction = m_currentItemActions[m_itemActionCursor];
 
-        if (selectedAction == L"판매" )
+        if (selectedAction == L"판매" || selectedAction == L"구매")
         {
             const InventorySlot* slot = m_player.GetInventory()->GetSlotAtIndex(m_inventorySlotSelection);
             const ItemData* data = DataManager::GetInstance().GetItemData(slot->ItemID);
             if (slot && slot->Quantity > 0)
             {
+                if(m_currentShopState == EShopState::Shop_Sell_Action)
                 // 아이템 수량을 확인
                 if (slot->Quantity > 1)
                 {

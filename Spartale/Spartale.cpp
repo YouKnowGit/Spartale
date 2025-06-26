@@ -57,14 +57,25 @@ int main()
                 getline(std::wcin, name);
 
                 ConsoleUtils::ShowConsoleCursor(false);
+
                 auto player = make_unique<Player>(name);
+
                 player->GetAbilityComponent()->GrantAbility(SkillFactory::CreateSkill("SK_NormalAttack"));
                 player->GetAbilityComponent()->EquipAbility(0, player->GetAbilityComponent()->GetGrantedAbility(0));
 
                 // 시작 아이템으로 HP 포션을 3개와 청동 검을 추가합니다.
-                player->GetInventory()->AddItem("consume_hp_potion_01", 3);
+                player->GetInventory()->AddItem("consume_potion_01", 3);
+                player->GetInventory()->AddItem("consume_potion_02", 3);
+                player->GetInventory()->AddItem("consume_potion_03", 3);
+                player->GetInventory()->AddItem("consume_potion_04", 3);
                 player->GetInventory()->AddItem("equip_weapon_sword_01", 1);
+                player->GetInventory()->AddItem("equip_weapon_sword_02", 1);
+                player->GetInventory()->AddItem("equip_accessory_ring_01", 1);
+                player->GetInventory()->AddItem("equip_armor_plate_01", 1);
+                player->GetInventory()->AddItem("consume_def_boost_01", 5);
+                
                 GameWorld world(std::move(player));
+
                 world.Run();
 
                 currentState = EGameState::MainMenu;

@@ -31,6 +31,7 @@ enum class EShopState
 {
     MainMenu,           // 기본 메뉴 목록
     Shop_Buy,           // 상점 구매 화면
+    Shop_Buy_Action,
     Shop_Sell,           // 상점 판매 화면
     Shop_Sell_Action,
     Shop_Sell_Action_Drop,
@@ -71,6 +72,8 @@ private:
     void DrawStatDistributionScreen(); // 오른쪽 패널: 스탯 분배
     void DrawSkillBookScreen();
     void DrawSkillSelectionScreen();
+    void DrawShopBuyScreen();
+    //void DrawShopBuyActionMenu();
     void DrawInventoryScreen();
 	void DrawInventoryActionMenu();
     void DrawShopOptions();
