@@ -88,8 +88,8 @@ protected:
     // 각 레벨별 추가할 스킬 목록
     const std::vector<std::string> allSkillIDs = {
         "SK_Meditate",
-        "SK_StrengthBuff",
         "SK_Fireball",
+        "SK_StrengthBuff",
         "SK_PoisonCloud",
         "SK_ArcaneBlast",
         "SK_TripleSlash",
