@@ -45,7 +45,6 @@ bool ConsumableItem::use(Player* targetPlayer, int sourceSlotIndex)
     // "HEAL_MP" 효과 처리
     else if (effectData.Type == "HEAL_MP")
     {
-        // MP 회복 로직 직접 추가
         AttributeSet* stats = targetPlayer->GetAbilityComponent()->GetAttributeSet();
         if (stats)
         {
@@ -71,6 +70,18 @@ bool ConsumableItem::use(Player* targetPlayer, int sourceSlotIndex)
 
         // 3. 플레이어의 AbilitySystemComponent에 명령서 전달
         targetPlayer->GetAbilityComponent()->ApplyGameplayEffectToSelf(std::move(effect));
+    }
+    else if (effectData.Type == "HEAL_MP")// MP 회복 로직 추가
+    {
+        AttributeSet* stats = targetPlayer->GetAbilityComponent()->GetAttributeSet();
+        if (stats)
+        {
+            stats->MP.CurrentValue += effectData.Value;
+            if (stats->MP.CurrentValue > stats->MP.BaseValue)
+            {
+                stats->MP.CurrentValue = stats->MP.BaseValue;
+            }
+        }
     }
 
     // 소모품은 항상 사용 시 소모되므로 true 반환
