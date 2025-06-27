@@ -67,7 +67,6 @@ int main()
                 //
                 player->GetInventory()->AddItem("consume_potion_01", 3);
                 player->GetInventory()->AddItem("equip_weapon_sword_01", 1);
-                
                 GameWorld world(std::move(player));
 
                 world.Run();

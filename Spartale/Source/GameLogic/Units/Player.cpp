@@ -48,8 +48,12 @@ void Player::Initialize()
         MyStats->AdditionalStatPoints = 0;
         MyStats->Gold = 100;
     }
-    
+
     const std::vector<std::string> allSkillIDs = {
+    };
+
+    /*
+    const std::vector<std::string> allSkillIDs = { // 테스트용 유저 모든 스킬
         "SK_NormalAttack"
         "SK_PoisonCloud",
         "SK_Fireball",
@@ -60,7 +64,7 @@ void Player::Initialize()
         "SK_ArcaneBlast",
         "SK_AbyssalCollapse",
         "SK_Judgment"
-    };
+    }; */
     for (const auto& id : allSkillIDs)
     {
         GetAbilityComponent()->GrantAbility(SkillFactory::CreateSkill(id));

@@ -216,12 +216,12 @@
     "loottable": [ "equip_specter's_ring_01", "equip_Specter's_sword_01" ]
   },
   "Ancient_Dragon": {
-    "name": "고대 드래곤 데스페라도",
+    "name": "속박된 데스페라도",
     "level": 15,
-    "hp": 666,
-    "strength": 111,
+    "hp": 1500,
+    "strength": 60,
     "agility": 22,
-    "intelligence": 111,
+    "intelligence": 60,
     "defence": 55,
     "magicResistance": 55,
     "skills": [

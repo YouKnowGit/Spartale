@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <random>
+#include <windows.h>
 
 // 전방 선언
 class Player;
@@ -46,7 +47,7 @@ private:
     void LogAndWait(const std::wstring& message);
 
     void EndBattle();
-    std::wstring DrawStatBar(const std::wstring& label, float current, float max, int barLength) const;
+    std::wstring DrawStatBar(const std::wstring& label, float current, float max, int barLength, WORD& outColor) const;
     void CheckBattleStatus();
     bool AttemptToFlee();
 
@@ -77,6 +78,9 @@ private:
 
     // 난수 생성 엔진을 멤버 변수로 추가
     std::mt19937 m_rng;
+
+    WORD barColorHP; // 16진수 색코드 [ 빨간색 ]
+    WORD barColorMP; // 16진수 색코드 [ 파란색 ]
 
     const wchar_t* m_navigateSoundPath;
     const wchar_t* m_confirmSoundPath;

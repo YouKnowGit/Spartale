@@ -334,12 +334,12 @@ void BattleManager::Update()
             m_monster->Name = L"깨어난 데스페라도";
             AttributeSet* monStats = m_monster->GetAbilityComponent()->GetAttributeSet();
             monStats->Level = 20;
-            monStats->HP = FAttributeData(999);
-            monStats->Strength = FAttributeData(200);
-            monStats->Agility = FAttributeData(40);
-            monStats->Intelligence = FAttributeData(200);
-            monStats->Defence = FAttributeData(100);
-            monStats->MagicResistance = FAttributeData(100);
+            monStats->HP = FAttributeData(1500);
+            monStats->Strength = FAttributeData(70);
+            monStats->Agility = FAttributeData(25);
+            monStats->Intelligence = FAttributeData(80);
+            monStats->Defence = FAttributeData(60);
+            monStats->MagicResistance = FAttributeData(60);
             monStats->AdjustDependentAttributes();
 
             Render();
@@ -387,25 +387,41 @@ void BattleManager::DrawUI()
     AttributeSet* monsterAttr = m_monster->GetAbilityComponent()->GetAttributeSet();
 
 
-    auto DrawBox = [&](int x, int y, int width, int height) {
-        m_renderer.Draw(x, y, L'┌'); m_renderer.Draw(x + width - 1, y, L'┐');
-        m_renderer.Draw(x, y + height - 1, L'└'); m_renderer.Draw(x + width - 1, y + height - 1, L'┘');
-        for (int i = 1; i < width - 1; ++i) { m_renderer.Draw(x + i, y, L'─'); m_renderer.Draw(x + i, y + height - 1, L'─'); }
-        for (int i = 1; i < height - 1; ++i) { m_renderer.Draw(x, y + i, L'│'); m_renderer.Draw(x + width - 1, y + i, L'│'); }
-        };
+    auto DrawBox = [&](int x, int y, int width, int height) { // 전투UI 박스
+        int adjustedWidth = width + 2; 
+
+        m_renderer.Draw(x, y, L'┌'); m_renderer.Draw(x + adjustedWidth - 1, y, L'┐'); 
+        m_renderer.Draw(x, y + height - 1, L'└'); m_renderer.Draw(x + adjustedWidth - 1, y + height - 1, L'┘'); 
+        // 가로선 
+        for (int i = 1; i < adjustedWidth - 1; ++i) { 
+            m_renderer.Draw(x + i, y, L'─'); 
+            m_renderer.Draw(x + i, y + height - 1, L'─'); 
+        }
+        // 세로선 
+        for (int i = 1; i < height - 1; ++i) { 
+            m_renderer.Draw(x, y + i, L'│'); 
+            m_renderer.Draw(x + adjustedWidth - 1, y + i, L'│'); 
+        }
+    };
 
     // 몬스터 정보
     DrawBox(45, 2, 30, 6);
-    m_renderer.DrawString(47, 3, m_monster->Name + L"      Lv. " + std::to_wstring(monsterAttr->Level));
-    m_renderer.DrawString(47, 4, DrawStatBar(L"HP", monsterAttr->HP.CurrentValue, monsterAttr->HP.BaseValue, 15));
-    m_renderer.DrawString(49, 5, std::to_wstring((int)monsterAttr->HP.CurrentValue) + L" / " + std::to_wstring((int)monsterAttr->HP.BaseValue));
+    m_renderer.DrawString(47, 3, m_monster->Name);
+    m_renderer.DrawString(69, 3, L"Lv. " + std::to_wstring(monsterAttr->Level));
+    std::wstring barStrMonsterHP = DrawStatBar(L"HP", monsterAttr->HP.CurrentValue, monsterAttr->HP.BaseValue, 20, barColorHP); // 개선 코드 [ 색상 변경 ] [ MonsterHP ]
+    m_renderer.DrawString(47, 4, barStrMonsterHP, barColorHP);
+    m_renderer.DrawString(55, 5, std::to_wstring((int)monsterAttr->HP.CurrentValue) + L" / " + std::to_wstring((int)monsterAttr->HP.BaseValue));
 
     // 플레이어 정보
     DrawBox(2, 12, 30, 7);
-    m_renderer.DrawString(4, 13, m_player->Name + L"      Lv. " + std::to_wstring(playerAttr->Level));
-    m_renderer.DrawString(4, 14, DrawStatBar(L"HP", playerAttr->HP.CurrentValue, playerAttr->HP.BaseValue, 15));
-    m_renderer.DrawString(6, 15, std::to_wstring((int)playerAttr->HP.CurrentValue) + L" / " + std::to_wstring((int)playerAttr->HP.BaseValue));
-    m_renderer.DrawString(4, 16, L"MP : " + std::to_wstring((int)playerAttr->MP.CurrentValue) + L" / " + std::to_wstring((int)playerAttr->MP.BaseValue));
+    m_renderer.DrawString(4, 13, m_player->Name);
+    m_renderer.DrawString(26, 13, L"Lv. " + std::to_wstring(playerAttr->Level));
+    std::wstring barStrPlayerHP = DrawStatBar(L"HP", playerAttr->HP.CurrentValue, playerAttr->HP.BaseValue, 20, barColorHP); // 개선 코드 [ 색상 변경 ] [ PlayerHP ]
+    m_renderer.DrawString(4, 14, barStrPlayerHP, barColorHP);
+    m_renderer.DrawString(12, 15, std::to_wstring((int)playerAttr->HP.CurrentValue) + L" / " + std::to_wstring((int)playerAttr->HP.BaseValue));
+    std::wstring barStrPlayerMP = DrawStatBar(L"MP", playerAttr->MP.CurrentValue, playerAttr->MP.BaseValue, 20, barColorMP); // 개선 코드 [ 색상 변경 ] [ PlayerMP ]
+    m_renderer.DrawString(4, 16, barStrPlayerMP, barColorMP); 
+    m_renderer.DrawString(12, 17, std::to_wstring((int)playerAttr->MP.CurrentValue) + L" / " + std::to_wstring((int)playerAttr->MP.BaseValue));
 
     // 메시지 박스
     DrawBox(2, 20, 79, 8);
@@ -475,10 +491,10 @@ void BattleManager::EndBattle()
         {
             if (m_monster->GetID() == "Ancient_Dragon") // 상대: 드래곤, 상태: PlayerWon = 엔딩
             {
-                std::wstring rewardMessage = m_monster->Name + L"을(를) 쓰러뜨렸다. . . ";
-                LogAndWait(rewardMessage);
                 PlaySound(NULL, NULL, SND_PURGE);  
                 PlaySound(MainTheme, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT | SND_NOSTOP);
+                std::wstring rewardMessage = m_monster->Name + L"을(를) 쓰러뜨렸다. . . ";
+                LogAndWait(rewardMessage);
                 LogAndWait(L"축하드립니다. 게임을 클리어하셨습니다 !");
                 LogAndWait(L"© 2025 언리얼 3-4기 Yee조. All rights reserved.");
                 LogAndWait(L"제작: 김준우");
@@ -571,18 +587,22 @@ void BattleManager::EndBattle()
             break;
     }
 }
-
-std::wstring BattleManager::DrawStatBar(const std::wstring& label, float current, float max, int barLength) const
-{
+// 전투 씬 체력 및 마나색 입력 함수
+std::wstring BattleManager::DrawStatBar(const std::wstring& label, float current, float max, int barLength, WORD& outColor) const {
     if (current < 0) current = 0;
     float ratio = (max > 0) ? (current / max) : 0;
     int filledLength = static_cast<int>(ratio * barLength);
-    std::wstring bar = label + L" [ ";
-    for (int i = 0; i < barLength; ++i) {
-        if (i < filledLength) bar += L"■";
-        else bar += L" ";
-    }
-    bar += L"  ]";
+
+    std::wstring bar = label + L" [";
+    for (int i = 0; i < barLength; ++i)
+        bar += (i < filledLength) ? L"■" : L" ";
+    bar += L"]";
+
+    // 색상 설정
+    if (label == L"HP") outColor = FOREGROUND_RED | FOREGROUND_INTENSITY;
+    else if (label == L"MP") outColor = FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+    else outColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; // 기본 흰색
+
     return bar;
 }
 
