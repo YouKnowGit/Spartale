@@ -46,7 +46,11 @@ bool AbilitySystemComponent::CheckAndProcessLevelUp()
     while (myStats->Experience.CurrentValue >= myStats->Experience.BaseValue)
     {
         // 최대 레벨 10으로 제한
-        if (myStats->Level >= 10)    return false;
+        if (myStats->Level >= 10)
+        {
+            myStats->Experience = FAttributeData(500);
+            return false;
+        }
 
         // 레벨업 사운드 출력
         PlaySound(NULL, NULL, SND_PURGE);

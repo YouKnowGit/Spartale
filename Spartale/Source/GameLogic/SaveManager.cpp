@@ -22,6 +22,7 @@ void SaveManager::LoadGame(const std::string& filename)
 
 	m_player.Load(loadFile);
 	loadFile.close();
+	EncryptDecryptFile(filename, 1);
 }
 void SaveManager::EncryptDecryptFile(const std::string& filename, char key)
 {

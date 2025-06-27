@@ -121,7 +121,7 @@ Desperado/
 | `곽규환` | 전투 시스템, 게임 저장, 시스템 설계 | [gwakgh](https://github.com/gwakgh) |
 | `김준우` | 사운드, 몬스터/스킬 콘텐츠 | [Bathboomsoso](https://github.com/Bathboomsoso) |
 | `김민구` | 맵 구현, 게임 밸런싱 | [1azyox](https://github.com/1azyox) |
-| `김현수` | 게임 스토리 | [jhs10507](https://github.com/jhs10507) |
+| `정현수` | 게임 스토리 | [jhs10507](https://github.com/jhs10507) |
 | `김기인` | 아이템 기능 | [kki6700](https://github.com/kki6700) |
 
 ## 🔗 관련 링크

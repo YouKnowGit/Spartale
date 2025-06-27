@@ -199,11 +199,15 @@ void BattleManager::Update()
                         potions.push_back(i);
 
                         const ItemData* data = DataManager::GetInstance().GetItemData(slot->ItemID);
-                        if (data)    m_currentMenuOptions.push_back((data->Name) + L"(" + std::to_wstring(slot->Quantity) + L"개)");
+                        if (data)
+                        {
+                            bHasItem = true;
+                            m_currentMenuOptions.push_back((data->Name) + L"(" + std::to_wstring(slot->Quantity) + L"개)");
+                        }
                         else m_currentMenuOptions.push_back(L"-");
                     }
                 }
-                if (bHasItem)    m_battleState = EBattleState::PlayerActionSelect;
+                if (bHasItem)    m_battleState = EBattleState::ItemInven;
                 else
                 {
                     LogAndWait(L"사용할 수 있는 아이템이 없습니다.");
@@ -268,6 +272,7 @@ void BattleManager::Update()
 
                 m_player->GetInventory()->UseItem(realItemIndex, m_player);
                 m_player->GetInventory()->RemoveItem(realItemIndex, 1);
+                PlaySound(Potion, NULL, SND_ASYNC | SND_FILENAME | SND_NODEFAULT);
 
                 Render();
 
@@ -516,13 +521,16 @@ void BattleManager::EndBattle()
                 int goldGained = static_cast<int>(BaseGoldPerLevel * monsterStats->Level * rewardMultiplier(m_rng));
 
                 // --- 보상 지급 ---
-                playerStats->Experience.CurrentValue += expGained;
+                if(playerStats->Level < 10)    playerStats->Experience.CurrentValue += expGained;
                 playerStats->Gold += goldGained;
 
                 // 몬스터 처치 및 보상 획득 메시지를 먼저 출력
-                std::wstring rewardMessage = m_monster->Name + L"을(를) 쓰러뜨렸다! 경험치 "
-                    + std::to_wstring(expGained) + L", "
-                    + std::to_wstring(goldGained) + L" G를 획득했다!";
+                std::wstring rewardMessage;
+                rewardMessage = m_monster->Name + L"을(를) 쓰러뜨렸다! " + std::to_wstring(goldGained) + L" G를 획득했다!";
+                LogAndWait(rewardMessage);
+
+                if (playerStats->Level < 10) rewardMessage = m_player->Name + L"는 경험치 " + std::to_wstring(expGained) + L" 을(를) 획득했다!";
+                else    rewardMessage = m_player->Name + L"은(는) 더 이상 경험치를 획득할 수 없다.";
                 LogAndWait(rewardMessage);
 
 

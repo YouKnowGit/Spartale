@@ -33,17 +33,20 @@ void Player::Initialize()
         MyStats->Experience.BaseValue = 100.f;
 
         MyStats->HP = FAttributeData(200.f);
-        MyStats->MP = FAttributeData(75.f);
+        MyStats->MP = FAttributeData(100.f);
 
         MyStats->Strength = FAttributeData(30.f);
         MyStats->Agility = FAttributeData(15.f);
         MyStats->Intelligence = FAttributeData(30.f);
 
-        MyStats->Defence = FAttributeData(15.f);
-        MyStats->MagicResistance = FAttributeData(15.f);
+        MyStats->Defence = FAttributeData(20.f);
+        MyStats->MagicResistance = FAttributeData(20.f);
 
         MyStats->CriticalHitChance = FAttributeData(5.f);
         MyStats->CriticalHitDamageMultiplier = FAttributeData(1.5f);
+
+        MyStats->AdditionalStatPoints = 0;
+        MyStats->Gold = 100;
     }
 
     const std::vector<std::string> allSkillIDs = {
@@ -66,7 +69,6 @@ void Player::Initialize()
     {
         GetAbilityComponent()->GrantAbility(SkillFactory::CreateSkill(id));
     }
-    
 
     // Player 위치 및 방향 관련 데이터
     CurrentLocation.X = 9;
