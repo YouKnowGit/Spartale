@@ -89,4 +89,5 @@ private:
     const wchar_t* RunwayFailure = L"Sounds/RunwayFailure";
     const wchar_t* BossAwake = L"Sounds/BossAwake.wav";
     const wchar_t* MainTheme = L"Sounds/MainTheme.wav";
+    const wchar_t* Potion = L"Sounds/Potion.wav";
 };

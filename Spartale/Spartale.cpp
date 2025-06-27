@@ -64,6 +64,7 @@ int main()
                 player->GetAbilityComponent()->EquipAbility(0, player->GetAbilityComponent()->GetGrantedAbility(0));
 
                 // 시작 아이템으로 HP 포션을 3개와 청동 검을 추가합니다.
+                //
                 player->GetInventory()->AddItem("consume_potion_01", 3);
                 player->GetInventory()->AddItem("equip_weapon_sword_01", 1);
                 

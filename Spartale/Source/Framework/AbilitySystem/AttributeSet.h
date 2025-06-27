@@ -26,14 +26,14 @@ public:
 
     AbilitySystemComponent* OwningAbilitySystemComponent;
 
-    // --- 기본 스탯 (Primary Stats) ---
+    // --- 기본 스탯 ---
     FAttributeData Strength;          // 힘
     FAttributeData Agility;           // 민첩
     FAttributeData Intelligence;      // 지능
     FAttributeData Defence;           // 방어력
     FAttributeData MagicResistance;   // 마법 저항력
 
-    // --- 자원 (Resources) ---
+    // --- 체력, 마나 ---
     FAttributeData HP;
     FAttributeData MP;
 
@@ -45,9 +45,9 @@ public:
     FAttributeData CriticalHitChance;          // 치명타 확률 (예: 0.05 = 5%)
     FAttributeData CriticalHitDamageMultiplier; // 치명타 피해량 배율 (예: 1.5 = 150%)
 
-    // --- 메타 데이터 (Meta Data) ---
+    // --- 메타 데이터 ---
     bool bIsDefending = false; // 현재 방어 상태인지 여부 (방어 시스템 제거 시 삭제)
-    int AdditionalStatPoints = 0; // 분배 가능한 추가 스탯 포인트
+    int AdditionalStatPoints = 13; // 분배 가능한 추가 스탯 포인트
 
     // 능력치가 변경되기 직전에 호출될 함수
     virtual void PreAttributeChange(const FAttributeData& Attribute, float& NewValue);

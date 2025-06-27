@@ -13,7 +13,7 @@
   },
   "consume_potion_02": {
     "name": "대형 체력 포션",
-    "description": "사용 시 체력을 150 회복합니다.",
+    "description": "사용 시 체력을 300 회복합니다.",
     "type": "Consumable",
     "price": 50,
     "isStackable": true,

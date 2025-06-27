@@ -39,24 +39,27 @@ void Player::Initialize()
         MyStats->Agility = FAttributeData(15.f);
         MyStats->Intelligence = FAttributeData(30.f);
 
-        MyStats->Defence = FAttributeData(15.f);
-        MyStats->MagicResistance = FAttributeData(10.f);
+        MyStats->Defence = FAttributeData(20.f);
+        MyStats->MagicResistance = FAttributeData(20.f);
 
         MyStats->CriticalHitChance = FAttributeData(5.f);
         MyStats->CriticalHitDamageMultiplier = FAttributeData(1.5f);
+
+        MyStats->AdditionalStatPoints = 0;
+        MyStats->Gold = 100;
     }
     
     const std::vector<std::string> allSkillIDs = {
         "SK_NormalAttack"
-        //"SK_PoisonCloud",
-        //"SK_Fireball",
-        //"SK_TripleSlash",
-        //"SK_StrengthBuff",
-        //"SK_Meditate",
-        //"SK_Heal",
-        //"SK_ArcaneBlast",
-        //"SK_AbyssalCollapse",
-        //"SK_Judgment"
+        "SK_PoisonCloud",
+        "SK_Fireball",
+        "SK_TripleSlash",
+        "SK_StrengthBuff",
+        "SK_Meditate",
+        "SK_Heal",
+        "SK_ArcaneBlast",
+        "SK_AbyssalCollapse",
+        "SK_Judgment"
     };
     for (const auto& id : allSkillIDs)
     {
