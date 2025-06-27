@@ -100,6 +100,10 @@ Desperado/
 -   **과제 내용:** 전투 후 Y/N으로 방문.
 -   **`Desperado` 구현:** 월드 내에 존재하는 **NPC와 상호작용하여 진입**하는 방식을 채택하여 몰입감을 높였습니다. 아이템 구매/판매 시 수량을 직접 입력할 수 있으며, 과제 요구사항과 동일하게 **판매가는 정가의 60%로 정확히 구현**했습니다.
 
+## 🎮 테스트 (How To Test)
+
+- [**주요 기능 테스트**](https://teamsparta.notion.site/How-To-Test-21e2dc3ef5148084a2a9f0c2a4936a0d?source=copy_link)
+
 ## 🛠️ 기술 스택 (Tech Stack)
 
 -   **Programming Language:** C++
